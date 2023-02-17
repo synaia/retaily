@@ -12,7 +12,7 @@ export const ResumeSaleBox = () => {
 
     return (
         <Link to="/payment">
-        <div className="middle-left-side">
+        <div className="middle-left-side-terminal">
                 <div>
                     <h3>delivery</h3>
                 </div>

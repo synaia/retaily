@@ -4,7 +4,7 @@ import { db } from '../api/db'
 
 export const AppContext = createContext();
 
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJodW1hbiIsInNhbGVzIiwibWFuYWdlciJdLCJzdG9yZXMiOlsiTUFERUxUQSIsIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3NjY2NDMwMX0.r7fb3qJfLMeogMhkbBs-1h-vF0q3PdDahDfF56Tj18s'
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJodW1hbiIsInNhbGVzIiwibWFuYWdlciJdLCJzdG9yZXMiOlsiTUFERUxUQSIsIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3NjY4MzAxN30.JrYrEC0yo0rN_iotF9XCtqM_apBrq8iH14EPYsZuQqc'
 const store = 'SAMBIL'
 
 export const AppContextProvider = (props) => {

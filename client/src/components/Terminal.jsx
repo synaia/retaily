@@ -52,9 +52,9 @@ export const Terminal = () => {
         //     </div>
         // </div>
 
-    <div className="container">
+    <div className="container-terminal">
 
-        <div className="left-side">
+        <div className="left-side-terminal">
             
             <FindClient />
             
@@ -70,7 +70,7 @@ export const Terminal = () => {
         <main>
             <Header />
 
-            <div className="search">
+            <div className="search-terminal">
                 <input type="text" />
             </div>
 

@@ -157,7 +157,7 @@ export const ProductPicked = () => {
         // </div>
 
 
-<div className="center-left-side">
+<div className="center-left-side-terminal">
             {sale.products.length > 0 && 
             (sale.products.map((product, i) => (
             <div ref={itemsRef[product.id]} key={i}  className={`product-picked ${product.is_selected == 1 ? 'product-picked-selected': ''}`}
