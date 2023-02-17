@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-import core_app.product.product_models as models
-from core_app.dbfs.Query import Query
-from core_app.database import get_cursor
+import server.core_app.product.product_models as models
+from server.core_app.dbfs.Query import Query
+from server.core_app.database import get_cursor
 
 
 def read_products(store: str, db: Session, query: Query):

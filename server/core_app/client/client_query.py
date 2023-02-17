@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-import core_app.client.client_models as models
+import server.core_app.client.client_models as models
 
 
 def read_clients(db: Session):

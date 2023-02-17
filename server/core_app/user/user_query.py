@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-import core_app.user.user_models as models
+import server.core_app.user.user_models as models
 from datetime import datetime, timedelta
 from typing import List
 from fastapi import Depends, HTTPException, Security, status
@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, ValidationError
-from core_app.database import get_db
+from server.core_app.database import get_db
 
 
 # openssl rand -hex 32

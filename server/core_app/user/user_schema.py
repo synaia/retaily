@@ -1,7 +1,7 @@
 from pydantic import BaseModel, root_validator
 from datetime import datetime
 import typing
-from core_app.product.product_schemas import Store
+from server.core_app.product.product_schemas import Store
 
 
 class Scope(BaseModel):

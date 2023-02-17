@@ -1,14 +1,14 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
-from core_app.database import get_db
-import core_app.user.user_query as user_query
-import core_app.user.user_schema as schemas
-import core_app.user.user_models as models
-from core_app.user.user_query import Token
-from core_app.user.user_query import create_access_token
-from core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES
-from core_app.user.user_query import validate_permissions
+from server.core_app.database import get_db
+import server.core_app.user.user_query as user_query
+import server.core_app.user.user_schema as schemas
+import server.core_app.user.user_models as models
+from server.core_app.user.user_query import Token
+from server.core_app.user.user_query import create_access_token
+from server.core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES
+from server.core_app.user.user_query import validate_permissions
 
 router = APIRouter(prefix='/users', tags=['users'])
 

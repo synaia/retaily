@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, Column,  Integer, String, DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from core_app.database import Base, engine
+from server.core_app.database import Base, engine
 
 
 meta = MetaData()

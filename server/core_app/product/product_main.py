@@ -1,17 +1,19 @@
+import os
+
 from fastapi import APIRouter, Depends, HTTPException, Security, Header
 from typing import Optional
 from sqlalchemy.orm import Session
-from core_app.database import get_db
-from core_app.product.product_query import read_products
-import core_app.product.product_schemas as schemas
-import core_app.user.user_models as models
-from core_app.user.user_query import validate_permissions
-from core_app.dbfs.Query import Query
+from server.core_app.database import get_db
+from server.core_app.product.product_query import read_products
+import server.core_app.product.product_schemas as schemas
+import server.core_app.user.user_models as models
+from server.core_app.user.user_query import validate_permissions
+from server.core_app.dbfs.Query import Query
 
 
 router = APIRouter(prefix='/products', tags=['products'])
-
-query = Query('./dbfs/query.sql')
+path = os.getcwd() + '/server/core_app/dbfs/query.sql'
+query = Query(path)
 
 
 @router.on_event("startup")
