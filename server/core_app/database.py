@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from MySQLdb.cursors import DictCursor
 
 
-SQLALCHEMY_DATABASE_URL = "mysql://wilton:123456@localhost/pos_srv"
+SQLALCHEMY_DATABASE_URL = "mysql://wilton:123456@localhost/evofit_sambil"
 
 # engine = create_engine(
 #     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}

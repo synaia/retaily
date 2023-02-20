@@ -107,7 +107,7 @@ async def validate_permissions(user_active: models.User = Security(validate_user
     return user_active
 
 
-def create_user(user, db: Session):
+def create_user(user: models.User, db: Session):
     user.password = get_password_hash(user.password)
     db.add(user)
     db.commit()

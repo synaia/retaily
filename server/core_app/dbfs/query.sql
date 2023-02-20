@@ -17,7 +17,6 @@ WHERE
       p.id = i.product_id
   and s.id = i.store_id
   and s.name = %s
-  and p.image_raw is not null
   ;
 
 --OTHER

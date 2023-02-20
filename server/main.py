@@ -1,3 +1,6 @@
+import os
+import sys
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import server.core_app.product.product_main as product_main
@@ -9,11 +12,21 @@ import uvicorn
 # logging.basicConfig()
 # logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
+# openssl genrsa -out key.pem 2048
+# openssl rsa -in key.pem -outform PEM -pubout -out public.pem
+base_path = os.getcwd()
+key_pem = os.getcwd() + '/../certs/key.pem'
+public_pem = os.getcwd() + '/../certs/public.crt'
+
+
 origins = [
     "http://localhost:9080",
+    "https://localhost:9080",
+    "http://10.0.0.6:9080",
+    "https://10.0.0.6:9080",
 ]
 
-app = FastAPI()
+app = FastAPI(ssl_keyfile=key_pem, ssl_certfile=public_pem)
 
 app.include_router(product_main.router)
 app.include_router(user_main.router)
@@ -35,4 +48,4 @@ async def root():
 
 # debug mode :-)
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8500, ssl_keyfile=key_pem, ssl_certfile=public_pem)

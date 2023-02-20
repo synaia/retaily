@@ -4,7 +4,7 @@
   "description": "Migration from js to react",
   "main": "index.js",
   "scripts": {
-    "start": "snowpack dev --port 9080",
+    "start": "snowpack  dev --port 9080 --secure",
     "test": "echo \"Error: no test specified\" && exit 1",
     "init": "snowpack init"
   },

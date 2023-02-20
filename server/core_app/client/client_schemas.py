@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class Client(BaseModel):
-    id: int
+    id: int | None = None
     name: str | None = None
     document_id: str | None = None
     address: str | None = None

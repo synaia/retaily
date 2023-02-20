@@ -1,4 +1,5 @@
 import os
+import sys
 
 from fastapi import APIRouter, Depends, HTTPException, Security, Header
 from typing import Optional
@@ -12,7 +13,15 @@ from server.core_app.dbfs.Query import Query
 
 
 router = APIRouter(prefix='/products', tags=['products'])
-path = os.getcwd() + '/server/core_app/dbfs/query.sql'
+gettrace = getattr(sys, 'gettrace', None)
+# is debug mode :-) ?
+if gettrace():
+    path = os.getcwd() + '/dbfs/query.sql'
+    print('Debugging :-* ')
+else:
+    path = os.getcwd() + '/server/core_app/dbfs/query.sql'
+    print('Run normally.')
+
 query = Query(path)
 
 
