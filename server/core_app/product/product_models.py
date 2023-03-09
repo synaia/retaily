@@ -27,6 +27,10 @@ class Product(Base):
     def price_for_sale(self):
         return self.price
 
+    @hybrid_property
+    def is_selected(self):
+        return 0
+
 
 class Inventory(Base):
     __tablename__ = "app_inventory"

@@ -41,9 +41,11 @@ export const Numpad = () => {
                 <div className="numpad-btn">
                     <p>BTN 3</p>
                 </div>
-                <div className="numpad-btn">
-                    <p>BTN 4</p>
-                </div>
+                <Link to='/prods'>
+                    <div className="numpad-btn">
+                        <p>BTN 4</p>
+                    </div>
+                </Link>
                 <div className="numpad-btn">
                     <p>BTN 5</p>
                 </div>

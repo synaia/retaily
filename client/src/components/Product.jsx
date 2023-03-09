@@ -15,12 +15,7 @@ export const Product = ({product, func}) => {
     };
 
     return (
-        // <div className="button product" style={productImgStyle} onClick={func} data-product-id={product.id} >
-        //     <span className="product_price" data-product-id={product.id} >$ {product.price} </span>
-        //     <span className="product_description"><span className="qty_mini">{product.inventory.quantity}</span> {product.name} <br/>$ {product.price}</span>
-        // </div>
-        
-        <div className="product-card" style={productImgStyle} onClick={func} data-product-id={product.id}>
+        <div className="product-card" style={productImgStyle} onClick={() => func(product.id)} data-product-id={product.id}>
             <div className="product-card-top">
                 <h3>$ {product.price}</h3>
             </div>

@@ -35,6 +35,7 @@ class Product(BaseModel):
     date_create: datetime | None = None
     active: int
     image_raw: str | None = None
+    is_selected: int
     inventory: Inventory
 
     class Config:

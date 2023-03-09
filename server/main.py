@@ -20,10 +20,12 @@ public_pem = os.getcwd() + '/../certs/public.crt'
 
 
 origins = [
+    "http://localhost:3000",
     "http://localhost:9080",
     "https://localhost:9080",
     "http://10.0.0.6:9080",
     "https://10.0.0.6:9080",
+    "https://10.0.0.233:9080",
 ]
 
 app = FastAPI(ssl_keyfile=key_pem, ssl_certfile=public_pem)

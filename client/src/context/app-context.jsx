@@ -1,11 +1,18 @@
+/**
+ * @file app-context.jsx
+ * @author Wilton Beltre
+ * @description  old context method, I go to change to redux...
+ * @version 1.0.0
+ * @license MIT
+ */
+
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 import Axios from 'axios';
 import { db } from '../api/db'
+import { TOKEN, _store } from "../util/constants";
 
 export const AppContext = createContext();
-
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJjeCIsInNhbGVzIiwiaHVtYW4iXSwic3RvcmVzIjpbIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3Njg0NjI2OX0.RiT3xY4Ix6E_nsN2s2y0OgUALGtQZZu16E5UGTY16tw'
-const store = 'SAMBIL'
 
 export const AppContextProvider = (props) => {
     const [storeInfo, setStoreInfo] = useState({'name': 'Evofit', 'tax': 0.18});
@@ -20,7 +27,7 @@ export const AppContextProvider = (props) => {
         const {data: productItems} = await Axios.get('https://10.0.0.6:8500/products/', {
             headers: {
                 'Authorization': `bearer ${TOKEN}`,
-                'store': store
+                'store': _store
             }
         })
 

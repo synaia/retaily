@@ -13,7 +13,7 @@
 import http.server
 import ssl
 
-server_address = ('10.0.0.6', 4443)
+server_address = ('localhost', 4443)
 httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
 httpd.socket = ssl.wrap_socket(httpd.socket,
                                server_side=True,
