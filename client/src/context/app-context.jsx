@@ -10,7 +10,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import Axios from 'axios';
 import { db } from '../api/db'
-import { TOKEN, _store } from "../util/constants";
+import { TOKEN, STORE } from "../util/constants";
 
 export const AppContext = createContext();
 

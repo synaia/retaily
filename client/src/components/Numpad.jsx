@@ -1,34 +1,36 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { kickProductAction, reduceProductAction } from "../redux/features/product.feature.js";
 import { Client } from "./Client";
-import { useAPI } from "../context/app-context";
+
+
 
 export const Numpad = () => {
-    console.log('Numpad: rendered.')
-
-    const { clients, setClients, isclientloading, assigClient, kickProduct, reduceProduct } = useAPI();
+    console.log('Numpad: rendered.');
+    const dispatch = useDispatch();
 
     const setClient = () => {
-        const rdm = Math.floor(Math.random() * clients.length) + 1;
-        const clientPicked = [...clients][rdm];
-        assigClient(clientPicked);
+        // const rdm = Math.floor(Math.random() * clients.length) + 1;
+        // const clientPicked = [...clients][rdm];
+        // assigClient(clientPicked);
     };
 
     const removeProductFromPicket = () => {
-        let itemcard_selected = Array.from(document.querySelectorAll('.product-picked-selected'))[0]
+        let itemcard_selected = Array.from(document.querySelectorAll('.product-picked-selected'))[0];
         if (itemcard_selected != undefined) {
-            const product_id = itemcard_selected.dataset.productId
-            kickProduct(product_id)
+            const product_id = itemcard_selected.dataset.productId;
+            dispatch(kickProductAction(product_id));
         }
-    }
+    };
 
     const reduceProductFromPicket = () => {
-        let itemcard_selected = Array.from(document.querySelectorAll('.product-picked-selected'))[0]
+        let itemcard_selected = Array.from(document.querySelectorAll('.product-picked-selected'))[0];
         if (itemcard_selected != undefined) {
-            const product_id = itemcard_selected.dataset.productId
-            reduceProduct(product_id)
+            const product_id = itemcard_selected.dataset.productId;
+            dispatch(reduceProductAction(product_id));
         }
-    }
+    };
 
     return (
         <div className="bottom-left-side">

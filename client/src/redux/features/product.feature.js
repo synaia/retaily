@@ -1,7 +1,7 @@
 /**
  * @file product-list.feature.js
  * @author Wilton Beltre
- * @description  drive in a centralized way all about product methods and remote connection with backend
+ * @description  drive in a centralized way all about product methods and remote connection with backend.
  * @version 1.0.0
  * @license MIT 
  */
@@ -46,16 +46,14 @@ const updateSaleDetail = (productPickedList) => {
     return sale_detail;
 };
 
-export const pickProduct = (state, action) => {
+const pickProduct = (state, action) => {
     const productId = action.payload;
     const productAvailableList = state.products;
-    const productPickedList = state.sale.products;
+    const productPickedList = [...state.sale.products];
     const productPicked = {...productAvailableList.filter( prod => prod.id == productId )[0]};
     const productExist  = productPickedList.filter( prod => prod.id == productPicked.id )[0];
 
-    if (productPickedList.lenght > 0) {
-        productPickedList.forEach(prod => { prod.is_selected = 0; });
-    }
+    productPickedList.forEach(prod => { prod.is_selected = 0; });
 
     if (productExist != undefined) {
         let index = productPickedList.findIndex(prod => prod.id == productPicked.id);
@@ -66,13 +64,114 @@ export const pickProduct = (state, action) => {
         productPickedList.push(productPicked);
     }
 
-     // # clean selection by clicked
-    //  let itemcard = Array.from(document.querySelectorAll('.product-productPicked'))
-    //  itemcard.forEach(item => item.classList.remove('product-productPicked-selected'))
-
     const sale_detail = updateSaleDetail(productPickedList);
     state.sale = {'products': productPickedList, 'sale_detail': sale_detail};
-    console.log(state.sale);
+};
+
+const kickProduct = (state, action) => {
+    const productId = action.payload;
+    const products = [...state.sale.products];
+    const index = products.findIndex(prod => prod.id == productId);
+    products.splice(index, 1);
+    const sale_detail = updateSaleDetail(products);
+    state.sale = {'products': products, 'sale_detail': sale_detail};
+};
+
+const reduceProduct = (state, action) => {
+    const productId = action.payload;
+    const products = [...state.sale.products];
+    const index = products.findIndex(prod => prod.id == productId);
+    if (products[index].inventory.quantity_for_sale == 1) {
+        kickProduct(state, action);
+        return;
+    } else {
+        products[index].inventory.quantity_for_sale -= 1;
+        products[index].is_selected = 1;
+        const sale_detail = updateSaleDetail(products);
+        state.sale = {'products': products, 'sale_detail': sale_detail};
+    }
+};
+
+const shake = (target) => {
+    target.classList.add('shake')
+    const _shake = async () => {
+        await setTimeout( () => {
+            target.classList.remove('shake')
+        }, 500)
+    }
+    return _shake()
+};
+
+const discountTrigger = (state, action) => {
+    const e = action.payload;
+    const products = [...state.sale.products];
+    let product_id = e.currentTarget.parentNode.dataset.productId;
+    let new_value = e.currentTarget.value.trim();
+
+    const current_index = products.findIndex(p => (p.id == product_id));
+
+    if (products[current_index].price_for_sale == new_value) {
+        console.log('No changes on new value ....');
+        e.stopPropagation();
+        try {
+            e.currentTarget.remove();
+        } catch (err) {
+            console.log(err);
+        }
+        return ;
+    }
+
+    const reg_percentage = /^(\d+(?:\.\d+)?%|0%)$/;
+    const reg_number     = /^(\d+(?:\.\d+)?)$/;
+    const match_number   = /(\d+(?:\.\d+)?)/;
+
+    if (!(reg_percentage.test(new_value) || reg_number.test(new_value)) ) {
+        const currentTarget = e.currentTarget;
+        shake(currentTarget);
+
+        console.log('No percentage No number ....');
+
+        e.currentTarget.value = products[current_index].price_for_sale;
+        e.stopPropagation();
+        return ;
+    }
+
+    if (reg_percentage.test(new_value)) {
+        new_value = Number(new_value.match(match_number)[0]);
+        console.log('% discount', new_value);
+        const pr_price = products[current_index].price;
+        console.log('pr_price', pr_price);
+        new_value = pr_price - ((pr_price/100) * new_value);
+        console.log('new_value', new_value);
+        if (new_value < 0) {
+            const currentTarget = e.currentTarget;
+            shake(currentTarget);
+            console.log('Negative value not admited ....');
+            e.currentTarget.value = products[current_index].price_for_sale;
+            e.stopPropagation();
+            return ;
+        }
+    } else {
+        new_value = Number(new_value);
+    }
+    
+    const discount = (products[current_index].price - new_value) * products[current_index].inventory.quantity_for_sale;
+    products[current_index].price_for_sale = new_value;
+    products[current_index].discount = discount;
+
+    // rayos
+    const discount_percent = ((discount / products[current_index].price) / products[current_index].inventory.quantity_for_sale) * 100;
+
+    products[current_index].discount_percent = discount_percent;
+
+    const sale_detail = updateSaleDetail(products);
+    state.sale = {'products': products, 'sale_detail': sale_detail};
+
+    try {
+        e.currentTarget.remove();
+    } catch (err) {
+        console.log(err)
+    }
 };
 
 
@@ -81,6 +180,9 @@ const productsSlice = createSlice({
     initialState: initialState,
     reducers: {
         pickProductAction: pickProduct,
+        discountTriggerAction: discountTrigger,
+        kickProductAction: kickProduct,
+        reduceProductAction: reduceProduct,
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -95,5 +197,5 @@ const productsSlice = createSlice({
     }
 })
 
-export const { pickProductAction } = productsSlice.actions;
+export const { pickProductAction, discountTriggerAction, kickProductAction, reduceProductAction} = productsSlice.actions;
 export default productsSlice.reducer;

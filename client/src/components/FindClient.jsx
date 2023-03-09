@@ -1,9 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useAPI } from '../context/app-context'
+
 
 export const FindClient = () => {
-    const {sale} = useAPI();
+    const client = useSelector((store) => store.product.sale.client);
 
     return (
         <Link to="/client">
@@ -11,8 +12,8 @@ export const FindClient = () => {
                 <span className="material-icons-sharp">
                     emoji_people
                 </span>
-                {sale.client == null  && <h2>find a client ...</h2>}
-                {sale.client != null  && <h2>{sale.client.name}</h2>}
+                {client == null  && <h2>find a client ...</h2>}
+                {client != null  && <h2>{client.name}</h2>}
             </div>
         </Link>
     )

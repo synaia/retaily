@@ -1,14 +1,18 @@
+/**
+ * @file ProductGrid.jsx
+ * @author Wilton Beltre
+ * @description  Show the browsable products screen.
+ * @version 1.0.0
+ * @license MIT
+ */
+
+
 import React from "react";
 import { Product } from "./Product";
 import { useEffect } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { loadProducts, pickProductAction } from "../redux/features/product.feature.js";
-import { createSelector } from "@reduxjs/toolkit";
 
-const selectProducts = createSelector(
-    (state) => state.product.products,
-    (products) => products
-);
 
 export const ProductGrid = () => {
     console.log('ProductGrid: rendered.')
@@ -27,15 +31,14 @@ export const ProductGrid = () => {
 
     const pick = (productId) => {
          dispatch(pickProductAction(productId));
+
+        // # clean selection by clicked
+        let itemcard = Array.from(document.querySelectorAll('.product-picked'))
+        itemcard.forEach(item => item.classList.remove('product-picked-selected'))
     }
 
     return (
         <div id="products" className="products">
-            {/* {saleState.products.length > 0 && 
-               saleState.products.map((product, i) => (
-                <li key={i}>{product.id} - {product.inventory.quantity_for_sale} - {product.name}</li>
-               ))
-            } */}
             {loading && <div>Loading lalala ;D  .... </div>}
             {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
             {!loading && (

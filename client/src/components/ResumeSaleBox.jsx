@@ -1,14 +1,14 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Payment } from "./Payment";
 import { Link } from "react-router-dom";
-import { useAPI } from "../context/app-context";
 import { F_ } from "../util/Utils";
+
 
 export const ResumeSaleBox = () => {
     console.log('ResumeSaleBox: rendered.')
-    const { sale } = useAPI()
-    const sale_detail = sale.sale_detail
-
+    const sale = useSelector((store) => store.product.sale);
+    const sale_detail = sale.sale_detail;
 
     return (
         <Link to="/payment">
