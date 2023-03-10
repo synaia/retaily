@@ -1,10 +1,10 @@
 import React, { useEffect, useLayoutEffect } from "react";
-import { useAPI } from "../context/app-context";
+import { useSelector } from "react-redux";
 import { N_ } from "../util/Utils";
 
 export const ProductPickedReadOnly = () => {
     console.log('ProductPickedReadOnly: rendered.')
-    const { sale, setSale, updateTSaleDetails } = useAPI()
+    const sale = useSelector((store) => store.product.sale);
 
     return (
         <div className="center-left-side-pay">

@@ -1,15 +1,27 @@
-import React from "react";
-import { useAPI } from '../context/app-context'
+/**
+ * @file Client.jsx
+ * @author Wilton Beltre
+ * @description  Clients management and pick.
+ * @license MIT
+ */
+
+
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useRef } from "react";
-import { useState } from "react";
+import { useDispatch , useSelector} from "react-redux";
+import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
+import { pickClientAction, pickNewClientAction } from "../redux/features/product.feature.js";
 
 
 export const Client = () => {
-    const {clients, setClients, isclientloading, sale, setSale, postAddClient, putUpdateClient} = useAPI();
-    const [clientIdState, setClientIdState] = useState()
+    const dispatch = useDispatch();
+
+    const clientState = useSelector((state) => state.client);
+    const {loading, errorMessage, clients } = clientState;
+    const [clientIdState, setClientIdState] = useState();
+
     const documentId = useRef()
     const name = useRef()
     const address = useRef()
@@ -22,8 +34,7 @@ export const Client = () => {
 
     const pickClient = (e)=> {
         const clientId = e.currentTarget.dataset.clientId
-        const clientPicked = clients.filter( c => c.id == clientId )[0];
-        setSale({...sale, 'client': clientPicked});
+        dispatch(pickClientAction({clientId, clients}));
         navigator('/', {replace: true})
     }
 
@@ -37,10 +48,10 @@ export const Client = () => {
            "date_create": "2023-02-18T14:58:33",
            "wholesaler": true,
         }
-        postAddClient(new_client)
-        setSale({...sale, 'client': new_client});
-        setClients(clients => [new_client, ...clients])
-        navigator('/', {replace: true})
+        dispatch(addClient(new_client));
+        dispatch(pickNewClientAction(new_client));
+        dispatch(putClientinListAction(new_client));
+        navigator('/', {replace: true});
     }
 
     const getClient = (e) => {
@@ -52,9 +63,9 @@ export const Client = () => {
         address.current.value = clientPicked?.address
         celphone.current.value = clientPicked?.celphone
         email.current.value = clientPicked?.email
+
         // "date_create": "2023-02-18T14:58:33",
         // "wholesaler": true,
-
     }
 
     const editClient = () => {
@@ -68,18 +79,10 @@ export const Client = () => {
             "date_create": "2023-02-18T14:58:33",
             "wholesaler": true,
          }
-         putUpdateClient(current_client, clientIdState)
-         setSale({...sale, 'client': current_client});
-         let index = clients.findIndex(c => c.id == current_client.id);
-         const new_clients = [...clients] // required really???
-         new_clients[index] = current_client
-        //  const new_clients = clients.map(c => {
-        //     if (c.id == clientIdState) {
-        //         return {...c, current_client}
-        //     }
-        //     return c
-        //  })
-         setClients(new_clients)
+         dispatch(updateClient(current_client));
+         dispatch(pickNewClientAction(current_client));
+         dispatch(updateClientinListAction(current_client));
+         navigator('/', {replace: true});
     }
    
     return (
@@ -194,8 +197,9 @@ export const Client = () => {
                             </tr>
                          </thead>
                          <tbody>
-                                {isclientloading && <div>Clientes yujuuu lalala ;D  .... </div>}
-                                {!isclientloading && (
+                                {loading && <div>Clientes yujuuu lalala ;D  .... </div>}
+                                {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
+                                {!loading && (
                                     clients.map((client, i) => (
                                         <tr key={i} >
                                             <td onClick={getClient} data-client-id={client.id}>

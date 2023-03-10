@@ -1,18 +1,20 @@
 import React from "react";
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route, HashRouter} from 'react-router-dom'
 import {Provider} from "react-redux";
 import store from "../redux/store";
 import { Terminal } from "./Terminal";
 import { ProductGrid } from "./ProductGrid";
 import { Client } from "./Client";
 import { Payment } from "./Payment";
+import {Init } from "./Init";
 
 
 export const App = () => {
     return (
         <div >
-            <Router>
+            <HashRouter>
               <Provider store={store}>
+                <Init />
               {/* Some header here */}
                 <Routes>
                   <Route path="/" element={<Terminal />} />
@@ -21,7 +23,7 @@ export const App = () => {
                   <Route path="/prods" element={<ProductGrid />}/>
                 </Routes>
               </Provider>
-            </Router>
+            </HashRouter>
         </div>
     );
 }

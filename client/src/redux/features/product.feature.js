@@ -26,6 +26,7 @@ const initialState = {
 };
 
 export const loadProducts = createAsyncThunk('products/loadProducts', async () => {
+    console.log('loadProducts...');
     let response = await Axios.get(`${BACKEND_HOST}/products/`, {
         headers: {
             'Authorization': `bearer ${TOKEN}`,
@@ -65,7 +66,8 @@ const pickProduct = (state, action) => {
     }
 
     const sale_detail = updateSaleDetail(productPickedList);
-    state.sale = {'products': productPickedList, 'sale_detail': sale_detail};
+    state.sale.products = productPickedList;
+    state.sale.sale_detail = sale_detail;
 };
 
 const kickProduct = (state, action) => {
@@ -74,7 +76,8 @@ const kickProduct = (state, action) => {
     const index = products.findIndex(prod => prod.id == productId);
     products.splice(index, 1);
     const sale_detail = updateSaleDetail(products);
-    state.sale = {'products': products, 'sale_detail': sale_detail};
+    state.sale.products = products;
+    state.sale.sale_detail = sale_detail;
 };
 
 const reduceProduct = (state, action) => {
@@ -88,7 +91,8 @@ const reduceProduct = (state, action) => {
         products[index].inventory.quantity_for_sale -= 1;
         products[index].is_selected = 1;
         const sale_detail = updateSaleDetail(products);
-        state.sale = {'products': products, 'sale_detail': sale_detail};
+        state.sale.products = products;
+        state.sale.sale_detail = sale_detail;
     }
 };
 
@@ -165,13 +169,25 @@ const discountTrigger = (state, action) => {
     products[current_index].discount_percent = discount_percent;
 
     const sale_detail = updateSaleDetail(products);
-    state.sale = {'products': products, 'sale_detail': sale_detail};
+    state.sale.products = products;
+    state.sale.sale_detail = sale_detail;
 
     try {
         e.currentTarget.remove();
     } catch (err) {
         console.log(err)
     }
+};
+
+const pickClient = (state, action) => {
+    const {clientId, clients} = action.payload;
+    const clientPicked = clients.filter( c => c.id == clientId )[0];
+    state.sale.client = clientPicked;
+};
+
+const pickNewClient = (state, action) => {
+    const clientPicked = action.payload;
+    state.sale.client = clientPicked;
 };
 
 
@@ -183,6 +199,8 @@ const productsSlice = createSlice({
         discountTriggerAction: discountTrigger,
         kickProductAction: kickProduct,
         reduceProductAction: reduceProduct,
+        pickClientAction: pickClient,
+        pickNewClientAction: pickNewClient,
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -195,7 +213,13 @@ const productsSlice = createSlice({
             state.errorMessage = `ERROR loadProducts; ${action.error.message}`
         })
     }
-})
+});
 
-export const { pickProductAction, discountTriggerAction, kickProductAction, reduceProductAction} = productsSlice.actions;
+export const { 
+    pickProductAction, 
+    discountTriggerAction, 
+    kickProductAction, 
+    reduceProductAction, 
+    pickClientAction, 
+    pickNewClientAction } = productsSlice.actions;
 export default productsSlice.reducer;

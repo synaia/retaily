@@ -20,14 +20,9 @@ export const ProductGrid = () => {
     const dispatch = useDispatch();
 
     const products = useSelector((state) => state.product.products);
-    // const saleState = useSelector((store) => store.product.sale);
 
     const loading = useSelector((store) => store.product.loading);
     const errorMessage = useSelector((store) => store.product.errorMessage);
-
-    useEffect(() => {
-        dispatch(loadProducts());
-    }, [dispatch]);
 
     const pick = (productId) => {
          dispatch(pickProductAction(productId));

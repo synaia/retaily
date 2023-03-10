@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Header } from "./Header";
-import { useAPI } from "../context/app-context";
-
 import { ProductPickedReadOnly } from "./ProductPickedReadOnly";
 import { F_ } from "../util/Utils";
+import { useSelector } from "react-redux";
+
 
 
 export const Payment = () => {
-    const {sale} = useAPI()
-    const sale_detail = sale.sale_detail
+    const sale = useSelector((store) => store.product.sale);
+    const sale_detail = sale.sale_detail;
 
     console.log('Payment: rendered.')
     return (
