@@ -816,7 +816,7 @@ main .recent-orders a {
   main .recent-orders {
     width: 94%;
     position: absolute;
-    left: 50%;
+    left: calc(85vh);
     transform: translateX(-50%);
     margin: 2rem 0 0 8.8rem;
   }
@@ -1028,7 +1028,7 @@ main .client-grid {
   overflow-y: auto;
 }
 main .client-grid > div {
-  /* background: var(--color-white); */
+  background: var(--color-white);
   padding: var(--product-card-padding);
   /* border-radius: var(--card-border-radius); */
   margin-top: 1rem;

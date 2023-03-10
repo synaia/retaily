@@ -6,13 +6,14 @@
  */
 
 
-import React, { useState } from "react";
+import React, { useState, createContext, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
 import { pickClientAction, pickNewClientAction } from "../redux/features/product.feature.js";
+import { FixedSizeGrid as Grid } from "react-window";
 
 
 export const Client = () => {
@@ -30,12 +31,70 @@ export const Client = () => {
     const navigator = useNavigate()
 
 
-    console.log('Clients: rendered.')
 
-    const pickClient = (e)=> {
-        const clientId = e.currentTarget.dataset.clientId
-        dispatch(pickClientAction({clientId, clients}));
-        navigator('/', {replace: true})
+    const StickyGridContext = createContext();
+    StickyGridContext.displayName = "StickyListContext";
+
+    const ItemWrapper = ({ data, rowIndex, columnIndex, style }) => {
+        const { ItemRenderer, stickyIndices } = data;
+        if (stickyIndices && stickyIndices.includes(rowIndex) && stickyIndices.includes(columnIndex)) {
+          return null;
+        }
+        return <ItemRenderer rowIndex={rowIndex} columnIndex={columnIndex} style={style} />;
+    };
+
+    console.log('Clients: rendered.')
+    const columns  = ['id', 'name', 'celphone', 'email'];
+    const Cell = ({ columnIndex, rowIndex, style }) => (
+        <div style={style} onClick={() => pickClient(columnIndex, clients[rowIndex].id)}>
+           {clients[rowIndex][columns[columnIndex]]}
+        </div>
+    );
+
+    const innerElementType = forwardRef(({ children, ...rest }, ref) => (
+        <StickyGridContext.Consumer>
+          {({ stickyIndices }) => (
+            <div ref={ref} {...rest}>
+              { 
+                stickyIndices.map(rowIndex => (
+                        columns.map(columnIndex => (
+                        <Cell
+                            rowIndex={rowIndex}
+                            columnIndex={columnIndex}
+                            key={rowIndex}
+                            style={{ top: rowIndex * 35, left: 0, width: "100%", height: 35 }}
+                        />
+                    ))
+                ))
+              }
+              {children}
+            </div>
+          )}
+        </StickyGridContext.Consumer>
+      ));
+      
+      const StickyGrid = ({ children, stickyIndices, ...rest }) => (
+        <StickyGridContext.Provider value={{ ItemRenderer: children, stickyIndices }}>
+          {/* <List itemData={{ ItemRenderer: children, stickyIndices }} {...rest}>
+            {ItemWrapper}
+          </List> */}
+          <Grid 
+            itemData={{ ItemRenderer: children, stickyIndices }} {...rest}
+            >
+            {ItemWrapper}
+        </Grid>
+        </StickyGridContext.Provider>
+      );
+
+    
+
+    const pickClient = (columnIndex, clientId)=> {
+        if (columnIndex != 0) {
+            dispatch(pickClientAction({clientId, clients}));
+            navigator('/', {replace: true})
+        } else {
+            getClient(clientId);
+        }
     }
 
     const createClient = () => {
@@ -54,8 +113,7 @@ export const Client = () => {
         navigator('/', {replace: true});
     }
 
-    const getClient = (e) => {
-        const clientId = e.currentTarget.dataset.clientId
+    const getClient = (clientId) => {
         setClientIdState(clientId)
         const clientPicked = clients.filter( c => c.id == clientId )[0];
         documentId.current.value = clientPicked?.document_id
@@ -188,7 +246,33 @@ export const Client = () => {
 
                 <div className="client-grid ">
                     <div className="recent-orders">
-                        <table id="recent-orders--table">
+
+                    <Grid
+                        columnCount={columns.length}
+                        columnWidth={200}
+                        height={350}
+                        rowCount={clients.length}
+                        rowHeight={35}
+                        width={800}
+                    >
+                        {Cell}
+                    </Grid>
+
+                    {/* <StickyGrid
+                        innerElementType={innerElementType}
+                        stickyIndices={[0, 1]}
+                        columnCount={columns.length}
+                        columnWidth={200}
+                        height={350}
+                        rowCount={clients.length}
+                        rowHeight={35}
+                        width={800}
+                    >
+                        {Cell}
+                    </StickyGrid> */}
+
+
+                        {/* <table id="recent-orders--table">
                          <thead>
                             <tr>
                                 <th> </th>
@@ -217,7 +301,7 @@ export const Client = () => {
                                     ))
                                 )}
                          </tbody>
-                        </table>
+                        </table> */}
                         <a href="#">Show All</a>
                     </div>
                 </div>

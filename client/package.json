@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.3",
+    "react-window": "^1.8.8",
     "snowpack": "^3.8.8"
   }
 }
