@@ -31,7 +31,6 @@ export const Client = () => {
     const navigator = useNavigate()
 
 
-
     const StickyGridContext = createContext();
     StickyGridContext.displayName = "StickyListContext";
 
@@ -44,10 +43,10 @@ export const Client = () => {
     };
 
     console.log('Clients: rendered.')
-    const columns  = ['id', 'name', 'celphone', 'email'];
+    const columns  = ['id', 'name', 'celphone'];
     const Cell = ({ columnIndex, rowIndex, style }) => (
-        <div style={style} onClick={() => pickClient(columnIndex, clients[rowIndex].id)}>
-           {clients[rowIndex][columns[columnIndex]]}
+        <div style={style} onClick={() => pickClient(columnIndex, clients[rowIndex].id)} className="celldiv">
+           {(columnIndex == 0) ? <span className="material-icons-sharp">west</span> : clients[rowIndex][columns[columnIndex]]}
         </div>
     );
 
@@ -161,31 +160,31 @@ export const Client = () => {
                             <h3>Document ID</h3>
                         </div>
                         <div>
-                            <input ref={documentId} type="text"  />
+                            <input ref={documentId} type="text" autocomplete="off"  />
                         </div>
                         <div>
                             <h3>Name</h3>
                         </div>
                         <div>
-                            <input ref={name} type="text" />
+                            <input ref={name} type="text" autocomplete="off" />
                         </div>
                         <div>
                             <h3>Address</h3>
                         </div>
                         <div>
-                            <input ref={address} type="text"  />
+                            <textarea ref={address} type="text"  autocomplete="off"  />
                         </div>
                         <div>
                             <h3>Telephone</h3>
                         </div>
                         <div>
-                             <input ref={celphone} type="text" />
+                             <input ref={celphone} type="text" autocomplete="off" />
                         </div>
                         <div>
                              <h3>E-mail</h3>
                         </div>
                         <div>
-                            <input ref={email} type="text"  />
+                            <input ref={email} type="text" autocomplete="off"  />
                         </div>
                     </div>
                 </div>
@@ -249,11 +248,11 @@ export const Client = () => {
 
                     <Grid
                         columnCount={columns.length}
-                        columnWidth={200}
-                        height={350}
                         rowCount={clients.length}
-                        rowHeight={35}
-                        width={800}
+                        columnWidth={280}
+                        width={640}
+                        height={530}
+                        rowHeight={45}
                     >
                         {Cell}
                     </Grid>
@@ -302,7 +301,6 @@ export const Client = () => {
                                 )}
                          </tbody>
                         </table> */}
-                        <a href="#">Show All</a>
                     </div>
                 </div>
       </main>

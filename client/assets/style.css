@@ -236,7 +236,7 @@ aside .sidebar .message-count {
   border-bottom: 0.001em solid #61635c;
   padding-top: 0.05rem;
   margin-top: 0.2rem;
-  height: calc(14vh);
+  /* height: calc(14vh); */
   padding: 0.3rem 0.9rem 0.3rem 0.9rem;
   cursor: pointer;
   color: var(--color-info-dark);
@@ -425,7 +425,7 @@ main .search-terminal {
   justify-content: left; */
   /* gap: 2rem; */
 }
-main .search-terminal input[type="text"] {
+main .search-terminal input[type="text"]  {
   background: transparent;
   color: var(--color-dark);
   font-size: 1.5rem;
@@ -571,6 +571,34 @@ main table tbody tr:hover {
 main table tbody tr::active {
   transform: translate(0, -10px) scale(1.2);
 }
+
+.celldiv {
+  border-bottom: 0.001em solid #61635c;
+}
+.celldiv:hover {
+  background-color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 300ms ease;
+}
+.celldiv::active {
+  transform: translate(0, -10px) scale(1.2);
+}
+
+.celldiv_index {
+  border-bottom: 0.001em solid #61635c;
+  /* width: 10px !important; */
+}
+.celldiv_index:hover {
+  background-color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 300ms ease;
+}
+.celldiv_index::active {
+  transform: translate(0, -10px) scale(1.2);
+}
+
 
 main .recent-orders a {
   text-align: center;
@@ -793,8 +821,8 @@ main .recent-orders a {
 /* TABLETS AND SMALL LAPTOPS */
 @media screen and (max-width: 1200px) {
   .container-terminal {
-    width: 94%;
-    grid-template-columns: 15rem auto;
+    width: 99%;
+    grid-template-columns: 25rem auto;
   }
   aside .logo h2 {
     display: none;
@@ -809,16 +837,16 @@ main .recent-orders a {
     position: relative;
     margin-top: 1.8rem;
   }
-  main .products {
+  main .products > div {
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
   }
   main .recent-orders {
-    width: 94%;
+    /* width: 65%; */
     position: absolute;
-    left: calc(85vh);
+    left: calc(100vh);
     transform: translateX(-50%);
-    margin: 2rem 0 0 8.8rem;
+    /* margin: 2rem 0 0 8.8rem; */
   }
   main .recent-orders table {
     width: 83vw;
@@ -961,12 +989,12 @@ main .recent-orders a {
 
 }
 
-.center-left-side-client input[type="text"] {
+.center-left-side-client input[type="text"], textarea {
   background: var(--color-light);
   color: var(--color-dark);
   font-size: 1.2rem;
   text-transform: uppercase;
-  width: calc(50vh);
+  width: calc(35vh);
   border-bottom: 1px solid var(--color-dark-variant);
   padding: 1rem 0.5rem 0.1rem 0.5rem;
 }
@@ -1016,7 +1044,7 @@ main .search-client input[type="text"] {
   color: var(--color-dark);
   font-size: 1.5rem;
   text-transform: uppercase;
-  width: calc(90vh);
+  width: calc(50vh);
   /* padding: var(--product-card-padding); */
 }
 
@@ -1208,8 +1236,8 @@ main .client-grid small {
 
 @media screen and (max-width: 1200px) {
   .container-client {
-    width: 94%;
-    grid-template-columns: 15rem auto;
+    width: 99%;
+    grid-template-columns: 20rem auto;
   }
   aside .logo h2 {
     display: none;
@@ -1228,13 +1256,7 @@ main .client-grid small {
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
   }
-  main .recent-orders {
-    width: 94%;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 2rem 0 0 8.8rem;
-  }
+
   main .recent-orders table {
     width: 83vw;
   }
@@ -1266,7 +1288,7 @@ main .client-grid small {
   margin-top: 1.4rem;
 }
 .center-left-side-pay {
-  height: calc(100vh - 350px);
+  height: calc(90vh);
   overflow-y: auto;
 }
 
@@ -1324,8 +1346,8 @@ main .search-pay input[type="text"] {
 
 @media screen and (max-width: 1200px) {
   .container-pay {
-    width: 94%;
-    grid-template-columns: 15rem auto;
+    width: 99%;
+    grid-template-columns: 25rem auto;
   }
   aside .logo h2 {
     display: none;
@@ -1344,13 +1366,7 @@ main .search-pay input[type="text"] {
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
   }
-  main .recent-orders {
-    width: 94%;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 2rem 0 0 8.8rem;
-  }
+
   main .recent-orders table {
     width: 83vw;
   }

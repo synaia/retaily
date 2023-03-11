@@ -13,6 +13,7 @@ import { storeInfo } from "../../common/store-info";
 const initialState = {
     loading: false,
     products: [],
+    products_reshape: [[]],
     sale: {
         'client': null, 
         'products': [], 
@@ -33,6 +34,7 @@ export const loadProducts = createAsyncThunk('products/loadProducts', async () =
             'store': STORE
         }
     });
+
     return response.data;
 });
 
@@ -208,6 +210,13 @@ const productsSlice = createSlice({
         }).addCase(loadProducts.fulfilled, (state, action) => {
             state.loading = false
             state.products = action.payload
+
+            // const products_reshape = [];
+            // const copy_products = [...state.products];
+            // while(copy_products.length) products_reshape.push(copy_products.splice(0, 4));
+            // [...state.products_reshape] = products_reshape;
+            // console.log(products_reshape);
+
         }).addCase(loadProducts.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR loadProducts; ${action.error.message}`
