@@ -192,6 +192,21 @@ const pickNewClient = (state, action) => {
     state.sale.client = clientPicked;
 };
 
+const discardSale = (state, action) => {
+    // reset sale to initial state
+    if(!confirm('Really?')) return;
+    
+    state.sale = {
+        'client': null, 
+        'products': [], 
+        'sale_detail': {
+            'gran_total': 0, 
+            'sub_total': 0, 
+            'sub_tax': 0
+        }
+    };
+};
+
 
 const productsSlice = createSlice({
     name: 'products',
@@ -203,6 +218,7 @@ const productsSlice = createSlice({
         reduceProductAction: reduceProduct,
         pickClientAction: pickClient,
         pickNewClientAction: pickNewClient,
+        discardSaleAction: discardSale,
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -224,11 +240,15 @@ const productsSlice = createSlice({
     }
 });
 
+
 export const { 
     pickProductAction, 
     discountTriggerAction, 
     kickProductAction, 
     reduceProductAction, 
     pickClientAction, 
-    pickNewClientAction } = productsSlice.actions;
+    pickNewClientAction,
+    discardSaleAction,
+} = productsSlice.actions;
+
 export default productsSlice.reducer;

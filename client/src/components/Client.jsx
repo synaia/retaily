@@ -160,31 +160,31 @@ export const Client = () => {
                             <h3>Document ID</h3>
                         </div>
                         <div>
-                            <input ref={documentId} type="text" autocomplete="off"  />
+                            <input ref={documentId} type="text" />
                         </div>
                         <div>
                             <h3>Name</h3>
                         </div>
                         <div>
-                            <input ref={name} type="text" autocomplete="off" />
+                            <input ref={name} type="text"/>
                         </div>
                         <div>
                             <h3>Address</h3>
                         </div>
                         <div>
-                            <textarea ref={address} type="text"  autocomplete="off"  />
+                            <textarea ref={address} type="text"  />
                         </div>
                         <div>
                             <h3>Telephone</h3>
                         </div>
                         <div>
-                             <input ref={celphone} type="text" autocomplete="off" />
+                             <input ref={celphone} type="text" />
                         </div>
                         <div>
                              <h3>E-mail</h3>
                         </div>
                         <div>
-                            <input ref={email} type="text" autocomplete="off"  />
+                            <input ref={email} type="text" />
                         </div>
                     </div>
                 </div>

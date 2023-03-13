@@ -3,8 +3,7 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { kickProductAction, reduceProductAction } from "../redux/features/product.feature.js";
 import { Client } from "./Client";
-
-
+import { discardSaleAction } from "../redux/features/product.feature.js";
 
 export const Numpad = () => {
     console.log('Numpad: rendered.');
@@ -40,8 +39,8 @@ export const Numpad = () => {
                 <div className="numpad-btn" onClick={removeProductFromPicket}>
                     <p>remove</p>
                 </div>
-                <div className="numpad-btn">
-                    <p>BTN 3</p>
+                <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
+                    <p>reset</p>
                 </div>
                 <Link to='/prods'>
                     <div className="numpad-btn">
