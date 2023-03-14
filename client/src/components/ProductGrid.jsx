@@ -54,6 +54,7 @@ export const ProductGrid = () => {
     };
 
     useEffect(() => {
+        console.log('set_products_partial(products.slice(0, 20));');
         set_products_partial(products.slice(0, 20));
         const prodObject  = document.querySelector('.products');
         let c = 1;
