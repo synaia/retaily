@@ -118,6 +118,8 @@ export const ProductGrid = () => {
 
                 {loading && <div>Loading lalala ;D  .... </div>}
                 {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
+                {!loading && search.current?.value.length > 0 && products_partial.length == 0 && 
+                <div> <h1>{search.current?.value?.toUpperCase()} Not found</h1></div> }
                 {!loading && (
                     products_partial.map((product, i)=> (
                         <Product 
