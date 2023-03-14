@@ -100,7 +100,8 @@ export const Client = () => {
     
     const filterClient = (ev) => {
         let keyin = search.current?.value;
-        if (ev.keyCode === 13) {
+        // if (ev.keyCode === 13) {
+        if (keyin.length > 3 || ev.keyCode === 13) {
             console.log(keyin);
             let list_filtered = clients.filter((cli) => {
                 if (cli && (JSON.stringify(cli.name) !== 'null' || JSON.stringify(cli.celphone) !== 'null')) {
@@ -215,7 +216,7 @@ export const Client = () => {
                     </div>
 
                     <div className="search-client">
-                        <input ref={search} type="text" onKeyDown={filterClient}/>
+                        <input ref={search} type="text" onKeyDown={filterClient} className="search-bar" />
                     </div>
                     
 

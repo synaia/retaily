@@ -111,7 +111,7 @@ export const ProductGrid = () => {
     return (
         <React.Fragment>
             <div className="search-terminal">
-                <input ref={search} type="text" onKeyDown={filterProduct} />
+                <input ref={search} type="text" onKeyDown={filterProduct} className="search-bar" />
             </div>
 
             <div className="products" id="products">
