@@ -6,15 +6,12 @@
  * @license MIT
  */
 
-
 import React, { useState } from "react";
 import { Product } from "./Product";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch , useSelector} from "react-redux";
-import { loadProducts, pickProductAction } from "../redux/features/product.feature.js";
-import { FixedSizeGrid as Grid } from "react-window";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { pickProductAction } from "../redux/features/product.feature.js";
+
 
 export const ProductGrid = () => {
     console.log('ProductGrid: rendered.')
@@ -26,6 +23,8 @@ export const ProductGrid = () => {
     const loading = useSelector((store) => store.product.loading);
     const errorMessage = useSelector((store) => store.product.errorMessage);
 
+    const search = useRef();
+
     const pick = (productId) => {
          dispatch(pickProductAction(productId));
 
@@ -33,6 +32,26 @@ export const ProductGrid = () => {
         let itemcard = Array.from(document.querySelectorAll('.product-picked'))
         itemcard.forEach(item => item.classList.remove('product-picked-selected'))
     }
+
+    const filterProduct = (ev) => {
+        let keyin = search.current?.value;
+        let list_filtered = products.filter((prod) => {
+            if (prod) {
+                let exp = keyin.replace(/\ /g, '.+').toUpperCase();
+                let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
+                return  has ||
+                    prod.code.toUpperCase().includes(keyin.toUpperCase());
+            } else {
+                return false;
+            }
+        });
+
+        set_products_partial(list_filtered, ...products_partial);
+        
+        if (13 === ev.keyCode) {
+            ev.target.select();
+        }
+    };
 
     useEffect(() => {
         set_products_partial(products.slice(0, 20));
@@ -90,48 +109,53 @@ export const ProductGrid = () => {
     );
 
     return (
-        <div className="products" id="products">
+        <React.Fragment>
+            <div className="search-terminal">
+                <input ref={search} type="text" onKeyDown={filterProduct} />
+            </div>
 
-            {loading && <div>Loading lalala ;D  .... </div>}
-            {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
-            {!loading && (
-                products_partial.map((product, i)=> (
-                    <Product 
-                        product={product}
-                        func={pick}
-                        key={i}
-                    />
-                ))
+            <div className="products" id="products">
 
-                // <AutoSizer>
-                // {({ height, width }) => (
-                // <Grid
-                //     columnCount={2}
-                //     columnWidth={width/2}
-                //     rowCount={products.length}
-                //     rowHeight={height/2}
-                //     height={height}
-                //     width={width}
-                // >
-                //     {Cell}
-                // </Grid>
-                // )}
-                // </AutoSizer>
-                // <AutoSizer>
-                // {({ height, width }) => (
-                // <List 
-                //     className="products"
-                //     width={width}
-                //     height={height}
-                //     itemCount={products.length}
-                //     itemSize={600}
-                // >
-                //     {Cell}
-                // </List>
-                // )}
-                // </AutoSizer>
-            )}
+                {loading && <div>Loading lalala ;D  .... </div>}
+                {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
+                {!loading && (
+                    products_partial.map((product, i)=> (
+                        <Product 
+                            product={product}
+                            func={pick}
+                            key={i}
+                        />
+                    ))
 
-        </div>
+                    // <AutoSizer>
+                    // {({ height, width }) => (
+                    // <Grid
+                    //     columnCount={2}
+                    //     columnWidth={width/2}
+                    //     rowCount={products.length}
+                    //     rowHeight={height/2}
+                    //     height={height}
+                    //     width={width}
+                    // >
+                    //     {Cell}
+                    // </Grid>
+                    // )}
+                    // </AutoSizer>
+                    // <AutoSizer>
+                    // {({ height, width }) => (
+                    // <List 
+                    //     className="products"
+                    //     width={width}
+                    //     height={height}
+                    //     itemCount={products.length}
+                    //     itemSize={600}
+                    // >
+                    //     {Cell}
+                    // </List>
+                    // )}
+                    // </AutoSizer>
+                )}
+            </div>
+        </React.Fragment>
     );
 }

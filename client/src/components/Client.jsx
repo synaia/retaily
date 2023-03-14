@@ -9,11 +9,10 @@
 import React, { useState, createContext, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
 import { pickClientAction, pickNewClientAction } from "../redux/features/product.feature.js";
-import { FixedSizeGrid as Grid } from "react-window";
 
 
 export const Client = () => {
@@ -21,7 +20,9 @@ export const Client = () => {
 
     const clientState = useSelector((state) => state.client);
     const {loading, errorMessage, clients } = clientState;
+    const [clients_partial, set_clients_partial] = useState([]);
     const [clientIdState, setClientIdState] = useState();
+    const search = useRef();
 
     const documentId = useRef()
     const name = useRef()
@@ -30,70 +31,25 @@ export const Client = () => {
     const email = useRef()
     const navigator = useNavigate()
 
+    useEffect(() => {
+        set_clients_partial(clients.slice(0, 20));
+        const gridObject = document.querySelector('.client-grid');
+        let c = 1;
+        const WINDOW = 200;
+        gridObject.addEventListener('scroll', (event) => {
+            const y = gridObject.scrollTop;
+            // console.log(y);
+            if (y > (200 * c)) {
+                console.log(`y : ${y}`);
+                c += 1;
+                set_clients_partial(...clients_partial, clients.slice(0, 10*c));
+            }
+        });
+    }, [clients]);
 
-    const StickyGridContext = createContext();
-    StickyGridContext.displayName = "StickyListContext";
-
-    const ItemWrapper = ({ data, rowIndex, columnIndex, style }) => {
-        const { ItemRenderer, stickyIndices } = data;
-        if (stickyIndices && stickyIndices.includes(rowIndex) && stickyIndices.includes(columnIndex)) {
-          return null;
-        }
-        return <ItemRenderer rowIndex={rowIndex} columnIndex={columnIndex} style={style} />;
-    };
-
-    console.log('Clients: rendered.')
-    const columns  = ['id', 'name', 'celphone'];
-    const Cell = ({ columnIndex, rowIndex, style }) => (
-        <div style={style} onClick={() => pickClient(columnIndex, clients[rowIndex].id)} className="celldiv">
-           {(columnIndex == 0) ? <span className="material-icons-sharp">west</span> : clients[rowIndex][columns[columnIndex]]}
-        </div>
-    );
-
-    const innerElementType = forwardRef(({ children, ...rest }, ref) => (
-        <StickyGridContext.Consumer>
-          {({ stickyIndices }) => (
-            <div ref={ref} {...rest}>
-              { 
-                stickyIndices.map(rowIndex => (
-                        columns.map(columnIndex => (
-                        <Cell
-                            rowIndex={rowIndex}
-                            columnIndex={columnIndex}
-                            key={rowIndex}
-                            style={{ top: rowIndex * 35, left: 0, width: "100%", height: 35 }}
-                        />
-                    ))
-                ))
-              }
-              {children}
-            </div>
-          )}
-        </StickyGridContext.Consumer>
-      ));
-      
-      const StickyGrid = ({ children, stickyIndices, ...rest }) => (
-        <StickyGridContext.Provider value={{ ItemRenderer: children, stickyIndices }}>
-          {/* <List itemData={{ ItemRenderer: children, stickyIndices }} {...rest}>
-            {ItemWrapper}
-          </List> */}
-          <Grid 
-            itemData={{ ItemRenderer: children, stickyIndices }} {...rest}
-            >
-            {ItemWrapper}
-        </Grid>
-        </StickyGridContext.Provider>
-      );
-
-    
-
-    const pickClient = (columnIndex, clientId)=> {
-        if (columnIndex != 0) {
-            dispatch(pickClientAction({clientId, clients}));
-            navigator('/', {replace: true})
-        } else {
-            getClient(clientId);
-        }
+    const pickClient = (clientId)=> {
+        dispatch(pickClientAction({clientId, clients}));
+        navigator('/', {replace: true});
     }
 
     const createClient = () => {
@@ -141,6 +97,26 @@ export const Client = () => {
          dispatch(updateClientinListAction(current_client));
          navigator('/', {replace: true});
     }
+    
+    const filterClient = (ev) => {
+        let keyin = search.current?.value;
+        if (ev.keyCode === 13) {
+            console.log(keyin);
+            let list_filtered = clients.filter((cli) => {
+                if (cli && (JSON.stringify(cli.name) !== 'null' || JSON.stringify(cli.celphone) !== 'null')) {
+                    return cli.name.toUpperCase().includes(keyin.toUpperCase()) ||
+                        cli.celphone.toUpperCase().includes(keyin.toUpperCase())
+                } else {
+                    return false
+                }
+            });
+
+            set_clients_partial(list_filtered, ...clients_partial);
+        } else {
+            return false;
+        }
+    };
+
    
     return (
         <div className="container-client">
@@ -239,39 +215,13 @@ export const Client = () => {
                     </div>
 
                     <div className="search-client">
-                    <input type="text" />
+                        <input ref={search} type="text" onKeyDown={filterClient}/>
                     </div>
                     
 
                 <div className="client-grid ">
                     <div className="recent-orders">
-
-                    <Grid
-                        columnCount={columns.length}
-                        rowCount={clients.length}
-                        columnWidth={280}
-                        width={640}
-                        height={530}
-                        rowHeight={45}
-                    >
-                        {Cell}
-                    </Grid>
-
-                    {/* <StickyGrid
-                        innerElementType={innerElementType}
-                        stickyIndices={[0, 1]}
-                        columnCount={columns.length}
-                        columnWidth={200}
-                        height={350}
-                        rowCount={clients.length}
-                        rowHeight={35}
-                        width={800}
-                    >
-                        {Cell}
-                    </StickyGrid> */}
-
-
-                        {/* <table id="recent-orders--table">
+                        <table id="recent-orders--table">
                          <thead>
                             <tr>
                                 <th> </th>
@@ -280,27 +230,27 @@ export const Client = () => {
                             </tr>
                          </thead>
                          <tbody>
-                                {loading && <div>Clientes yujuuu lalala ;D  .... </div>}
-                                {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
+                                {loading && <tr><td>Clientes yujuuu lalala ;D  .... </td></tr>}
+                                {!loading && errorMessage &&  <tr><td> {errorMessage} </td></tr>}
                                 {!loading && (
-                                    clients.map((client, i) => (
+                                    clients_partial.map((client, i) => (
                                         <tr key={i} >
-                                            <td onClick={getClient} data-client-id={client.id}>
+                                            <td onClick={() => getClient(client.id)} data-client-id={client.id}>
                                                 <span className="material-icons-sharp">
                                                     west
                                                 </span>
                                             </td>
-                                            <td onClick={pickClient} data-client-id={client.id}>
+                                            <td onClick={() => pickClient(client.id)} data-client-id={client.id}>
                                                 {client.name}
                                             </td>
-                                            <td onClick={pickClient} data-client-id={client.id}>
+                                            <td onClick={() => pickClient(client.id)} data-client-id={client.id}>
                                                 {client.celphone}
                                             </td>
                                         </tr>
                                     ))
                                 )}
                          </tbody>
-                        </table> */}
+                        </table>
                     </div>
                 </div>
       </main>

@@ -5,21 +5,10 @@ import { ResumeSaleBox } from "./ResumeSaleBox";
 import { ProductGrid } from "./ProductGrid";
 import { Header } from "./Header";
 import { FindClient } from "./FindClient";
-import { useEffect } from "react";
 
 
 export const Terminal = () => {
     console.log('Terminal: rendered.')
-
-    useEffect(() => {
-        // Change Theme
-        const themeToggler = document.querySelector(".theme-toggler");
-        themeToggler.addEventListener("click", () => {
-            document.body.classList.toggle("dark-theme-variables");
-            themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
-            themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
-        });
-    })
 
     return(
         <div className="container-terminal">
@@ -39,10 +28,6 @@ export const Terminal = () => {
 
             <main>
                 <Header />
-
-                <div className="search-terminal">
-                    <input type="text" />
-                </div>
 
                 <ProductGrid />
             </main>
