@@ -23,13 +23,13 @@ export const Init = () => {
     dispatch(loadClients());
 
     useEffect(() => {
-        // Change Theme
-        const themeToggler = document.querySelector(".theme-toggler");
-        themeToggler.addEventListener("click", () => {
-            document.body.classList.toggle("dark-theme-variables");
-            themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
-            themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
-        });
+        // // Change Theme
+        // const themeToggler = document.querySelector(".theme-toggler");
+        // themeToggler.addEventListener("click", () => {
+        //     document.body.classList.toggle("dark-theme-variables");
+        //     themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
+        //     themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
+        // });
 
         // document.addEventListener('keyup', (e) => {
         //     // console.log(e.shiftKey);

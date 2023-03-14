@@ -8,6 +8,11 @@ import { Client } from "./Client";
 import { Payment } from "./Payment";
 import {Init } from "./Init";
 
+import { AdminBoard } from "./AdminBoard";
+import { Insights } from "./Insights";
+import { Users } from "./Users";
+import { Orders } from './Orders';
+import { Products } from './Products';
 
 export const App = () => {
     return (
@@ -21,6 +26,17 @@ export const App = () => {
                   <Route path="/client" element={<Client />}/>
                   <Route path="/payment" element={<Payment />}/>
                   <Route path="/prods" element={<ProductGrid />}/>
+                </Routes>
+              </Provider>
+            </HashRouter>
+
+            <HashRouter>
+              <Provider store={store}>
+                <Routes>
+                  <Route path="/admin" element={<AdminBoard Content={<Insights/>} />} />
+                  <Route path="/admin/users" element={<AdminBoard Content={<Users/>} />} />
+                  <Route path="/admin/orders" element={<AdminBoard Content={<Orders/>} />} />
+                  <Route path="/admin/products" element={<AdminBoard Content={<Products/>} />} />
                 </Routes>
               </Provider>
             </HashRouter>
