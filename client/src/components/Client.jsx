@@ -31,6 +31,8 @@ export const Client = () => {
     const email = useRef()
     const navigator = useNavigate()
 
+    document.querySelector('.search-bar').focus();
+
     useEffect(() => {
         set_clients_partial(clients.slice(0, 20));
         const gridObject = document.querySelector('.client-grid');
@@ -216,7 +218,7 @@ export const Client = () => {
                     </div>
 
                     <div className="search-client">
-                        <input ref={search} type="text" onKeyDown={filterClient} className="search-bar" />
+                        <input ref={search} type="text" onKeyUp={filterClient} className="search-bar" />
                     </div>
                     
 
