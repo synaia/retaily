@@ -3,40 +3,51 @@ from datetime import datetime
 import typing
 import warnings
 
-
-class Store(BaseModel):
-    name: str
-    date_create: datetime | None = None
-
-    class Config:
-        orm_mode = True
+import server.core_app.client.client_schemas as client
+import server.core_app.product.product_schemas as product
 
 
-class Inventory(BaseModel):
-    quantity: int | None = None
-    quantity_for_sale: int | None = None
-    store: Store
-
-    class Config:
-        orm_mode = True
-
-
-class Product(BaseModel):
+class SalePaid(BaseModel):
     id: int
-    name: str | None = None
-    cost: float
-    price: float
-    # quantity: int
-    # quantity_for_sale: int
-    price_for_sale: float
-    margin: float | None = None
-    code: str | None = None
-    img_path: str | None = None
+    amount: float
+    type: str
+    date_create: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class SaleLine(BaseModel):
+    id: int | None = None
+    amount: float | None = None
+    tax_amount: float | None = None
+    discount: float | None = None
+    quantity: int | None = None
+    total_amount: float | None = None
+    sale_id: int | None = None
+    product_id: int | None = None
+    product: product.Product
+
+    class Config:
+        orm_mode = True
+
+
+class Sale(BaseModel):
+    id: int
+    amount: float
+    sub: float
+    discount: float
+    tax_amount: float
+    delivery_charge: float | None = None
+    sequence: str | None = None
+    sequence_type: str | None = None
+    status: str | None = None
+    sale_type: str | None = None
     date_create: datetime | None = None
-    active: int
-    image_raw: str | None = None
-    is_selected: int
-    inventory: Inventory
+    login: str | None = None
+    sale_line: list[SaleLine] = []
+    sale_paid: list[SalePaid] = []
+    client: client.Client
 
     class Config:
         orm_mode = True

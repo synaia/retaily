@@ -26,17 +26,15 @@ class Product(BaseModel):
     name: str | None = None
     cost: float
     price: float
-    # quantity: int
-    # quantity_for_sale: int
-    price_for_sale: float
+    price_for_sale: float | None = None
     margin: float | None = None
     code: str | None = None
     img_path: str | None = None
     date_create: datetime | None = None
-    active: int
+    active: int | None = None
     image_raw: str | None = None
-    is_selected: int
-    inventory: Inventory
+    is_selected: int | None = None
+    inventory: Inventory | None = None
 
     class Config:
         orm_mode = True

@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Security, Header
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products
-import server.core_app.product.product_schemas as schemas
+import server.core_app.sale.sale_schemas as schemas
+from server.core_app.sale.sale_query import read_sales
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
 from server.core_app.dbfs.Query import Query
@@ -32,11 +32,13 @@ async def startup_event():
     print()
 
 
-@router.get("/", response_model=list[schemas.Product])
-async def get_products(
+@router.get("/", response_model=list[schemas.Sale])
+async def get_sales(
+        init_date: str,
+        end_date: str,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    products = read_products(store, db, query)
-    return products
+    sales = read_sales(init_date, end_date, store, db, query)
+    return sales

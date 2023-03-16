@@ -4,6 +4,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from server.core_app.database import Base
 from server.core_app.user.user_models import app_user_store
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
+
+from server.core_app.database import Base
 
 
 class Sale(Base):
@@ -21,48 +26,33 @@ class Sale(Base):
     sale_type = Column(String(45))
     date_create = Column(DateTime)
     login = Column(String(45))
-    store = Column(String(45)) # new to [add]
-    # employee [removed]
+    store_id = Column(Integer, ForeignKey('app_store.id'))
     client_id = Column(Integer, ForeignKey('client.id'))
     client = relationship("Client", backref='sale', uselist=False)
+    store = relationship("Store", backref='sale', uselist=False)
+    sale_line = relationship("SaleLine", backref='sale', uselist=True)
+    sale_paid = relationship("SalePaid", backref='sale', uselist=True)
 
 
-
-
-
-class Inventory(Base):
-    __tablename__ = "app_inventory"
+class SaleLine(Base):
+    __tablename__ = "sale_line"
 
     id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Float)
+    tax_amount = Column(Float)
+    discount = Column(Float)
     quantity = Column(Integer)
+    total_amount = Column(Float)
+    sale_id = Column(Integer, ForeignKey('sale.id'))
     product_id = Column(Integer, ForeignKey('product.id'))
-    store_id = Column(Integer, ForeignKey('app_store.id'))
-    store = relationship("Store", backref='inventory', uselist=False)
-
-    # product = relationship("Product", back_populates="inventory")
-    #
-    # store = relationship("Store",  back_populates="inventory")
+    product = relationship("Product", backref='sale_line', uselist=False)
 
 
-    @hybrid_property
-    def quantity_for_sale(self):
-        return 1
-
-
-class Store(Base):
-    __tablename__ = "app_store"
+class SalePaid(Base):
+    __tablename__ = "sale_paid"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True)
+    amount = Column(Float)
+    type = Column(String)
     date_create = Column(DateTime)
-    # inventory = relationship("Inventory", back_populates='store_owner')
-
-    # inventory = relationship("Inventory", back_populates="store")
-
-    user = relationship("User", back_populates='store', secondary=app_user_store)
-
-
-
-
-# from core_app.database import engine
-# Inventory.__table__.create(engine)
+    sale_id = Column(Integer, ForeignKey('sale.id'))
