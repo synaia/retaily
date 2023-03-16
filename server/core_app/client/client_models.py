@@ -16,3 +16,4 @@ class Client(Base):
     email = Column(String)
     date_create = Column(DateTime)
     wholesaler = Column(Integer)
+    sale = relationship("Sale", backref='client', uselist=True)
