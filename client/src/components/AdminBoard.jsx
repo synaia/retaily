@@ -41,9 +41,9 @@ export const AdminBoard = ({Content}) => {
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>POS</h3>
                 </a>
-                <a href="/#/admin/orders">
+                <a href="/#/admin/sales">
                   <span className="material-icons-sharp"> receipt_long </span>
-                  <h3>Orders</h3>
+                  <h3>Sales</h3>
                 </a>
                 <a href="/#/admin/users">
                   <span className="material-icons-sharp"> person_outline </span>

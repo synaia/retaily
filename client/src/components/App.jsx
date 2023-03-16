@@ -11,7 +11,7 @@ import {Init } from "./Init";
 import { AdminBoard } from "./AdminBoard";
 import { Insights } from "./Insights";
 import { Users } from "./Users";
-import { Orders } from './Orders';
+import { Sales } from './Sales';
 import { Products } from './Products';
 
 export const App = () => {
@@ -35,7 +35,7 @@ export const App = () => {
                 <Routes>
                   <Route path="/admin" element={<AdminBoard Content={<Insights/>} />} />
                   <Route path="/admin/users" element={<AdminBoard Content={<Users/>} />} />
-                  <Route path="/admin/orders" element={<AdminBoard Content={<Orders/>} />} />
+                  <Route path="/admin/sales" element={<AdminBoard Content={<Sales/>} />} />
                   <Route path="/admin/products" element={<AdminBoard Content={<Products/>} />} />
                 </Routes>
               </Provider>
