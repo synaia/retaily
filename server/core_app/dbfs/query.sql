@@ -36,23 +36,20 @@ SELECT
     cli.id as client_id,
     cli.name as client_name,
     cli.document_id,
-    cli.celphone
+    cli.celphone,
+    (SELECT
+        SUM(paid.amount)
+	   FROM sale_paid paid
+      WHERE  paid.sale_id = s.id
+      GROUP BY paid.sale_id
+	) as total_paid
  FROM sale s,  app_store store, client cli
 WHERE s.client_id = cli.id
   AND s.store_id = store.id
   AND store.name = %s
   AND s.date_create BETWEEN %s AND %s
+  AND s.id in (27105, 27094, 26636, 27104)
 ORDER BY s.id DESC
-;
-
---SELECT_PAID
-SELECT
-	sp.id as paid_id,
-    sp.amount as paid_amount,
-    sp.type as paid_type,
-    sp.date_create as paid_date_create
-FROM sale_paid sp
-WHERE sp.sale_id = %s
 ;
 
 --SELECT_LINE
@@ -70,4 +67,13 @@ SELECT
 FROM sale_line sl, product p
 WHERE sl.product_id = p.id
   AND sl.sale_id = %s;
+
+--SELECT_PAID
+SELECT
+	sp.id as paid_id,
+    sp.amount as paid_amount,
+    sp.type as paid_type,
+    sp.date_create as paid_date_create
+FROM sale_paid sp
+WHERE sp.sale_id = %s
 ;

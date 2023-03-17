@@ -3,9 +3,18 @@ import React from "react";
 import { Insights} from './Insights';
 
 import '../../assets/style-admin.css';
+
 import { useEffect } from 'react';
+import { useDispatch } from "react-redux";
+import { loadSales } from "../redux/features/sale.feature.js";
 
 export const AdminBoard = ({Content}) => {
+  const dispatch = useDispatch();
+  const data_range = {
+    init_date: '2023-01-05 00:00:00',
+    end_date:  '2023-03-05 23:15:55'
+  };
+  dispatch(loadSales(data_range));
 
   useEffect(() => {
     const highlights = (sidebar, item) => {

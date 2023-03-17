@@ -28,10 +28,25 @@ class Sale(Base):
     login = Column(String(45))
     store_id = Column(Integer, ForeignKey('app_store.id'))
     client_id = Column(Integer, ForeignKey('client.id'))
+    total_paid = Column(Float)
+    due_balance = Column(Float)
+    invoice_status = Column(String)
     client = relationship("Client", backref='sale', uselist=False)
     store = relationship("Store", backref='sale', uselist=False)
     sale_line = relationship("SaleLine", backref='sale', uselist=True)
     sale_paid = relationship("SalePaid", backref='sale', uselist=True)
+
+    # @hybrid_property
+    # def total_paid(self):
+    #     return 0
+    #
+    # @hybrid_property
+    # def due_balance(self):
+    #     return 0
+    #
+    # @hybrid_property
+    # def invoice_status(self):
+    #     return 'NONE'
 
 
 class SaleLine(Base):

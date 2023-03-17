@@ -330,12 +330,12 @@ main .recent-orders table:hover {
   cursor: pointer;
   box-shadow: none;
 }
-main table tbody td {
+.ctable tbody td {
   height: 2.8rem;
   border-bottom: 1px solid var(--color-light);
   color: var(--color-dark-variant);
 }
-main table tbody tr:last-child td {
+.ctable tbody tr:last-child td {
   border: none;
 }
 main .recent-orders a {
@@ -483,7 +483,7 @@ main .recent-orders a {
 @media screen and (max-width: 1200px) {
   .container {
     width: 94%;
-    grid-template-columns: 7rem auto 23rem;
+    grid-template-columns: 7rem auto;
   }
   aside .logo h2 {
     display: none;
@@ -617,3 +617,88 @@ main .recent-orders a {
   }
 }
 /* END MEDIA QUERIES */
+
+.sales-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+.sale-card {
+  display: grid;
+  grid-template-columns: 0.2fr auto;
+  gap: 2rem;
+  box-shadow: var(--box-shadow);
+  background: var(--color-white);
+  padding: 5px;
+  /* border: 0.5px dashed var(--color-primary); */
+}
+
+.sale-card-content {
+  display: grid;
+  grid-template-rows: auto;
+  gap: 1rem;
+}
+
+.sale-card-head {
+    display: grid;
+    grid-template-columns: 0.9fr auto;
+    gap: 1.6rem;
+    color: var(--color-dark-variant);
+}
+
+.sale-card-amounts {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.sale-total-amount {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.sale-total-paid {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 14px;
+}
+
+.sale-card-lines {
+  display: grid;
+  grid-template-columns: 0.7fr auto 0.0fr;
+  gap: 1.6rem;
+}
+
+.sale-card-btns {
+  display: flex;
+  gap: 20px;
+}
+
+.sale-card-table  {
+  border: 0.1px solid var(--color-info-dark);
+  /* background: var(--color-white); */
+  width: 100%;
+  height: 90px;
+  /* border-radius: var(--card-border-radius); */
+  padding: 5px;
+  text-align: left;
+  /* box-shadow: var(--box-shadow); */
+  transition: all 300ms ease;
+}
+.sale-card-table thead tr  {
+  background-color: var(--color-background);
+  color: var(--color-info-dark);
+}
+.sale-card-table tbody td {
+  height: 1.7rem;
+  border-bottom: 1px solid var(--color-light);
+  color: var(--color-dark-variant);
+  font-size: 0.8rem;
+}
+.sale-card-table tbody tr:last-child td {
+  border: none;
+}

@@ -6,22 +6,22 @@ export const Insights = () => {
         <div className="insights">
             {/* <!-- SALES --> */}
             <div className="sales">
-            <span className="material-icons-sharp"> analytics </span>
-            <div className="middle">
-                <div className="left">
-                <h3>Total Sales</h3>
-                <h1>$25,024</h1>
+                <span className="material-icons-sharp"> analytics </span>
+                <div className="middle">
+                    <div className="left">
+                    <h3>Total Sales</h3>
+                    <h1>$25,024</h1>
+                    </div>
+                    <div className="progress">
+                    <svg>
+                        <circle cx="38" cy="38" r="36"></circle>
+                    </svg>
+                    <div className="number">
+                        <p>81%</p>
+                    </div>
+                    </div>
                 </div>
-                <div className="progress">
-                <svg>
-                    <circle cx="38" cy="38" r="36"></circle>
-                </svg>
-                <div className="number">
-                    <p>81%</p>
-                </div>
-                </div>
-            </div>
-            <small className="text-muted"> Last 24 hours </small>
+                <small className="text-muted"> Last 24 hours </small>
             </div>
 
             {/* <!-- EXPENSES --> */}

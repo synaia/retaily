@@ -6,8 +6,8 @@
  * @license MIT
  */
 
-export const BACKEND_HOST = 'https://10.0.0.6:8500';
+export const BACKEND_HOST = 'https://localhost:8500';
 
 // constants for test pupuses
-export const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJjeCIsInNhbGVzIiwiaHVtYW4iXSwic3RvcmVzIjpbIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3OTAwODk0NX0.moBbS9cDDkrhAcbUHpFc3uvaZBL6AZ2a1q7ufZbiqVw';
+export const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJjeCIsInNhbGVzIiwiaHVtYW4iXSwic3RvcmVzIjpbIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3OTEwMjE0Nn0.JCvlTjL_DlriZFHxCwQoDgcnU-MudKJ8VOxXAnUklZs';
 export const STORE = 'SAMBIL';

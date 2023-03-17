@@ -224,7 +224,7 @@ export const Client = () => {
 
                 <div className="client-grid ">
                     <div className="recent-orders">
-                        <table id="recent-orders--table">
+                        <table className="ctable">
                          <thead>
                             <tr>
                                 <th> </th>

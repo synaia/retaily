@@ -45,6 +45,9 @@ class Sale(BaseModel):
     sale_type: str | None = None
     date_create: datetime | None = None
     login: str | None = None
+    total_paid: float | None = None
+    due_balance: float | None = None
+    invoice_status: str | None = None
     sale_line: list[SaleLine] = []
     sale_paid: list[SalePaid] = []
     client: client.Client
