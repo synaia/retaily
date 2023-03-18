@@ -957,7 +957,7 @@ main .recent-orders a {
   .right .top .profile .info {
     display: none;
   }
-  .right .top button {
+  /* .right .top button {
     display: inline-block;
     background: transparent;
     cursor: pointer;
@@ -967,7 +967,7 @@ main .recent-orders a {
   }
   .right .top button span {
     font-size: 2rem;
-  }
+  } */
 }
 /* END MEDIA QUERIES */
 
@@ -1233,7 +1233,7 @@ main .client-grid small {
   .right .top .profile .info {
     display: none;
   }
-  .right .top button {
+  /* .right .top button {
     display: inline-block;
     background: transparent;
     cursor: pointer;
@@ -1243,7 +1243,7 @@ main .client-grid small {
   }
   .right .top button span {
     font-size: 2rem;
-  }
+  } */
 }
 /* END MEDIA QUERIES */
 
@@ -1476,7 +1476,7 @@ main .search-pay input[type="text"] {
   .right .top .profile .info {
     display: none;
   }
-  .right .top button {
+  /* .right .top button {
     display: inline-block;
     background: transparent;
     cursor: pointer;
@@ -1486,7 +1486,7 @@ main .search-pay input[type="text"] {
   }
   .right .top button span {
     font-size: 2rem;
-  }
+  } */
 }
 
 .invoice-to {

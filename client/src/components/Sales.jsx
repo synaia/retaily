@@ -54,6 +54,7 @@ export const Sales = () => {
             {!loading && (
                     sales_partial.map((sale, i)=> (
                         <div className="sale-card" key={i}>
+                            <div className={"sale-card-" + sale.invoice_status}></div>
                             <div>
                                 {sale.invoice_status}
                             </div>
@@ -76,12 +77,17 @@ export const Sales = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="sale-card-head">
+                                <div className="sale-card-paid">
                                     <div>
                                         <span>{sale.login}</span>
                                     </div>
                                     <div>
-                                        <button>Pagar</button>
+                                        <div>
+                                            <button className="cbutton">
+                                                <span class="material-icons-sharp"> paid </span>
+                                                <span>PAY</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="sale-card-lines">
@@ -138,8 +144,18 @@ export const Sales = () => {
                                   </table>
                                 </div>
                                 <div className="sale-card-btns">
-                                    <div>RE-PRINT</div>
-                                    <div>CANCEL</div>
+                                    <div>
+                                        <button className="cbutton">
+                                            <span class="material-icons-sharp"> print </span>
+                                            <span>RE-PRINT</span>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button className="cbutton cbutton-red">
+                                            <span class="material-icons-sharp"> delete_forever </span>
+                                            <span>CANCEL</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

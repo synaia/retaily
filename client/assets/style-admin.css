@@ -355,9 +355,9 @@ main .recent-orders a {
   justify-content: end;
   gap: 2rem;
 }
-.right .top button {
+/* .right .top button {
   display: none;
-}
+} */
 .right .theme-toggler {
   background: var(--color-light);
   display: flex;
@@ -604,7 +604,7 @@ main .recent-orders a {
   .right .top .profile .info {
     display: none;
   }
-  .right .top button {
+  /* .right .top button {
     display: inline-block;
     background: transparent;
     cursor: pointer;
@@ -614,7 +614,7 @@ main .recent-orders a {
   }
   .right .top button span {
     font-size: 2rem;
-  }
+  } */
 }
 /* END MEDIA QUERIES */
 
@@ -628,12 +628,24 @@ main .recent-orders a {
 
 .sale-card {
   display: grid;
-  grid-template-columns: 0.2fr auto;
+  grid-template-columns: 0.01fr 0.2fr auto;
   gap: 2rem;
   box-shadow: var(--box-shadow);
   background: var(--color-white);
   padding: 5px;
   /* border: 0.5px dashed var(--color-primary); */
+}
+
+.sale-card-close {
+  background: var(--color-primary);
+}
+
+.sale-card-canceled {
+  background: var(--color-danger);
+}
+
+.sale-card-open {
+  background: var(--color-warning);
 }
 
 .sale-card-content {
@@ -647,6 +659,13 @@ main .recent-orders a {
     grid-template-columns: 0.9fr auto;
     gap: 1.6rem;
     color: var(--color-dark-variant);
+}
+
+.sale-card-paid {
+  display: grid;
+  grid-template-columns: 0.955fr auto;
+  gap: 1.6rem;
+  color: var(--color-dark-variant);
 }
 
 .sale-card-amounts {
@@ -701,4 +720,32 @@ main .recent-orders a {
 }
 .sale-card-table tbody tr:last-child td {
   border: none;
+}
+.cbutton {
+  box-shadow: var(--box-shadow);
+  color: var(--color-dark-variant);
+  font-size: 12px;
+  background-color: var(--color-background);
+  padding: 5px 25px 5px 25px;
+  text-decoration: none;
+
+  display: grid;
+  grid-template-columns: 0.3fr auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cbutton:hover, .cbutton-red:hover {
+  cursor: pointer;
+  background: var(--color-primary);
+  text-decoration: none;
+}
+
+.cbutton-red:hover {
+  background: var(--color-danger);
+}
+
+.cbutton:active {
+  transform: translate(0, -3px) scale(.8);
+  transition: all 600ms ease;
 }

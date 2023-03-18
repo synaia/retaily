@@ -33,7 +33,15 @@ def read_sales(init_date: str, end_date: str, store: str, db: Session, query: Qu
         sale.login = rp['login']
         sale.total_paid = 0 if (rp['total_paid'] is None) else rp['total_paid']
         sale.due_balance = rp['amount'] - sale.total_paid
-        sale.invoice_status = 'OPEN' if sale.due_balance > 0 else 'CLOSE'
+
+        if 'RETURN' == sale.status:
+            invoice_status = 'canceled'
+        elif sale.due_balance > 0:
+            invoice_status = 'open'
+        else:
+            invoice_status = 'close'
+
+        sale.invoice_status = invoice_status
         client = Client()
         client.id = rp['client_id']
         client.name = rp['client_name']
