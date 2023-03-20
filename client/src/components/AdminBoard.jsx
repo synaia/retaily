@@ -8,13 +8,9 @@ import { useEffect } from 'react';
 import { useDispatch } from "react-redux";
 import { loadSales } from "../redux/features/sale.feature.js";
 
-export const AdminBoard = ({Content}) => {
+export const AdminBoard = ({Content, Title, Search}) => {
   const dispatch = useDispatch();
-  const data_range = {
-    init_date: '2023-01-05 00:00:00',
-    end_date:  '2023-03-05 23:15:55'
-  };
-  dispatch(loadSales(data_range));
+
 
   useEffect(() => {
     const highlights = (sidebar, item) => {
@@ -26,6 +22,17 @@ export const AdminBoard = ({Content}) => {
     sidebar.forEach(item => item.addEventListener('click', () => highlights(sidebar, item)));
 
   }, []);
+
+
+  useEffect(() => {
+    // Change Theme
+    const themeToggler = document.querySelector(".theme-toggler");
+    themeToggler.addEventListener("click", () => {
+        document.body.classList.toggle("dark-theme-variables");
+        themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
+        themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
+    });
+  });
 
    
     return (
@@ -93,7 +100,7 @@ export const AdminBoard = ({Content}) => {
             <main>
             <div className="header-content">
                 <div>
-                    <h1>Dashboard</h1>
+                    <h1>{Title}</h1>
                 </div>
                   <div>
                       <div className="right">
@@ -123,10 +130,8 @@ export const AdminBoard = ({Content}) => {
                   </div>
               </div>
 
-              <div className="date">
-                <input type="date" />
-              </div>
-              
+             
+             {Search}
 
              {Content}
 

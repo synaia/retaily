@@ -25,6 +25,8 @@
   --padding-1: 1.2rem;
 
   --box-shadow: 0 2rem 3rem var(--color-light);
+
+  --color-scheme: light;
 }
 
 /* DARK THEME VARIABLES */
@@ -35,6 +37,7 @@
   --color-dark-variant: #a3bdcc;
   --color-light: rgba(0, 0, 0, 0.4);
   --box-shadow: 0 2rem 3rem var(--color-light);
+  --color-scheme: dark;
 }
 
 /* STYLES */
@@ -214,9 +217,11 @@ main {
 main .date {
   display: inline-block;
   background: var(--color-light);
-  border-radius: var(--border-radius-1);
+  /* border-radius: var(--border-radius-1); */
   margin-top: 1rem;
-  padding: 0.5rem 1.6rem;
+  padding: 0.5rem 0.5rem 0.6rem 0.5rem;
+  margin: 0.5rem;
+  color-scheme: var(--color-scheme);
 }
 main .date input[type="date"] {
   background: transparent;
@@ -628,8 +633,8 @@ main .recent-orders a {
 
 .sale-card {
   display: grid;
-  grid-template-columns: 0.01fr 0.2fr auto;
-  gap: 2rem;
+  grid-template-columns: 0.01fr 0.1fr auto;
+  gap: 1rem;
   box-shadow: var(--box-shadow);
   background: var(--color-white);
   padding: 5px;
@@ -739,6 +744,8 @@ main .recent-orders a {
   cursor: pointer;
   background: var(--color-primary);
   text-decoration: none;
+  box-shadow: none;
+  transition: all 300ms ease;
 }
 
 .cbutton-red:hover {
@@ -748,4 +755,115 @@ main .recent-orders a {
 .cbutton:active {
   transform: translate(0, -3px) scale(.8);
   transition: all 600ms ease;
+}
+
+.search-bar {
+  display: grid;
+  /* grid-template-columns: 150px 150px repeat(auto-fill, 90px) 100px; */
+  grid-template-columns: 150px 150px 80px 80px 80px 100px auto;
+  gap: 0rem;
+  align-items: center;
+}
+
+.fbutton {
+  /* box-shadow: var(--box-shadow); */
+  color: var(--color-dark-variant);
+  font-size: 12px;
+  background-color: var(--color-background);
+  padding: 0px 15px 0px 15px;
+  text-decoration: none;
+
+  display: grid;
+  grid-template-columns: 0.3fr auto;
+  align-items: center;
+  gap: 0.3rem;
+  height: 35px;
+  font-size: 0.6rem;
+}
+
+.fbutton:hover, .fbutton-green:hover, .fbutton-orange:hover, .fbutton-red:hover {
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: none;
+  transition: all 300ms ease;
+}
+
+.fbutton-green:hover {
+  background: var(--color-success);
+}
+
+.fbutton-orange:hover {
+  background: var(--color-warning);
+}
+
+.fbutton-red:hover {
+  background: var(--color-danger);
+}
+
+.fbutton-purple:hover {
+  background: var(--color-primary);
+}
+
+.fbutton:active {
+  transform: translate(0, -3px) scale(.8);
+  transition: all 600ms ease;
+}
+
+.fbutton-green-active {
+  background: var(--color-success);
+}
+
+.fbutton-orange-active {
+  background: var(--color-warning);
+}
+
+.fbutton-red-active {
+  background: var(--color-danger);
+}
+
+.fbutton-purple-active {
+  background: var(--color-primary);
+}
+
+
+.search-wrap {
+  position: relative;
+  height: 40px;
+}
+
+.search-wrap .input-fancy {
+  background-color: #fff;
+  border: 0;
+  font-size: 18px;
+  padding-left: 15px;
+  height: 40px;
+  width: 50px;
+  transition: width 0.3s ease;
+}
+
+.fancy-btn {
+  background-color: #fff;
+  border: 0;
+  cursor: pointer;
+  font-size: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 50px;
+  transition: transform 0.3s ease;
+}
+
+.fancy-btn:focus,
+.input-fancy:focus {
+  outline: none;
+}
+
+.search-wrap.active .input-fancy {
+  width: 200px;
+  display: flex;
+}
+
+.search-wrap.active .fancy-btn {
+  transform: translateX(198px);
 }

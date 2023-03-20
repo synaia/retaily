@@ -13,7 +13,8 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
     let response = await Axios.get(`${BACKEND_HOST}/sales/`, {
         params: {
             init_date: data_range.init_date,
-            end_date: data_range.end_date
+            end_date: data_range.end_date,
+            invoice_status: data_range.invoice_status
         },
         headers: {
             'Authorization': `bearer ${TOKEN}`,
@@ -24,10 +25,10 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
     return response.data;
 });
 
+
 const salesSlice = createSlice({
     name: 'sales',
     initialState: initialState,
-
     extraReducers: (builder) => {
         builder.addCase(loadSales.pending, (state, action) => {
             state.loading = true
@@ -40,5 +41,6 @@ const salesSlice = createSlice({
         })
     }
 });
+
 
 export default salesSlice.reducer;

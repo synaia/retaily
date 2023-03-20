@@ -13,6 +13,7 @@ import { Insights } from "./Insights";
 import { Users } from "./Users";
 import { Sales } from './Sales';
 import { Products } from './Products';
+import { SearchBar } from "./SearchBar";
 
 export const App = () => {
     return (
@@ -33,10 +34,10 @@ export const App = () => {
             <HashRouter>
               <Provider store={store}>
                 <Routes>
-                  <Route path="/admin" element={<AdminBoard Content={<Insights/>} />} />
-                  <Route path="/admin/users" element={<AdminBoard Content={<Users/>} />} />
-                  <Route path="/admin/sales" element={<AdminBoard Content={<Sales/>} />} />
-                  <Route path="/admin/products" element={<AdminBoard Content={<Products/>} />} />
+                  <Route path="/admin" element={<AdminBoard Content={<Insights/>} Title="Dashboard Main" />} />
+                  <Route path="/admin/users" element={<AdminBoard Content={<Users/>} Title="Users" />} />
+                  <Route path="/admin/sales" element={<AdminBoard Content={<Sales/>}  Search={<SearchBar />} Title="Sales" />} />
+                  <Route path="/admin/products" element={<AdminBoard Content={<Products/>} Title="Products" />} />
                 </Routes>
               </Provider>
             </HashRouter>

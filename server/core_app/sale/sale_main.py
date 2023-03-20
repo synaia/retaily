@@ -36,9 +36,10 @@ async def startup_event():
 async def get_sales(
         init_date: str,
         end_date: str,
+        invoice_status: str,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    sales = read_sales(init_date, end_date, store, db, query)
+    sales = read_sales(init_date, end_date, store, invoice_status, db, query)
     return sales

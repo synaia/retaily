@@ -6,13 +6,18 @@ from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 
 
-def read_sales(init_date: str, end_date: str, store: str, db: Session, query: Query):
-    sql_raw = query.SELECT_SALES
+def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, db: Session, query: Query):
     sql_raw_paid = query.SELECT_PAID
     sql_raw_line = query.SELECT_LINE
 
     cur = get_cursor(db)
-    cur.execute(sql_raw, (store, init_date, end_date)) # test calling child tables.
+    if invoice_status == 'all':
+        sql_raw = query.SELECT_SALES_ALL
+        cur.execute(sql_raw, (store, init_date, end_date))
+    else:
+        sql_raw = query.SELECT_SALES_BY_INVOICE_STATUS
+        cur.execute(sql_raw, (store, init_date, end_date, invoice_status))
+
     resp = cur.fetchall()
 
     sales = []
@@ -34,14 +39,15 @@ def read_sales(init_date: str, end_date: str, store: str, db: Session, query: Qu
         sale.total_paid = 0 if (rp['total_paid'] is None) else rp['total_paid']
         sale.due_balance = rp['amount'] - sale.total_paid
 
-        if 'RETURN' == sale.status:
-            invoice_status = 'canceled'
-        elif sale.due_balance > 0:
-            invoice_status = 'open'
-        else:
-            invoice_status = 'close'
+        # (27105, 27094, 26636, 27104)
+        # if 'RETURN' == sale.status:
+        #     invoice_status = 'canceled'
+        # elif sale.due_balance > 0:
+        #     invoice_status = 'open'
+        # else:
+        #     invoice_status = 'close'
 
-        sale.invoice_status = invoice_status
+        sale.invoice_status = rp['invoice_status']
         client = Client()
         client.id = rp['client_id']
         client.name = rp['client_name']

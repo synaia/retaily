@@ -7,34 +7,37 @@ import { F_ } from "../util/Utils.js";
 
 export const Sales = () => {
     const dispatch = useDispatch();
+    const sales = useSelector((state) => state.sale.sales);
     const [sales_partial, set_sales_partial] = useState([]);
-    const saleState = useSelector((state) => state.sale);
-    const {loading, errorMessage, sales} = saleState;
+    const loading = useSelector((state) => state.sale.loading);
+    const errorMessage = useSelector((state) => state.sale.errorMessage);
+    
 
     // useEffect(() => {
-    //     const data_range = {
-    //         init_date: '2023-01-01 00:00:00',
-    //         end_date:  '2023-02-10 10:15:55'
-    //     };
+    // const data_range = {
+    //     init_date: '2023-01-05 00:00:00',
+    //     end_date:  '2023-03-05 23:15:55',
+    //     invoice_status: 'all',
+    //   };
     //     dispatch(loadSales(data_range));
     // }, [dispatch]);
 
-    useEffect(() => {
-        set_sales_partial(sales.slice(0, 10));
-        console.log('useEffect:set_sales_partial:scroll');
-        const salObject  = document.querySelector('.sales-grid');
-        let c = 1;
-        const WINDOW = 200;
-        salObject.addEventListener('scroll', (event) => {
-            const y = salObject.scrollTop;
-            // console.log(y);
-            if (y > (200 * c)) {
-                console.log(`y : ${y}`);
-                c += 1;
-                set_sales_partial(...sales_partial, sales.slice(0, 10*c));
-            }
-        });
-    }, [sales]);
+    // useEffect(() => {
+    //     set_sales_partial(sales.slice(0, 10));
+    //     console.log('useEffect:set_sales_partial:scroll');
+    //     const salObject  = document.querySelector('.sales-grid');
+    //     let c = 1;
+    //     const WINDOW = 300;
+    //     salObject.addEventListener('scroll', (event) => {
+    //         const y = salObject.scrollTop;
+    //         // console.log(y);
+    //         if (y > (WINDOW * c)) {
+    //             console.log(`y : ${y}`);
+    //             c += 1;
+    //             set_sales_partial(...sales_partial, sales.slice(0, 10*c));
+    //         }
+    //     });
+    // }, [sales]);
 
     useEffect(() => {
         // Change Theme
@@ -48,12 +51,11 @@ export const Sales = () => {
 
     return (
         <div className="sales-grid">
-            <h1>Sales</h1>
             {loading && <div>Loading lalala ;D  .... </div>}
             {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
             {!loading && (
-                    sales_partial.map((sale, i)=> (
-                        <div className="sale-card" key={i}>
+                    sales.map((sale, i)=> (
+                        <div className="sale-card" key={sale.id}>
                             <div className={"sale-card-" + sale.invoice_status}></div>
                             <div>
                                 {sale.invoice_status}
@@ -84,7 +86,7 @@ export const Sales = () => {
                                     <div>
                                         <div>
                                             <button className="cbutton">
-                                                <span class="material-icons-sharp"> paid </span>
+                                                <span className="material-icons-sharp"> paid </span>
                                                 <span>PAY</span>
                                             </button>
                                         </div>
@@ -102,7 +104,7 @@ export const Sales = () => {
                                     <tbody>
                                     {
                                     sale.sale_line.map((line, ix) => (
-                                        <tr>
+                                        <tr key={ix}>
                                             <td>{line.product.name}</td>
                                             <td>{line.quantity} x {line.amount - (line.discount/line.quantity)}</td>
                                             <td>{F_(line.total_amount)}</td>
@@ -128,7 +130,7 @@ export const Sales = () => {
                                     <tbody>
                                     {
                                     sale.sale_paid.map((paid, iz) => (
-                                        <tr>
+                                        <tr key={iz}>
                                             <td>{F_(paid.amount)}</td>
                                             <td>{paid.type}</td>
                                             <td>{paid.date_create}</td>
@@ -146,13 +148,13 @@ export const Sales = () => {
                                 <div className="sale-card-btns">
                                     <div>
                                         <button className="cbutton">
-                                            <span class="material-icons-sharp"> print </span>
+                                            <span className="material-icons-sharp"> print </span>
                                             <span>RE-PRINT</span>
                                         </button>
                                     </div>
                                     <div>
                                         <button className="cbutton cbutton-red">
-                                            <span class="material-icons-sharp"> delete_forever </span>
+                                            <span className="material-icons-sharp"> delete_forever </span>
                                             <span>CANCEL</span>
                                         </button>
                                     </div>
