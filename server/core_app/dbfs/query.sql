@@ -64,7 +64,7 @@ SELECT
 WHERE s.client_id = cli.id
   AND s.store_id = store.id
   AND store.name = %s
-   AND s.date_create BETWEEN %s AND %s
+  AND s.date_create BETWEEN %s AND %s
   AND (CASE
       WHEN s.status = 'RETURN' THEN 'canceled'
       WHEN (s.amount - (SELECT
@@ -75,6 +75,7 @@ WHERE s.client_id = cli.id
 						)) > 0 THEN 'open'
       ELSE 'close'
 	 END) in ('canceled', 'open', 'close')
+  AND cli.id = %s
 ORDER BY s.id DESC
 ;
 

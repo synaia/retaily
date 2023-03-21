@@ -14,7 +14,8 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
         params: {
             init_date: data_range.init_date,
             end_date: data_range.end_date,
-            invoice_status: data_range.invoice_status
+            invoice_status: data_range.invoice_status,
+            client_id: data_range.client_id
         },
         headers: {
             'Authorization': `bearer ${TOKEN}`,

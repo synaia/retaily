@@ -26,7 +26,7 @@ const SuggestionsList = props => {
                   className={classname}
                   onClick={() => onSelectSuggestion(index)}
                 >
-                  {suggestion}
+                  {suggestion.name} - {suggestion.id}
                 </li>
               );
             })}
@@ -42,6 +42,9 @@ const SuggestionsList = props => {
 
 export const SearchBar = () => {
     const dispatch = useDispatch();
+    const clientState = useSelector((state) => state.client);
+    const {loading, errorMessage, clients } = clientState;
+
     const [icon, setIcon] = useState('search');
 
     const [inputValue, setInputValue] = useState("");
@@ -49,23 +52,21 @@ export const SearchBar = () => {
     const [selectedSuggestion, setSelectedSuggestion] = React.useState(0);
     const [displaySuggestions, setDisplaySuggestions] = React.useState(false);
 
-    const suggestions = [
-        "Oathbringer",
-        "American Gods",
-        "A Game of Thrones",
-        "Prince of Thorns",
-        "Assassin's Apprentice",
-        "The Hero of Ages",
-        "The Gunslinger"
-      ];
+    const suggestions = [...clients];
       
     
     const onChange = event => {
         const value = event.target.value;
         setInputValue(value);
 
-        const filteredSuggestions = suggestions.filter(suggestion =>
-            suggestion.toLowerCase().includes(value.toLowerCase())
+        const filteredSuggestions = suggestions.filter(cli => {
+            if (cli && (JSON.stringify(cli.name) !== 'null' || JSON.stringify(cli.celphone) !== 'null')) {
+                return cli.name.toUpperCase().includes(value.toUpperCase()) ||
+                    cli.celphone.toUpperCase().includes(value.toUpperCase())
+            } else {
+                return false
+            }
+        }
         );
 
         setFilteredSuggestions(filteredSuggestions);
@@ -74,9 +75,11 @@ export const SearchBar = () => {
 
     const onSelectSuggestion = index => {
         setSelectedSuggestion(index);
-        setInputValue(filteredSuggestions[index]);
+        setInputValue(filteredSuggestions[index].name);
         setFilteredSuggestions([]);
         setDisplaySuggestions(false);
+        const inp = document.querySelector('.input-fancy'); 
+        inp.dataset.clientId = filteredSuggestions[index].id;
     };
 
 
@@ -97,6 +100,7 @@ export const SearchBar = () => {
             init_date: init_date,
             end_date:  end_date,
             invoice_status: 'all',
+            client_id: 0,
           };
         dispatch(loadSales(data_range));
         
@@ -127,12 +131,17 @@ export const SearchBar = () => {
             const _init_date = `${document.querySelector('.init_date').value} 00:00:00`;
             const _end_date  = `${document.querySelector('.end_date').value} 23:59:59`;
 
+            const inp = document.querySelector('.input-fancy'); 
+            console.log('client id:', inp.dataset.clientId);
+
             const data_range = {
                 'init_date': _init_date,
                 'end_date':  _end_date,
                 'invoice_status': _invoice_status,
+                'client_id': inp.dataset.clientId,
               };
               dispatch(loadSales(data_range));
+
         };
 
         const btns = document.querySelectorAll('.fbutton');
@@ -183,7 +192,8 @@ export const SearchBar = () => {
                    className="input-fancy user-input" 
                    onChange={onChange}
                    value={inputValue}
-                   placeholder="Search..." />
+                   placeholder="Search..."
+                   data-client-id />
             <button className="fancy-btn">
                  <span className="material-icons-sharp search-icon">{icon}</span>
             </button>

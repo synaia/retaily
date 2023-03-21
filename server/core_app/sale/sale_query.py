@@ -6,14 +6,14 @@ from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 
 
-def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, db: Session, query: Query):
+def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, client_id: int, db: Session, query: Query):
     sql_raw_paid = query.SELECT_PAID
     sql_raw_line = query.SELECT_LINE
 
     cur = get_cursor(db)
     if invoice_status == 'all':
         sql_raw = query.SELECT_SALES_ALL
-        cur.execute(sql_raw, (store, init_date, end_date))
+        cur.execute(sql_raw, (store, init_date, end_date, client_id))
     else:
         sql_raw = query.SELECT_SALES_BY_INVOICE_STATUS
         cur.execute(sql_raw, (store, init_date, end_date, invoice_status))
