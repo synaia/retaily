@@ -867,3 +867,26 @@ main .recent-orders a {
 .search-wrap.active .fancy-btn {
   transform: translateX(198px);
 }
+
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  max-height: 160px;
+  overflow-y: auto;
+  max-width: 250px;
+  /* position: absolute; */
+}
+.suggestion {
+  background-color: rgb(226, 181, 181);
+  padding: 10px;
+  color: rgb(65, 65, 65);
+  cursor: pointer;
+}
+.suggestion:hover {
+  background-color: rgba(238, 238, 238, 0.1);
+}
+.selected {
+  background-color: rgb(148, 44, 44);
+  color: rgb(238, 223, 223);
+}
