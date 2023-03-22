@@ -1,12 +1,14 @@
 import os
 import sys
 
-from fastapi import APIRouter, Depends, HTTPException, Security, Header
+from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
 import server.core_app.sale.sale_schemas as schemas
 from server.core_app.sale.sale_query import read_sales
+from server.core_app.sale.sale_query import add_pay
+from server.core_app.sale.sale_schemas import SalePaid
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
 from server.core_app.dbfs.Query import Query
@@ -44,3 +46,11 @@ async def get_sales(
 ):
     sales = read_sales(init_date, end_date, store, invoice_status, client_id, db, query)
     return sales
+
+
+@router.put("/add_pay")
+async def __add_pay(paids: list[SalePaid], sale_id: int, db: Session = Depends(get_db)):
+    try:
+        return add_pay(paids, sale_id, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))

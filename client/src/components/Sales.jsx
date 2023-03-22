@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadSales } from "../redux/features/sale.feature.js";
+import { loadSales, addPay, updatePayInListAction } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
 
 
@@ -11,6 +11,27 @@ export const Sales = () => {
     const [sales_partial, set_sales_partial] = useState([]);
     const loading = useSelector((state) => state.sale.loading);
     const errorMessage = useSelector((state) => state.sale.errorMessage);
+
+    const paytext = [];
+
+    const paycash =  [];
+    const paycc   =  [];
+    const [showpaymentbutton, setshowpaymentbutton] = useState([]);
+    const [paymenttext, setpaymenttext] = useState([]);
+    const p_texts = []
+    const showpayments = [];
+    sales.forEach( (s) => {
+        paycash[s.id] = React.createRef();
+        paycc[s.id] = React.createRef();
+        showpayments[s.id] = false;
+        paytext[s.id] = React.createRef();
+        p_texts[s.id] = 'PAY';
+    });
+
+    useEffect(() => {
+        setshowpaymentbutton(showpayments);
+        setpaymenttext(p_texts);
+    }, []);
     
 
     // useEffect(() => {
@@ -49,6 +70,43 @@ export const Sales = () => {
         });
     });
 
+
+    const _addPay = (sale_id) => {
+        const cash = paycash[sale_id].current?.value;
+        const cc = paycc[sale_id].current?.value;
+        
+        const paids = [];
+
+        if (!isNaN(parseFloat(cash))) {
+            paids.push({"amount": cash, "type": 'CASH'});
+        }
+        if (!isNaN(parseFloat(cc))) {
+            paids.push({"amount": cc, "type": 'CC'});
+        }
+
+        const data_request = {'paids': paids, 'sale_id': sale_id};
+        console.log(data_request);
+
+        dispatch(addPay(data_request));
+
+        paycash[sale_id].current.value = '';
+        paycc[sale_id].current.value = '';
+        showpayments[sale_id] = false;
+        setshowpaymentbutton(showpayments);
+    };
+
+    const payMethod = (id) => {
+        const cash = paycash[id].current?.value;
+        const cc = paycc[id].current?.value;
+        showpayments[id] = (cash > 0 || cc > 0);
+        setshowpaymentbutton(showpayments);
+        const r1 = !isNaN(parseFloat(cash)) ? parseFloat(cash) : 0;
+        const r2 = !isNaN(parseFloat(cc)) ? parseFloat(cc) : 0;
+        setpaymenttext(`PAY: ${r1 + r2}`);
+
+        // paytext[id].current?.value = `PAY: ${cash + cc}`;
+    }
+
     return (
         <div className="sales-grid">
             {loading && <div>Loading lalala ;D  .... </div>}
@@ -61,6 +119,7 @@ export const Sales = () => {
                                 {sale.invoice_status}
                             </div>
                             <div className="sale-card-content">
+                                
                                 <div className="sale-card-head">
                                     <div>
                                         <div>
@@ -83,12 +142,33 @@ export const Sales = () => {
                                     <div>
                                         <span>{sale.login}</span>
                                     </div>
+                                 
+                                    <div className="pay-input">
+                                        {sale.invoice_status == 'open' &&
+                                        <span className="material-icons-sharp pay-input-i"> price_check </span>
+                                        }
+                                        {sale.invoice_status == 'open' &&
+                                        <input ref={paycash[sale.id]} type="number"  onChange={() => payMethod(sale.id)}  onFocus={() => payMethod(sale.id)}  className="pay-input-t" />
+                                        }
+                                    </div>
+                                    <div className="pay-input">
+                                        {sale.invoice_status == 'open' &&
+                                        <span className="material-icons-sharp pay-input-i"> credit_score </span>
+                                        }
+                                        {sale.invoice_status == 'open' &&
+                                        <input ref={paycc[sale.id]}  type="number" onChange={() => payMethod(sale.id)}   onFocus={() => payMethod(sale.id)}  className="pay-input-t"></input>
+                                        }
+                                    </div>
+                                    
                                     <div>
                                         <div>
-                                            <button className="cbutton">
+                                            {
+                                            showpaymentbutton[sale.id] && sale.invoice_status == 'open' &&
+                                            <button className="cbutton" onClick={() => _addPay(sale.id)}>
                                                 <span className="material-icons-sharp"> paid </span>
-                                                <span>PAY</span>
+                                                <span ref={paytext[sale.id]}>{paymenttext}</span>
                                             </button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -125,6 +205,7 @@ export const Sales = () => {
                                             <th>AMOUNT</th>
                                             <th>TYPE</th>
                                             <th>DATE</th>
+                                            <th>USER</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -134,11 +215,13 @@ export const Sales = () => {
                                             <td>{F_(paid.amount)}</td>
                                             <td>{paid.type}</td>
                                             <td>{paid.date_create}</td>
+                                            <td> </td>
                                         </tr>
                                     ))
                                     }
                                         <tr>
                                             <td><b>{F_(sale.total_paid)}</b></td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                         </tr>

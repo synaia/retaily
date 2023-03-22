@@ -8,10 +8,10 @@ import server.core_app.product.product_schemas as product
 
 
 class SalePaid(BaseModel):
-    id: int
+    id: int | None = None
     amount: float
     type: str
-    date_create: datetime
+    date_create: datetime | None = None
 
     class Config:
         orm_mode = True

@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
 import server.core_app.sale.sale_models as models
+from server.core_app.sale.sale_schemas import SalePaid
 from server.core_app.client.client_models import Client
 from server.core_app.product.product_models import Product
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
+import datetime
 
 
 def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, client_id: int, db: Session, query: Query):
@@ -95,3 +97,29 @@ def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, c
     print(len(sales))
 
     return sales
+
+
+def add_pay(paids: list[SalePaid], sale_id: int,  db: Session, query: Query):
+    print('O_0', sale_id)
+    print('paids', paids)
+    sql_raw_add_paid = query.INSERT_PAID
+    sql_raw_paid = query.SELECT_PAID
+
+    cur = get_cursor(db)
+    for pay in paids:
+        data = (pay.amount, pay.type, sale_id)
+        cur.execute(sql_raw_add_paid, data)
+        cur.connection.commit() # trick :)
+
+    cur.execute(sql_raw_paid, (sale_id,))
+    paids = cur.fetchall()
+    sale_paids = []
+    for p in paids:
+        paid = models.SalePaid()
+        paid.id = p['paid_id']
+        paid.amount = p['paid_amount']
+        paid.type = p['paid_type']
+        paid.date_create = p['paid_date_create']
+        sale_paids.append(paid)
+
+    return {'sale_id': sale_id, 'paids': sale_paids}

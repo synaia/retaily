@@ -163,3 +163,8 @@ SELECT
 FROM sale_paid sp
 WHERE sp.sale_id = %s
 ;
+
+--INSERT_PAID
+INSERT INTO sale_paid(amount, type, sale_id, date_create)
+   VALUES(%s, %s, %s, NOW())
+;
