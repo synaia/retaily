@@ -639,13 +639,14 @@ main .recent-orders a {
   background: var(--color-white);
   padding: 5px;
   /* border: 0.5px dashed var(--color-primary); */
+  /* height: 20rem; */
 }
 
 .sale-card-close {
   background: var(--color-primary);
 }
 
-.sale-card-canceled {
+.sale-card-cancelled {
   background: var(--color-danger);
 }
 
@@ -829,6 +830,7 @@ main .recent-orders a {
 .search-wrap {
   position: relative;
   height: 40px;
+  padding-left: 10px;
 }
 
 .search-wrap .input-fancy {
@@ -839,6 +841,7 @@ main .recent-orders a {
   height: 40px;
   width: 50px;
   transition: width 0.3s ease;
+  text-transform: uppercase;
 }
 
 .fancy-btn {
@@ -878,15 +881,15 @@ main .recent-orders a {
   /* position: absolute; */
 }
 .suggestion {
-  background-color: rgb(226, 181, 181);
+  background-color: var(--color-background);
   padding: 10px;
-  color: rgb(65, 65, 65);
+  /* color: rgb(65, 65, 65); */
   cursor: pointer;
 }
 .suggestion:hover {
-  background-color: rgba(238, 238, 238, 0.1);
+  background-color: var(--color-primary)
 }
 .selected {
-  background-color: rgb(148, 44, 44);
-  color: rgb(238, 223, 223);
+  background-color: var(--color-success);
+  color: var(--color-danger)
 }

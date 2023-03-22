@@ -11,12 +11,13 @@ def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, c
     sql_raw_line = query.SELECT_LINE
 
     cur = get_cursor(db)
-    if invoice_status == 'all':
-        sql_raw = query.SELECT_SALES_ALL
-        cur.execute(sql_raw, (store, init_date, end_date, client_id))
-    else:
-        sql_raw = query.SELECT_SALES_BY_INVOICE_STATUS
+    invoice_status = ('open', 'cancelled', 'close',) if invoice_status == 'all' else (invoice_status,)
+    sql_raw = query.SELECT_SALES_BY_INVOICE_STATUS
+    if client_id == 0:
         cur.execute(sql_raw, (store, init_date, end_date, invoice_status))
+    else:
+        sql_raw = query.SELECT_SALES_BY_CLIENT
+        cur.execute(sql_raw, (store, init_date, end_date, invoice_status, client_id))
 
     resp = cur.fetchall()
 

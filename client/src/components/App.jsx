@@ -27,13 +27,7 @@ export const App = () => {
                   <Route path="/client" element={<Client />}/>
                   <Route path="/payment" element={<Payment />}/>
                   <Route path="/prods" element={<ProductGrid />}/>
-                </Routes>
-              </Provider>
-            </HashRouter>
 
-            <HashRouter>
-              <Provider store={store}>
-                <Routes>
                   <Route path="/admin" element={<AdminBoard Content={<Insights/>} Title="Dashboard Main" />} />
                   <Route path="/admin/users" element={<AdminBoard Content={<Users/>} Title="Users" />} />
                   <Route path="/admin/sales" element={<AdminBoard Content={<Sales/>}  Search={<SearchBar />} Title="Sales" />} />

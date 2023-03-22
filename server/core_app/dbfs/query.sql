@@ -19,7 +19,7 @@ WHERE
   and s.name = %s
   ;
 
---SELECT_SALES_ALL
+--SELECT_SALES_BY_CLIENT
 SELECT
 	s.id,
     s.amount,
@@ -51,7 +51,7 @@ SELECT
     ) as total_line,
 
 	(CASE
-      WHEN s.status = 'RETURN' THEN 'canceled'
+      WHEN s.status = 'RETURN' THEN 'cancelled'
       WHEN (s.amount - (SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
@@ -66,7 +66,7 @@ WHERE s.client_id = cli.id
   AND store.name = %s
   AND s.date_create BETWEEN %s AND %s
   AND (CASE
-      WHEN s.status = 'RETURN' THEN 'canceled'
+      WHEN s.status = 'RETURN' THEN 'cancelled'
       WHEN (s.amount - (SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
@@ -74,7 +74,7 @@ WHERE s.client_id = cli.id
 						  GROUP BY paid.sale_id
 						)) > 0 THEN 'open'
       ELSE 'close'
-	 END) in ('canceled', 'open', 'close')
+	 END) in %s
   AND cli.id = %s
 ORDER BY s.id DESC
 ;
@@ -111,7 +111,7 @@ SELECT
     ) as total_line,
 
 	(CASE
-      WHEN s.status = 'RETURN' THEN 'canceled'
+      WHEN s.status = 'RETURN' THEN 'cancelled'
       WHEN (s.amount - (SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
@@ -126,7 +126,7 @@ WHERE s.client_id = cli.id
   AND store.name = %s
    AND s.date_create BETWEEN %s AND %s
   AND (CASE
-      WHEN s.status = 'RETURN' THEN 'canceled'
+      WHEN s.status = 'RETURN' THEN 'cancelled'
       WHEN (s.amount - (SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
@@ -134,7 +134,7 @@ WHERE s.client_id = cli.id
 						  GROUP BY paid.sale_id
 						)) > 0 THEN 'open'
       ELSE 'close'
-	 END) = %s
+	 END) in %s
 ORDER BY s.id DESC
 ;
 

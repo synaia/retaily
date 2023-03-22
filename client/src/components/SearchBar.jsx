@@ -132,13 +132,14 @@ export const SearchBar = () => {
             const _end_date  = `${document.querySelector('.end_date').value} 23:59:59`;
 
             const inp = document.querySelector('.input-fancy'); 
-            console.log('client id:', inp.dataset.clientId);
+            const client_id =  !isNaN(parseInt(inp.dataset.clientId)) ? inp.dataset.clientId : 0;
+            console.log('client_id', client_id);
 
             const data_range = {
                 'init_date': _init_date,
                 'end_date':  _end_date,
                 'invoice_status': _invoice_status,
-                'client_id': inp.dataset.clientId,
+                'client_id': client_id,
               };
               dispatch(loadSales(data_range));
 
@@ -149,18 +150,22 @@ export const SearchBar = () => {
             b.addEventListener('click', () => active_btn(b));
          });
 
-
-        const search = document.querySelector(".search-wrap");
-        const btn = document.querySelector(".fancy-btn");
-        const input = document.querySelector(".input-fancy");
-        btn.addEventListener("click", () => {
-            search.classList.toggle("active");
-            input.focus();
-            // setIcon('close' === {...icon} ? 'search' : 'close');
-            // console.log({...icon});
-        });
-
     }, []);
+
+
+   
+    const changeIcon = () => {
+        const search = document.querySelector(".search-wrap");
+        // const btn = document.querySelector(".fancy-btn");
+        const input = document.querySelector(".input-fancy");
+        search.classList.toggle("active");
+        input.focus();
+        setIcon((icon == "search") ? "close" : "search");
+        setInputValue('');
+        const inp = document.querySelector('.input-fancy'); 
+        inp.dataset.clientId = 0;
+    };
+
 
 
     return (
@@ -183,18 +188,18 @@ export const SearchBar = () => {
             <span className="material-icons-sharp"> lock </span>
             <span>CLOSE</span>
         </button>
-        <button className="fbutton fbutton-red" data-invoice-status="canceled">
+        <button className="fbutton fbutton-red" data-invoice-status="cancelled">
             <span className="material-icons-sharp"> auto_delete </span>
-            <span>CANCELED</span>
+            <span>CANCELLED</span>
         </button>
         <div className="search-wrap">
             <input type="text" 
                    className="input-fancy user-input" 
                    onChange={onChange}
                    value={inputValue}
-                   placeholder="Search..."
+                   placeholder="..."
                    data-client-id />
-            <button className="fancy-btn">
+            <button className="fancy-btn" onClick={changeIcon}>
                  <span className="material-icons-sharp search-icon">{icon}</span>
             </button>
             <SuggestionsList
