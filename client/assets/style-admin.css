@@ -830,13 +830,14 @@ main .recent-orders a {
 .search-wrap {
   position: relative;
   height: 40px;
-  padding-left: 10px;
+  padding-left: 15px;
+  color: var(--color-info-dark);
 }
 
 .search-wrap .input-fancy {
-  background-color: #fff;
+  /* background-color: #fff; */
+  background: var(--color-info-light);
   border: 0;
-  font-size: 18px;
   padding-left: 15px;
   height: 40px;
   width: 50px;
@@ -845,7 +846,8 @@ main .recent-orders a {
 }
 
 .fancy-btn {
-  background-color: #fff;
+  color: var(--color-info-dark);
+  background: var(--color-info-light);
   border: 0;
   cursor: pointer;
   font-size: 24px;
@@ -854,7 +856,7 @@ main .recent-orders a {
   left: 0;
   height: 40px;
   width: 50px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; 
 }
 
 .fancy-btn:focus,
@@ -865,10 +867,13 @@ main .recent-orders a {
 .search-wrap.active .input-fancy {
   width: 200px;
   display: flex;
+  font-size: 14px;
 }
 
 .search-wrap.active .fancy-btn {
-  transform: translateX(198px);
+  transform: translateX(200px);
+  color: var(--color-info-dark);
+  background: var(--color-info-light);
 }
 
 
@@ -878,6 +883,8 @@ main .recent-orders a {
   max-height: 160px;
   overflow-y: auto;
   max-width: 250px;
+  font-size: 11px;
+  border: 0.05rem dashed var(--color-info-dark)
   /* position: absolute; */
 }
 .suggestion {
