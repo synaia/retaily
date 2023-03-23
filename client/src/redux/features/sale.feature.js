@@ -56,8 +56,18 @@ const updatePayInList = (state, action, payload) => {
     const { sale_id, paids } = payload;
     const index = state.sales.findIndex(s => s.id == sale_id);
     const copy_sales = [...state.sales];
-    console.log(copy_sales[index].sale_paid);
+    // console.log(copy_sales[index].sale_paid);
     copy_sales[index].sale_paid = paids;
+    console.log('paids: ', copy_sales[index].sale_paid );
+
+    const total_paid = copy_sales[index].sale_paid.reduce((y, paid) => { return paid.amount + y}, 0); 
+    copy_sales[index].total_paid = total_paid;
+    console.log('total_paid', total_paid);
+    if (total_paid >= copy_sales[index].amount) {
+        console.log('closing invoice.');
+        copy_sales[index].invoice_status = 'close';
+    }
+
     state.sales = copy_sales;
 };
 

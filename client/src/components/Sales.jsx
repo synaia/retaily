@@ -18,19 +18,24 @@ export const Sales = () => {
     const paycc   =  [];
     const [showpaymentbutton, setshowpaymentbutton] = useState([]);
     const [paymenttext, setpaymenttext] = useState([]);
+    const [infotextamount, setinfotextamount] = useState([]);
+
     const p_texts = []
     const showpayments = [];
+    const i_texts = [];
     sales.forEach( (s) => {
         paycash[s.id] = React.createRef();
         paycc[s.id] = React.createRef();
         showpayments[s.id] = false;
         paytext[s.id] = React.createRef();
         p_texts[s.id] = 'PAY';
+        i_texts[s.id] = '';
     });
 
     useEffect(() => {
         setshowpaymentbutton(showpayments);
         setpaymenttext(p_texts);
+        setinfotextamount(i_texts);
     }, []);
     
 
@@ -95,14 +100,29 @@ export const Sales = () => {
         setshowpaymentbutton(showpayments);
     };
 
-    const payMethod = (id) => {
+    const payMethod = (id, sale_amount) => {
         const cash = paycash[id].current?.value;
         const cc = paycc[id].current?.value;
-        showpayments[id] = (cash > 0 || cc > 0);
-        setshowpaymentbutton(showpayments);
         const r1 = !isNaN(parseFloat(cash)) ? parseFloat(cash) : 0;
         const r2 = !isNaN(parseFloat(cc)) ? parseFloat(cc) : 0;
-        setpaymenttext(`PAY: ${r1 + r2}`);
+        
+        if ((r1 + r2) > sale_amount ) {
+            console.log('Amount exceded....');
+            showpayments[id] = false;
+            setshowpaymentbutton(showpayments);
+            i_texts[id] = `MONTO EXEDIDO ${(r1 + r2)}`;
+            setinfotextamount(i_texts);
+            return;
+        } else {
+            i_texts[id] = '';
+            setinfotextamount(i_texts);
+        }
+
+        showpayments[id] = (cash > 0 || cc > 0);
+        setshowpaymentbutton(showpayments);
+        
+        p_texts[id] = `PAY: ${r1 + r2}`
+        setpaymenttext(p_texts);
     };
 
     const _cancelSale = (id) => {
@@ -135,9 +155,16 @@ export const Sales = () => {
                                         <div className="sale-total-amount">
                                             <span>{F_(sale.amount)}</span>
                                         </div>
+                                        {sale.invoice_status == 'open' &&
                                         <div className="sale-total-paid">
                                             <span>{F_(sale.total_paid)}</span>
                                         </div>
+                                        }
+                                        {sale.invoice_status == 'open' &&
+                                        <div className="sale-total-due-balance">
+                                            <span>{F_(sale.amount - sale.total_paid)}</span>
+                                        </div>
+                                        }
                                     </div>
                                 </div>
                                 <div className="sale-card-paid">
@@ -150,7 +177,7 @@ export const Sales = () => {
                                         <span className="material-icons-sharp pay-input-i"> price_check </span>
                                         }
                                         {sale.invoice_status == 'open' &&
-                                        <input ref={paycash[sale.id]} type="number"  onChange={() => payMethod(sale.id)}  onFocus={() => payMethod(sale.id)}  className="pay-input-t" />
+                                        <input ref={paycash[sale.id]} type="number"  onChange={() => payMethod(sale.id, sale.amount)}  onFocus={() => payMethod(sale.id, sale.amount)}  className="pay-input-t" />
                                         }
                                     </div>
                                     <div className="pay-input">
@@ -158,7 +185,7 @@ export const Sales = () => {
                                         <span className="material-icons-sharp pay-input-i"> credit_score </span>
                                         }
                                         {sale.invoice_status == 'open' &&
-                                        <input ref={paycc[sale.id]}  type="number" onChange={() => payMethod(sale.id)}   onFocus={() => payMethod(sale.id)}  className="pay-input-t"></input>
+                                        <input ref={paycc[sale.id]}  type="number" onChange={() => payMethod(sale.id, sale.amount)}   onFocus={() => payMethod(sale.id, sale.amount)}  className="pay-input-t"></input>
                                         }
                                     </div>
                                     
@@ -170,6 +197,10 @@ export const Sales = () => {
                                                 <span className="material-icons-sharp"> paid </span>
                                                 <span ref={paytext[sale.id]}>{paymenttext}</span>
                                             </button>
+                                            }
+                                            {
+                                            infotextamount[sale.id]  &&
+                                                <h2 className="danger">{infotextamount[sale.id]}</h2>
                                             }
                                         </div>
                                     </div>
