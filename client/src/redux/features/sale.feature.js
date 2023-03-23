@@ -41,6 +41,17 @@ export const addPay = createAsyncThunk('sale/add_pay', async (data_request) => {
     return response.data;
 });
 
+export const cancelSale = createAsyncThunk('sale/cancel_sale', async (data_request) => {
+    const sale_id = data_request.id;
+    let response = await Axios.put(`${BACKEND_HOST}/sales/cancel_sale/${sale_id}`, {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 const updatePayInList = (state, action, payload) => {
     const { sale_id, paids } = payload;
     const index = state.sales.findIndex(s => s.id == sale_id);
@@ -48,18 +59,20 @@ const updatePayInList = (state, action, payload) => {
     console.log(copy_sales[index].sale_paid);
     copy_sales[index].sale_paid = paids;
     state.sales = copy_sales;
-    // console.log(action.payload);
-    // console.log(state.sales[index].sale_paid)
-    // state.sales[index].sale_paid = [paids, ...state.sales[index].sale_paid];
-    
+};
+
+const updateSaleInList = (state, action, payload) => {
+    const { sale_id } = payload;
+    const index = state.sales.findIndex(s => s.id == sale_id);
+    const copy_sales = [...state.sales];
+    copy_sales[index].invoice_status = 'cancelled';
+    state.sales = copy_sales;
 };
 
 const salesSlice = createSlice({
     name: 'sales',
     initialState: initialState,
-    reducers: {
-        updatePayInListAction: updatePayInList,
-    },
+   
     extraReducers: (builder) => {
         builder.addCase(loadSales.pending, (state, action) => {
             state.loading = true
@@ -77,11 +90,18 @@ const salesSlice = createSlice({
            const { sale_id, paids } = action.payload;
            updatePayInList(state, action, action.payload);
         }).addCase(addPay.rejected, (state, action) => {
-            state.errorMessage = `ERROR loadSales; ${action.error.message}`
+            state.errorMessage = `ERROR addPay; ${action.error.message}`
+        });
+
+        builder.addCase(cancelSale.pending, (state, action) => {
+            // Pending....
+        }).addCase(cancelSale.fulfilled, (state, action) => {
+            updateSaleInList(state, action, action.payload);
+        }).addCase(cancelSale.rejected, (state, action) => {
+            state.errorMessage = `ERROR cancelSale; ${action.error.message}`
         });
     }
 });
 
 
-export const {updatePayInListAction} = salesSlice.actions;
 export default salesSlice.reducer;

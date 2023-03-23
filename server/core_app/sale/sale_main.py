@@ -6,8 +6,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
 import server.core_app.sale.sale_schemas as schemas
-from server.core_app.sale.sale_query import read_sales
-from server.core_app.sale.sale_query import add_pay
+from server.core_app.sale.sale_query import read_sales, add_pay, cancel_sale
 from server.core_app.sale.sale_schemas import SalePaid
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -53,4 +52,13 @@ async def __add_pay(paids: list[SalePaid], sale_id: int, db: Session = Depends(g
     try:
         return add_pay(paids, sale_id, db, query)
     except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.put("/cancel_sale/{sale_id}")
+async def __cancel_sale(sale_id: int, db: Session = Depends(get_db)):
+    try:
+        return cancel_sale(sale_id, db, query)
+    except Exception as ex:
+        print(sale_id)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))

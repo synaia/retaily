@@ -168,3 +168,9 @@ WHERE sp.sale_id = %s
 INSERT INTO sale_paid(amount, type, sale_id, date_create)
    VALUES(%s, %s, %s, NOW())
 ;
+
+--UPDATE_SALES_AS_RETURN
+UPDATE sale
+  SET status = 'RETURN'
+WHERE id = %s
+;

@@ -14,12 +14,12 @@ def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, c
 
     cur = get_cursor(db)
     invoice_status = ('open', 'cancelled', 'close',) if invoice_status == 'all' else (invoice_status,)
-    sql_raw = query.SELECT_SALES_BY_INVOICE_STATUS
+    sql_raw_main = query.SELECT_SALES_BY_INVOICE_STATUS
     if client_id == 0:
-        cur.execute(sql_raw, (store, init_date, end_date, invoice_status))
+        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status))
     else:
-        sql_raw = query.SELECT_SALES_BY_CLIENT
-        cur.execute(sql_raw, (store, init_date, end_date, invoice_status, client_id))
+        sql_raw_main = query.SELECT_SALES_BY_CLIENT
+        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status, client_id))
 
     resp = cur.fetchall()
 
@@ -123,3 +123,12 @@ def add_pay(paids: list[SalePaid], sale_id: int,  db: Session, query: Query):
         sale_paids.append(paid)
 
     return {'sale_id': sale_id, 'paids': sale_paids}
+
+
+def cancel_sale(sale_id: int,  db: Session, query: Query):
+    sql_raw_sale_return = query.UPDATE_SALES_AS_RETURN
+    cur = get_cursor(db)
+    cur.execute(sql_raw_sale_return, (sale_id,))
+    cur.connection.commit()
+    return {'sale_id': sale_id}
+

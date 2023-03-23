@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadSales, addPay, updatePayInListAction } from "../redux/features/sale.feature.js";
+import { loadSales, addPay, cancelSale } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
 
 
@@ -103,9 +103,11 @@ export const Sales = () => {
         const r1 = !isNaN(parseFloat(cash)) ? parseFloat(cash) : 0;
         const r2 = !isNaN(parseFloat(cc)) ? parseFloat(cc) : 0;
         setpaymenttext(`PAY: ${r1 + r2}`);
+    };
 
-        // paytext[id].current?.value = `PAY: ${cash + cc}`;
-    }
+    const _cancelSale = (id) => {
+        dispatch(cancelSale({id}));
+    };
 
     return (
         <div className="sales-grid">
@@ -235,12 +237,14 @@ export const Sales = () => {
                                             <span>RE-PRINT</span>
                                         </button>
                                     </div>
+                                    {sale.invoice_status != 'cancelled' &&
                                     <div>
-                                        <button className="cbutton cbutton-red">
+                                        <button className="cbutton cbutton-red" onClick={() => _cancelSale(sale.id)}>
                                             <span className="material-icons-sharp"> delete_forever </span>
                                             <span>CANCEL</span>
                                         </button>
                                     </div>
+                                    }
                                 </div>
                             </div>
                         </div>
