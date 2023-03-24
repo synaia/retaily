@@ -23,11 +23,11 @@ export const Header = () => {
                     </div>
                     <div className="profile">
                     <div className="info">
-                        <p>Hey, <b>Bruno</b></p>
+                        <p>Hey, <b>Wilton</b></p>
                         <a href="/#/admin"><small className="text-muted">Admin</small></a>
                     </div>
                     <div className="profile-photo">
-                        <img src="./assets/images/profile-1.jpg" alt="Profile Picture" />
+                        <img src="./assets/images/profile-1.png" alt="Profile Picture" />
                     </div>
                     </div>
                 </div>      

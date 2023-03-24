@@ -205,11 +205,11 @@ export const Client = () => {
                                 </div>
                                 <div className="profile">
                                     <div className="info">
-                                        <p>Hey, <b>Bruno</b></p>
+                                        <p>Hey, <b>Wilton</b></p>
                                         <small className="text-muted">Admin</small>
                                     </div>
                                     <div className="profile-photo">
-                                        <img src="./assets/images/profile-1.jpg" alt="Profile Picture" />
+                                        <img src="./assets/images/profile-1.png" alt="Profile Picture" />
                                     </div>
                                 </div>
                             </div>      
