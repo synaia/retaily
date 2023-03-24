@@ -11,6 +11,7 @@ import { Product } from "./Product";
 import { useEffect, useRef } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { pickProductAction } from "../redux/features/product.feature.js";
+import { Loading } from "./Loading";
 
 
 export const ProductGrid = () => {
@@ -117,7 +118,7 @@ export const ProductGrid = () => {
 
             <div className="products" id="products">
 
-                {loading && <div>Loading lalala ;D  .... </div>}
+                {loading && <Loading Text="Here maybe another kind of loading :)" Intro="true" />}
                 {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
                 {!loading && search.current?.value.length > 0 && products_partial.length == 0 && 
                 <div> <h1>{search.current?.value?.toUpperCase()} Not found</h1></div> }

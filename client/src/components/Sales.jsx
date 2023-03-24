@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadSales, addPay, cancelSale } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
+import {Loading } from "./Loading";
 
 
 export const Sales = () => {
@@ -169,7 +170,7 @@ export const Sales = () => {
     return (
         <div className="sales-container">
         <div className="sales-grid">
-            {loading && <div>Loading lalala ;D  .... </div>}
+            {loading && <Loading Text="Loading :)" /> }
             {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
             {!loading && sales.length == 0 &&
                 <div className="sale-card" >
@@ -325,14 +326,64 @@ export const Sales = () => {
                     ))
                 )}
         </div>
-        <div className="sales-resume">
-            <h2>T: {F_(sumSales)}</h2>
-            <h2>Net: {F_(sumNetSales)}</h2>
-            <h2>Due: {F_(sumDueBalances)}</h2>
+        <div className="">
 
-            <h3>Open: {countOpen}</h3>
-            <h3>Close: {countClose}</h3>
-            <h3>Cancelled: {countCancelled}</h3>
+            <div className="sales-analytics">
+                <h2>Sales Analytics</h2>
+                <div className="sales-resume">
+                    <div className="info">
+                        <h3>{countOpen}</h3>
+                        <small className="text-muted"> OPEN </small>
+                    </div>
+                    <div className="info">
+                        <h3>{countClose}</h3>
+                        <small className="text-muted"> CLOSE </small>
+                    </div>
+                    <div className="info">
+                        <h3>{countCancelled}</h3>
+                        <small className="text-muted"> CANCELLED </small>
+                    </div>
+                </div>
+                <div id="analytics">
+                    <div className="item total-sales">
+                        <div className="icon">
+                            <span className="material-icons-sharp"> currency_exchange </span>
+                        </div>
+                        <div className="right">
+                            <div className="info">
+                            <h3>TOTAL SALES</h3>
+                            <small className="text-muted"> Last 24 Hours </small>
+                            </div>
+                            
+                            <h3>{F_(sumSales)}</h3>
+                        </div>
+                        </div><div className="item offline">
+                        <div className="icon">
+                            <span className="material-icons-sharp"> thumb_up </span>
+                        </div>
+                        <div className="right">
+                            <div className="info">
+                            <h3>CLOSE INVOICES</h3>
+                            <small className="text-muted"> Last 24 Hours </small>
+                            </div>
+                            <h5 className="">{Math.round((sumNetSales/sumSales) * 100)}%</h5>
+                            <h3>{F_(sumNetSales)}</h3>
+                        </div>
+                        </div><div className="item customers">
+                        <div className="icon">
+                            <span className="material-icons-sharp"> thumb_down </span>
+                        </div>
+                        <div className="right">
+                            <div className="info">
+                            <h3>DUE BALANCES</h3>
+                            <small className="text-muted"> Last 24 Hours </small>
+                            </div>
+                            <h5 className="danger">{Math.round((sumDueBalances/sumSales) * 100)}%</h5>
+                            <h3>{F_(sumDueBalances)}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         </div>
     )

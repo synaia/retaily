@@ -1,6 +1,7 @@
 import React from "react";
 import { Product } from "./Product";
 import { useAPI } from "../context/app-context";
+import { Loading } from "./Loading";
 
 export const ProductGrid = ({productItems, loading}) => {
     console.log('ProductGrid: rendered.')
@@ -13,7 +14,7 @@ export const ProductGrid = ({productItems, loading}) => {
 
     return (
         <div id="products" className="products">
-            {loading && <div>Loading lalala ;D  .... </div>}
+            {loading && <Loading  Text="Loading products ...."/>}
             {!loading && (
                 productItems.map((product, i)=> (
                     <Product 

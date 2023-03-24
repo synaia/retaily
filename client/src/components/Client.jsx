@@ -13,7 +13,7 @@ import { useRef, useEffect } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
 import { pickClientAction, pickNewClientAction } from "../redux/features/product.feature.js";
-
+import { Loading } from "./Loading.jsx";
 
 export const Client = () => {
     const dispatch = useDispatch();
@@ -233,7 +233,7 @@ export const Client = () => {
                             </tr>
                          </thead>
                          <tbody>
-                                {loading && <tr><td>Clientes yujuuu lalala ;D  .... </td></tr>}
+                                {loading && <Loading Text="Fetch clients ...." />}
                                 {!loading && errorMessage &&  <tr><td> {errorMessage} </td></tr>}
                                 {!loading && (
                                     clients_partial.map((client, i) => (
