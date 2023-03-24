@@ -700,6 +700,12 @@ main .recent-orders a {
   font-size: 14px;
 }
 
+.sale-total-amount, .sale-total-paid, .sale-total-due-balance {
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 16px;
+  padding-right: 5px;
+}
+
 .sale-card-lines {
   display: grid;
   grid-template-columns: 0.7fr auto 0.0fr;
@@ -932,4 +938,14 @@ main .recent-orders a {
 .pay-input-t::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.sales-container {
+  display: grid;
+  grid-template-columns: 0.7fr 0.3fr;
+  gap: 2rem;
+}
+
+.sales-resume {
+
 }

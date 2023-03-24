@@ -12,6 +12,14 @@ export const Sales = () => {
     const loading = useSelector((state) => state.sale.loading);
     const errorMessage = useSelector((state) => state.sale.errorMessage);
 
+    const [sumSales, setSumSales] = useState();
+    const [sumNetSales, setSumNetSales] = useState();
+    const [sumDueBalances, setSumDueBalances] = useState();
+
+    const [countOpen, setCountOpen] = useState();
+    const [countClose, setCountClose] = useState();
+    const [countCancelled, setCountCancelled] = useState();
+
     const paytext = [];
 
     const paycash =  [];
@@ -129,10 +137,45 @@ export const Sales = () => {
         dispatch(cancelSale({id}));
     };
 
+    useEffect(() => {
+        const s = sales.reduce((x, sale) => {
+            return x + sale.amount
+        }, 0);
+        const n = sales.reduce((x, sale) => {
+            if (sale.invoice_status != 'cancelled') {
+                return x + sale.total_paid
+            } else {
+                return x;
+            }
+        }, 0);
+        const d = s - n;
+        setSumSales(s);
+        setSumNetSales(n);
+        setSumDueBalances(d);
+
+        let open = sales.filter((sale) => { return sale.invoice_status == "open" });
+        let close = sales.filter((sale) => { return sale.invoice_status == "close" });
+        let cancelled = sales.filter((sale) => { return sale.invoice_status == "cancelled" });
+        open = (open != undefined) ? open.length : 0;
+        close = (close != undefined) ? close.length : 0;
+        cancelled = (cancelled != undefined) ? cancelled.length : 0;
+
+        setCountOpen(open);
+        setCountClose(close);
+        setCountCancelled(cancelled);
+
+    }, [sales]);
+
     return (
+        <div className="sales-container">
         <div className="sales-grid">
             {loading && <div>Loading lalala ;D  .... </div>}
             {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
+            {!loading && sales.length == 0 &&
+                <div className="sale-card" >
+                    <h2>Nothing to show.</h2>
+                </div>
+            }
             {!loading && (
                     sales.map((sale, i)=> (
                         <div className="sale-card" key={sale.id}>
@@ -281,6 +324,16 @@ export const Sales = () => {
                         </div>
                     ))
                 )}
+        </div>
+        <div className="sales-resume">
+            <h2>T: {F_(sumSales)}</h2>
+            <h2>Net: {F_(sumNetSales)}</h2>
+            <h2>Due: {F_(sumDueBalances)}</h2>
+
+            <h3>Open: {countOpen}</h3>
+            <h3>Close: {countClose}</h3>
+            <h3>Cancelled: {countCancelled}</h3>
+        </div>
         </div>
     )
 };
