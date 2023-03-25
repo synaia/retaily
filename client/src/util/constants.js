@@ -9,5 +9,5 @@
 export const BACKEND_HOST = 'https://localhost:8500';
 
 // constants for test pupuses
-export const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWdhbiIsInNjb3BlcyI6WyJjeCIsInNhbGVzIiwiaHVtYW4iXSwic3RvcmVzIjpbIlNBTUJJTCJdLCJpc19hY3RpdmUiOjEsImV4cCI6MTY3OTcxNjY5N30.Os7mX-U4AJrApuhUTS6-L64YNSZ6LPfmL0PEzwPuLZU';
+export const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsdWlzIiwic2NvcGVzIjpbInNhbGVzIl0sInN0b3JlcyI6W10sImlzX2FjdGl2ZSI6MSwiZXhwIjoxNjc5NzM0OTgzfQ.fQb-u-CmP-bzT7rJ81sJ0YWzeopUs-2u7Y9hiu-pbzs';
 export const STORE = 'SAMBIL';

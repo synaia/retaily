@@ -44,7 +44,7 @@
 * {
   margin: 0;
   padding: 0;
-  outline: 0;
+  /* outline: 0; */
   appearance: none;
   border: 0;
   text-decoration: none;
@@ -969,3 +969,6 @@ main .recent-orders a {
   font-size: 14px;
 }
 
+.row-selected-bg {
+  background-color: var(--color-warning)
+}
