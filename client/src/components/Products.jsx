@@ -8,7 +8,7 @@ import { useDispatch , useSelector} from "react-redux";
 
 export const Products = () => {
     const products = useSelector((state) => state.product.products);
-    const [cellNavigationMode, setCellNavigationMode] = useState('CHANGE_ROW');
+    const [cellNavigationMode, setCellNavigationMode] = useState('LOOP_OVER_ROW');
 
     const columns = [
         { key: 'id', name: 'ID', resizable: true, width: 10 },
@@ -16,7 +16,7 @@ export const Products = () => {
         { key: 'cost', name: 'Cost' },
         { key: 'price', name: 'Price' },
         { key: 'code', name: 'SKU' },
-        { key: 'quantity', name: 'QTY' },
+        { key: 'quantity', name: 'QTY', width: 10 },
       ];
     let rows = [];
     products.forEach(product => {
@@ -46,8 +46,6 @@ export const Products = () => {
     const highlightsted = [];
 
     const handleCellKeyDown = (args, event) => {
-        console.log(event);
-
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
@@ -57,7 +55,28 @@ export const Products = () => {
           event.preventGridDefault();
           event.preventDefault();
         };
-    
+
+        let currentDiv = event.target.parentElement;
+        if (key === 'ArrowDown') {
+            currentDiv = currentDiv.nextElementSibling;
+        }
+
+        if (key === 'ArrowUp') {
+            currentDiv = currentDiv.previousElementSibling;
+        }
+
+        if(currentDiv != undefined) {
+            const row_highlightsrow = (element) => {
+                if (highlightsted.length == 1) {
+                    highlightsted[0].classList.toggle('row-selected-bg');
+                    highlightsted.pop();
+                }
+                highlightsted.push(element);
+                element.classList.toggle('row-selected-bg');
+            };
+            row_highlightsrow(currentDiv);    
+        }
+       
         const loopOverNavigation = () => {
           if ((key === 'ArrowRight' || (key === 'Tab' && !shiftKey)) && idx === columns.length - 1) {
             selectCell({ rowIdx, idx: 0 });
@@ -121,6 +140,10 @@ export const Products = () => {
         
     };
 
+    const testFunc = (v) => {
+        console.log(v)
+    };
+
     return (
         <DataGrid 
             columns={columns} 
@@ -130,6 +153,8 @@ export const Products = () => {
             onCellKeyDown={handleCellKeyDown}
             enableVirtualization={true}
             onCellClick={highlightsrow}
+            onSelectedRowsChange={testFunc}
+            className="rdg-light"
         />
     )
 };

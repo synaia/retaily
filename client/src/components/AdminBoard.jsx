@@ -57,6 +57,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>POS</h3>
                 </a>
+                {/* Test NavLink */}
                 <a href="/#/admin/sales">
                   <span className="material-icons-sharp"> receipt_long </span>
                   <h3>Sales</h3>

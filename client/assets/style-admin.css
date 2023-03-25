@@ -970,5 +970,13 @@ main .recent-orders a {
 }
 
 .row-selected-bg {
-  background-color: var(--color-warning)
+  background-color: var(--color-light)
+}
+
+.c1wupbe7-0-0-beta-27[aria-selected='true'] {
+  outline: 1px solid var(--color-primary);
+}
+
+.rdg-dark, .rdg-light {
+  height: calc(100vh - 150px);
 }
