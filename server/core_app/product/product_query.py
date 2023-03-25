@@ -34,3 +34,18 @@ def read_products(store: str, db: Session, query: Query):
         products.append(product)
 
     return products
+
+
+def update_one(field: str, value: str, product_id: int, db: Session):
+    print(f'field: {field}, value: {value}')
+    # product = db.query(models.Product).get(product_id)
+    # if product is not None:
+    #     product.update({field: value})
+    #
+    # print(product)
+
+    sql_raw_update = f'UPDATE product SET {field} = "{value}" WHERE id = %s;'
+    print(sql_raw_update)
+    cur = get_cursor(db)
+    cur.execute(sql_raw_update, (product_id,))
+    cur.connection.commit()

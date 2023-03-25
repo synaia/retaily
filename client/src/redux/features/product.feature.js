@@ -38,6 +38,21 @@ export const loadProducts = createAsyncThunk('products/loadProducts', async () =
     return response.data;
 });
 
+export const updateProduct = createAsyncThunk('product/update_product', async (args, ) => {
+    console.log(args);
+    let response = await Axios.post(`${BACKEND_HOST}/products/update`, args,  {
+        params: {
+            product_id: args.product_id,
+            field: args.field,
+            value: args.value
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+});
+
 const updateSaleDetail = (productPickedList) => {
     const gran_total = productPickedList.reduce((x, p) => {
         return (x + (p.price_for_sale * p.inventory.quantity_for_sale));
@@ -206,7 +221,24 @@ const discardSale = (state, action) => {
         }
     };
 };
-
+const refreshProductList = (state, action) => {
+    const products = [];
+    const rows = action.payload;
+    rows.forEach((product) => {
+        let row = {
+            'id': product.id,
+            'name': product.name,
+            'cost': product.cost,
+            'price': product.price,
+            'code': product.code,
+            'inventory': {
+                'quantity': product.quantity,
+            },
+        };
+        products.push(row);
+    });
+    state.products = products;
+};
 
 const productsSlice = createSlice({
     name: 'products',
@@ -219,6 +251,7 @@ const productsSlice = createSlice({
         pickClientAction: pickClient,
         pickNewClientAction: pickNewClient,
         discardSaleAction: discardSale,
+        refreshProductListAction: refreshProductList
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -249,6 +282,7 @@ export const {
     pickClientAction, 
     pickNewClientAction,
     discardSaleAction,
+    refreshProductListAction
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

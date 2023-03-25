@@ -3,19 +3,22 @@ import { useState } from "react";
 import 'react-data-grid/lib/styles.css';
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor } from 'react-data-grid';
-import { useDispatch , useSelector} from "react-redux";
+import { useDispatch , useSelector } from "react-redux";
+import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.jsx";
+
 
 
 export const Products = () => {
     const products = useSelector((state) => state.product.products);
+    const dispatch = useDispatch();
     const [cellNavigationMode, setCellNavigationMode] = useState('LOOP_OVER_ROW');
 
     const columns = [
         { key: 'id', name: 'ID', resizable: true, width: 10 },
         { key: 'name', name: 'Product', width: 400, editor: textEditor},
-        { key: 'cost', name: 'Cost' },
-        { key: 'price', name: 'Price' },
-        { key: 'code', name: 'SKU' },
+        { key: 'cost', name: 'Cost', editor: textEditor },
+        { key: 'price', name: 'Price', editor: textEditor },
+        { key: 'code', name: 'SKU', editor: textEditor },
         { key: 'quantity', name: 'QTY', width: 10 },
       ];
     let rows = [];
@@ -38,9 +41,19 @@ export const Products = () => {
     // bottomSummaryRows\
 
     const rowChange = (rows, changes) => {
-        console.log(rows)
-        console.log('---------------------------------------')
-        console.log(changes)
+        // console.log(rows)
+        // console.log('---------------------------------------')
+        console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
+        // console.log(rows[changes.indexes[0]])
+        dispatch(refreshProductListAction(rows));
+
+
+        const args = {
+            'field': changes.column.key,
+            'value': rows[changes.indexes[0]][changes.column.key],
+            'product_id': rows[changes.indexes[0]].id
+        };
+        dispatch(updateProduct(args))
     };
 
     const highlightsted = [];

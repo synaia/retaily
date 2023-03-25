@@ -6,7 +6,17 @@ from server.core_app.database import Base
 from server.core_app.user.user_models import app_user_store
 
 
-class Product(Base):
+class UpdateMixin:
+    """
+    Add a simple update() method to instances that accepts
+    a dictionary of updates.
+    """
+    def update(self, values):
+        for k, v in values.items():
+            setattr(self, k, v)
+
+
+class Product(UpdateMixin, Base):
     __tablename__ = "product"
 
     id = Column(Integer, primary_key=True, index=True)

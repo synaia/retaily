@@ -1,11 +1,11 @@
 import os
 import sys
 
-from fastapi import APIRouter, Depends, HTTPException, Security, Header
+from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products
+from server.core_app.product.product_query import read_products, update_one
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -40,3 +40,15 @@ async def get_products(
 ):
     products = read_products(store, db, query)
     return products
+
+
+@router.post("/update")
+async def update_product(
+                        product_id: int,
+                        field: str,
+                         value: str,
+                         db: Session = Depends(get_db)):
+    try:
+        update_one(field, value, product_id, db)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
