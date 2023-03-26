@@ -39,7 +39,6 @@ export const loadProducts = createAsyncThunk('products/loadProducts', async () =
 });
 
 export const updateProduct = createAsyncThunk('product/update_product', async (args, ) => {
-    console.log(args);
     let response = await Axios.post(`${BACKEND_HOST}/products/update`, args,  {
         params: {
             product_id: args.product_id,

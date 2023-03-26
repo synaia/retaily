@@ -1,27 +1,33 @@
-import React from "react";
-import { useState } from "react";
-import 'react-data-grid/lib/styles.css';
+import React, { useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
-import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.jsx";
+import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.js";
 
+import 'react-data-grid/lib/styles.css';
 
 
 export const Products = () => {
     const products = useSelector((state) => state.product.products);
     const dispatch = useDispatch();
-    const [cellNavigationMode, setCellNavigationMode] = useState('LOOP_OVER_ROW');
+    const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
+    const [rows, setRows] = useState([]);
+    const search = useRef();
+    const gridRef = useRef(null);
 
-    const columns = [
-        { key: 'id', name: 'ID', resizable: true, width: 10 },
-        { key: 'name', name: 'Product', width: 400, editor: textEditor},
-        { key: 'cost', name: 'Cost', editor: textEditor },
-        { key: 'price', name: 'Price', editor: textEditor },
-        { key: 'code', name: 'SKU', editor: textEditor },
-        { key: 'quantity', name: 'QTY', width: 10 },
-      ];
-    let rows = [];
+    const columns = useMemo(() => {
+        return [
+            { key: 'id', name: 'ID', resizable: true, width: 10 },
+            { key: 'name', name: 'Product', width: 400, editor: textEditor},
+            { key: 'cost', name: 'Cost', editor: textEditor },
+            { key: 'price', name: 'Price', editor: textEditor },
+            { key: 'code', name: 'SKU', editor: textEditor },
+            { key: 'quantity', name: 'QTY', width: 10 },
+          ];
+    }); 
+    
+    const _rows_ = [];
     products.forEach(product => {
         let row = {
             'id': product.id,
@@ -31,8 +37,46 @@ export const Products = () => {
             'code': product.code,
             'quantity': product.inventory.quantity,
         };
-        rows.push(row)
+        _rows_.push(row)
     });
+
+    useEffect(()=> {
+        setRows(_rows_);
+    }, [products]);
+
+    const filter_rows = (ev) => {
+        // gridRef.setState({ selected: { rowIdx: 0, idx: 0 } });
+        gridRef.current.selectCell({ rowIdx: null, idx: null }); // trick fuck
+        // gridRef.current.element.blur();
+        // ev.target.focus();
+        
+        console.log(gridRef);
+
+        let keyin = search.current?.value;
+        let list_filtered = products.filter((prod) => {
+            if (prod) {
+                let exp = keyin.replace(/\ /g, '.+').toUpperCase();
+                let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
+                return  has ||
+                    prod.code.toUpperCase().includes(keyin.toUpperCase());
+            } else {
+                return false;
+            }
+        });
+
+        setRows(list_filtered);
+        
+        
+        if (13 === ev.keyCode) {
+            ev.target.select();
+        }
+        
+    };
+
+
+    useEffect(() => {
+        console.log('rows.length: ', rows.length);
+    }, [rows]);
 
     const rowKeyGetter = (row) => {
         return row.id;
@@ -59,6 +103,7 @@ export const Products = () => {
     const highlightsted = [];
 
     const handleCellKeyDown = (args, event) => {
+        // console.log(args);
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
@@ -154,20 +199,26 @@ export const Products = () => {
     };
 
     const testFunc = (v) => {
-        console.log(v)
+        console.log('testFunc: ', v)
     };
 
     return (
-        <DataGrid 
-            columns={columns} 
-            rows={rows} 
-            onRowsChange={rowChange}
-            rowKeyGetter={rowKeyGetter} 
-            onCellKeyDown={handleCellKeyDown}
-            enableVirtualization={true}
-            onCellClick={highlightsrow}
-            onSelectedRowsChange={testFunc}
-            className="rdg-light"
-        />
+        <React.Fragment>
+            <div className="search-terminal">
+                <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar" />
+            </div>
+            <DataGrid 
+                ref={gridRef}
+                columns={columns} 
+                rows={rows} 
+                onRowsChange={rowChange}
+                rowKeyGetter={rowKeyGetter} 
+                onCellKeyDown={handleCellKeyDown}
+                enableVirtualization={true}
+                onCellClick={highlightsrow}
+                onSelectedRowsChange={testFunc}
+                className="rdg-light"
+            />
+        </React.Fragment>
     )
 };

@@ -53,7 +53,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                   <span className="material-icons-sharp"> dashboard </span>
                   <h3>Dashboard</h3>
                 </a>
-                <a href="#">
+                <a href="/">
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>POS</h3>
                 </a>
