@@ -6,17 +6,7 @@ from server.core_app.database import Base
 from server.core_app.user.user_models import app_user_store
 
 
-class UpdateMixin:
-    """
-    Add a simple update() method to instances that accepts
-    a dictionary of updates.
-    """
-    def update(self, values):
-        for k, v in values.items():
-            setattr(self, k, v)
-
-
-class Product(UpdateMixin, Base):
+class Product(Base):
     __tablename__ = "product"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -30,6 +20,7 @@ class Product(UpdateMixin, Base):
     active = Column(Integer)
     image_raw = Column(String)
     inventory = relationship("Inventory", backref='product', uselist=False)
+    pricinglist = relationship("PricingList", backref='product', uselist=True)
 
     # inventory = relationship("Inventory", back_populates="product")
 
@@ -73,6 +64,26 @@ class Store(Base):
 
     user = relationship("User", back_populates='store', secondary=app_user_store)
 
+
+class Pricing(Base):
+    __tablename__ = "pricing"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    user_modified = Column(String)
+    date_create = Column(DateTime)
+
+
+class PricingList(Base):
+    __tablename__ = "pricing_list"
+
+    id = Column(Integer, primary_key=True, index=True)
+    price = Column(Float)
+    user_modified = Column(String)
+    date_create = Column(DateTime)
+    product_id = Column(Integer, ForeignKey('product.id'))
+    pricing_id = Column(Integer, ForeignKey('pricing.id'))
+    pricing = relationship("Pricing", backref='pricing_list', uselist=False)
 
 
 

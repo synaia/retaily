@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, update_one
+from server.core_app.product.product_query import read_products, read_all_products, update_one
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -39,6 +39,16 @@ async def get_products(
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     products = read_products(store, db, query)
+    return products
+
+
+@router.get("/all", response_model=list[schemas.Product])
+async def get_products(
+        db: Session = Depends(get_db),
+        store: Optional[str] = Header(None),
+        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    products = read_all_products(db, query)
     return products
 
 

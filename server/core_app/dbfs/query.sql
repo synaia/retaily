@@ -19,6 +19,36 @@ WHERE
   and s.name = %s
   ;
 
+--SELECT_ALL_PRODUCT
+SELECT
+    p.id,
+    p.name,
+    p.cost,
+    p.price,
+    p.margin,
+    p.code,
+    p.img_path,
+    p.date_create,
+    p.active,
+    p.image_raw
+  FROM product  p
+  ORDER BY p.id DESC
+;
+
+--SELECT_PRICING_LIST
+SELECT
+     pl.id,
+     pl.price,
+     pl.user_modified,
+     pl.date_create,
+     p.name as name_price_list
+FROM pricing_list pl, pricing p
+  WHERE pl.pricing_id = p.id
+   AND  pl.product_id = %s
+ORDER BY pl.id
+;
+
+
 --SELECT_SALES_BY_CLIENT
 SELECT
 	s.id,
