@@ -267,7 +267,7 @@ export const Products = () => {
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
                 onSelectedRowsChange={testFunc}
-                className="rdg-light"
+                className="data-grid-product"
             />
         </React.Fragment>
     )

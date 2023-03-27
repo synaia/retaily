@@ -28,6 +28,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
     // Change Theme
     const themeToggler = document.querySelector(".theme-toggler");
     themeToggler.addEventListener("click", () => {
+        document.querySelector('.data-grid-product').classList.toggle('rdg-dark');
         document.body.classList.toggle("dark-theme-variables");
         themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
         themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
