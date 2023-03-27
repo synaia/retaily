@@ -985,7 +985,7 @@ main .recent-orders a {
 
 }
 
-.rdg-dark, .rdg-light {
+.data-grid-product {
   height: calc(100vh - 150px);
 
   color: var(--color-dark-variant);
