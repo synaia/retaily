@@ -39,11 +39,12 @@ export const loadProducts = createAsyncThunk('products/loadProducts', async () =
 });
 
 export const updateProduct = createAsyncThunk('product/update_product', async (args, ) => {
+    const value = (args.field === 'active') ? (+ args.value) : args.value;
     let response = await Axios.post(`${BACKEND_HOST}/products/update`, args,  {
         params: {
             product_id: args.product_id,
             field: args.field,
-            value: args.value
+            value: value
         },
         headers: {
             'Authorization': `bearer ${TOKEN}`,

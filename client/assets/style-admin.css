@@ -991,3 +991,7 @@ main .recent-orders a {
   color: var(--color-dark-variant);
   font-size: 0.9rem;
 }
+
+.c1rb4brs7-0-0-beta-27:checked + .c1bvvwcc7-0-0-beta-27 {
+  background-color: var(--color-primary);
+}

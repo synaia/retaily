@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useState, useMemo } from "react";
 import DataGrid from 'react-data-grid';
-import {SelectColumn, textEditor } from 'react-data-grid';
+import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
 import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.js";
 
@@ -23,7 +23,21 @@ export const Products = () => {
             { key: 'cost', name: 'Cost', editor: textEditor },
             { key: 'price', name: 'Price', editor: textEditor },
             { key: 'code', name: 'SKU', editor: textEditor },
-            { key: 'quantity', name: 'QTY', width: 10 },
+            {
+                key: 'active', 
+                name: 'Active', 
+                width: 10, 
+                formatter({ row, onRowChange, isCellSelected }) {
+                return (
+                  <SelectCellFormatter
+                    value={row.active}
+                    onChange={() => {
+                      onRowChange({ ...row, active: !row.active });
+                    }}
+                    isCellSelected={isCellSelected}
+                  />
+                ); },
+            }
           ];
     }); 
     
@@ -35,7 +49,7 @@ export const Products = () => {
             'cost': product.cost,
             'price': product.price,
             'code': product.code,
-            'quantity': product.inventory.quantity,
+            'active': product.active,
         };
         _rows_.push(row)
     });
