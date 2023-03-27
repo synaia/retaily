@@ -41,16 +41,49 @@ export const Products = () => {
     });
 
     useEffect(()=> {
-        setRows(_rows_);
+        let keyin = search.current?.value;
+        console.log('keyin', keyin)
+        if (keyin != '') {
+            let list_filtered = products.filter((prod) => {
+                if (prod) {
+                    let exp = keyin.replace(/\ /g, '.+').toUpperCase();
+                    let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
+                    return  has ||
+                        prod.code.toUpperCase().includes(keyin.toUpperCase());
+                } else {
+                    return false;
+                }
+            });
+            setRows(list_filtered);
+        } else {
+            setRows(_rows_);
+        }
+
     }, [products]);
 
-    const filter_rows = (ev) => {
+    const filter_rows = (event) => {
+        const preventDefault = () => {
+            event.preventDefault();
+        };
+        // console.log(ev);
+        const { key } = event;
+
+        if (key === "/") {
+            preventDefault();
+            return;
+        }
+
+        if (key === "ArrowDown") {
+            gridRef.current.selectCell({ rowIdx: 0, idx: 1 }); 
+            return;
+        }
+
         // gridRef.setState({ selected: { rowIdx: 0, idx: 0 } });
         gridRef.current.selectCell({ rowIdx: null, idx: null }); // trick fuck
         // gridRef.current.element.blur();
         // ev.target.focus();
         
-        console.log(gridRef);
+        // console.log(gridRef);
 
         let keyin = search.current?.value;
         let list_filtered = products.filter((prod) => {
@@ -67,8 +100,8 @@ export const Products = () => {
         setRows(list_filtered);
         
         
-        if (13 === ev.keyCode) {
-            ev.target.select();
+        if (13 === event.keyCode) {
+            event.target.select();
         }
         
     };
@@ -78,41 +111,58 @@ export const Products = () => {
         console.log('rows.length: ', rows.length);
     }, [rows]);
 
+    /**
+     @todo: return 0 its NOT a option.
+    **/
     const rowKeyGetter = (row) => {
-        return row.id;
+        // console.log('aqqui: ', row);
+        if (row != undefined) {
+            return row.id;
+        } else {
+            return 0;
+        }
     };
     // TODO
     // bottomSummaryRows\
 
     const rowChange = (rows, changes) => {
+        console.log(changes);
         // console.log(rows)
         // console.log('---------------------------------------')
         console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
         // console.log(rows[changes.indexes[0]])
-        dispatch(refreshProductListAction(rows));
-
 
         const args = {
             'field': changes.column.key,
             'value': rows[changes.indexes[0]][changes.column.key],
             'product_id': rows[changes.indexes[0]].id
         };
+
+
+        dispatch(refreshProductListAction(args));
+       
         dispatch(updateProduct(args))
     };
 
     const highlightsted = [];
 
     const handleCellKeyDown = (args, event) => {
-        // console.log(args);
+        // console.log(args.mode);
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
-        const { key, shiftKey } = event;
+        const { key, shiftKey } = event; 
     
         const preventDefault = () => {
           event.preventGridDefault();
           event.preventDefault();
         };
+
+        if (args.mode === 'SELECT' && key === "/" ) {
+            preventDefault();
+            search.current.focus();
+            return;
+        }
 
         let currentDiv = event.target.parentElement;
         if (key === 'ArrowDown') {

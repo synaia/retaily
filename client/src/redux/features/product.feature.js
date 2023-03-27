@@ -220,23 +220,29 @@ const discardSale = (state, action) => {
         }
     };
 };
+
 const refreshProductList = (state, action) => {
-    const products = [];
-    const rows = action.payload;
-    rows.forEach((product) => {
-        let row = {
-            'id': product.id,
-            'name': product.name,
-            'cost': product.cost,
-            'price': product.price,
-            'code': product.code,
-            'inventory': {
-                'quantity': product.quantity,
-            },
-        };
-        products.push(row);
-    });
+    const { field, value, product_id} = action.payload;
+    const products = [...state.products];
+    const index = products.findIndex(prod => prod.id == product_id);
+    products[index][field] = value;
     state.products = products;
+
+    // const rows = action.payload;
+    // rows.forEach((product) => {
+    //     let row = {
+    //         'id': product.id,
+    //         'name': product.name,
+    //         'cost': product.cost,
+    //         'price': product.price,
+    //         'code': product.code,
+    //         'inventory': {
+    //             'quantity': product.quantity,
+    //         },
+    //     };
+    //     products.push(row);
+    // });
+    // state.products = products;
 };
 
 const productsSlice = createSlice({
