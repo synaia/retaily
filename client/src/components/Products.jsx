@@ -9,19 +9,27 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const Products = () => {
-    const products = useSelector((state) => state.product.products);
+    const products = useSelector((state) => state.product.all_products);
+    const pricing_labels = useSelector((state) => state.product.pricing_labels);
     const dispatch = useDispatch();
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
     const search = useRef();
     const gridRef = useRef(null);
 
+    const price_columns = [];
+    pricing_labels.forEach(label => {
+        price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, pricing_id: label.id});
+        // return true;
+    });
+
     const columns = useMemo(() => {
         return [
             { key: 'id', name: 'ID', resizable: true, width: 10 },
             { key: 'name', name: 'Product', width: 400, editor: textEditor},
             { key: 'cost', name: 'Cost', editor: textEditor },
-            { key: 'price', name: 'Price', editor: textEditor },
+            // { key: 'price', name: 'Price', editor: textEditor },
+            ...price_columns,
             { key: 'code', name: 'SKU', editor: textEditor },
             {
                 key: 'active', 
@@ -40,10 +48,10 @@ export const Products = () => {
             }
           ];
     }); 
-    
+
     const _rows_ = [];
     products.forEach(product => {
-        let row = {
+        const row = {
             'id': product.id,
             'name': product.name,
             'cost': product.cost,
@@ -51,8 +59,16 @@ export const Products = () => {
             'code': product.code,
             'active': product.active,
         };
+        product.pricinglist.forEach(list => {
+            const price = list.price;
+            const pricelist_name = list.pricing.price_key;
+            row[pricelist_name] = price;
+        });
+
         _rows_.push(row)
     });
+    
+    
 
     useEffect(()=> {
         let keyin = search.current?.value;
@@ -146,12 +162,14 @@ export const Products = () => {
         console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
         // console.log(rows[changes.indexes[0]])
 
+        const pricing_id = (changes.column.pricing_id != undefined) ? changes.column.pricing_id : -1;
+
         const args = {
+            'pricing_id': pricing_id,
             'field': changes.column.key,
             'value': rows[changes.indexes[0]][changes.column.key],
             'product_id': rows[changes.indexes[0]].id
         };
-
 
         dispatch(refreshProductListAction(args));
        

@@ -41,13 +41,21 @@ SELECT
      pl.price,
      pl.user_modified,
      pl.date_create,
-     p.name as name_price_list
+     p.price_key,
+     p.label
 FROM pricing_list pl, pricing p
   WHERE pl.pricing_id = p.id
    AND  pl.product_id = %s
 ORDER BY pl.id
 ;
 
+--SELECT_PRICING_LABELS
+SELECT
+    p.id,
+    p.price_key,
+    p.label
+FROM pricing p
+;
 
 --SELECT_SALES_BY_CLIENT
 SELECT

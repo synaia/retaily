@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, update_one
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -52,13 +52,24 @@ async def get_products(
     return products
 
 
+@router.get("/pricing_labels", response_model=list[schemas.Pricing])
+async def get_pricing_labels(
+        db: Session = Depends(get_db),
+        store: Optional[str] = Header(None),
+        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    pricings = read_pricing_labels(db, query)
+    return pricings
+
+
 @router.post("/update")
 async def update_product(
+                        pricing_id: int,
                         product_id: int,
                         field: str,
-                         value: str,
-                         db: Session = Depends(get_db)):
+                        value: str,
+                        db: Session = Depends(get_db)):
     try:
-        update_one(field, value, product_id, db)
+        update_one(pricing_id, field, value, product_id, db)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))

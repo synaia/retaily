@@ -13,7 +13,8 @@ import { storeInfo } from "../../common/store-info";
 const initialState = {
     loading: false,
     products: [],
-    products_reshape: [[]],
+    all_products: [],
+    pricing_labels: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -38,10 +39,35 @@ export const loadProducts = createAsyncThunk('products/loadProducts', async () =
     return response.data;
 });
 
+export const loadAllProducts = createAsyncThunk('products/load_all_products', async () => {
+    console.log('load_all_products...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/all`, {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+
+    return response.data;
+});
+
+export const getPricingLabels = createAsyncThunk('products/get_pricing_labels', async () => {
+    console.log('get_pricing_labels...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/pricing_labels`, {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+
+    return response.data;
+});
+
 export const updateProduct = createAsyncThunk('product/update_product', async (args, ) => {
     const value = (args.field === 'active') ? (+ args.value) : args.value;
     let response = await Axios.post(`${BACKEND_HOST}/products/update`, args,  {
         params: {
+            pricing_id: args.pricing_id,
             product_id: args.product_id,
             field: args.field,
             value: value
@@ -223,11 +249,20 @@ const discardSale = (state, action) => {
 };
 
 const refreshProductList = (state, action) => {
+    /** @TODO logic when the update is on price list. */
     const { field, value, product_id} = action.payload;
-    const products = [...state.products];
+    const products = [...state.all_products];
     const index = products.findIndex(prod => prod.id == product_id);
     products[index][field] = value;
-    state.products = products;
+    state.all_products = products;
+
+    /** @TODO  se debe actualizar la mariconada : */
+    // ASI :
+    // product.pricinglist.forEach(list => {
+    //     const price = list.price;
+    //     const pricelist_name = list.pricing.name;
+    //     row[pricelist_name] = price;
+    // });
 
     // const rows = action.payload;
     // rows.forEach((product) => {
@@ -265,16 +300,29 @@ const productsSlice = createSlice({
         }).addCase(loadProducts.fulfilled, (state, action) => {
             state.loading = false
             state.products = action.payload
-
-            // const products_reshape = [];
-            // const copy_products = [...state.products];
-            // while(copy_products.length) products_reshape.push(copy_products.splice(0, 4));
-            // [...state.products_reshape] = products_reshape;
-            // console.log(products_reshape);
-
         }).addCase(loadProducts.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR loadProducts; ${action.error.message}`
+        });
+
+        builder.addCase(loadAllProducts.pending, (state, action) => {
+            state.loading = true
+        }).addCase(loadAllProducts.fulfilled, (state, action) => {
+            state.loading = false
+            state.all_products = action.payload
+        }).addCase(loadAllProducts.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR loadAllProducts; ${action.error.message}`
+        });
+
+        builder.addCase(getPricingLabels.pending, (state, action) => {
+            state.loading = true
+        }).addCase(getPricingLabels.fulfilled, (state, action) => {
+            state.loading = false
+            state.pricing_labels = action.payload
+        }).addCase(getPricingLabels.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR getPricingLabels; ${action.error.message}`
         })
     }
 });

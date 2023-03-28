@@ -5,7 +5,9 @@ import warnings
 
 
 class Pricing(BaseModel):
-    name: str
+    id: int | None = None
+    label: str
+    price_key: str | None= None
     user_modified: str | None = None
     date_create: datetime | None = None
 

@@ -11,6 +11,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loadProducts } from  "../redux/features/product.feature.js";
+import { loadAllProducts } from  "../redux/features/product.feature.js";
+import { getPricingLabels } from  "../redux/features/product.feature.js";
 import { loadClients } from  "../redux/features/client.feature.js";
 import { useEffect } from "react";
 
@@ -20,7 +22,9 @@ export const Init = () => {
     // const navigator = useNavigate();
     const dispatch = useDispatch();
     dispatch(loadProducts());
+    dispatch(loadAllProducts());
     dispatch(loadClients());
+    dispatch(getPricingLabels());
 
     useEffect(() => {
         // // Change Theme

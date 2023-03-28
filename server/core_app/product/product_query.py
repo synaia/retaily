@@ -69,7 +69,8 @@ def read_all_products(db: Session, query: Query):
             li.price = l['price']
             li.user_modified = l['user_modified']
             li.date_create = l['date_create']
-            pri.name = l['name_price_list']
+            pri.price_key = l['price_key']
+            pri.label = l['label']
             li.pricing = pri
             plist.append(li)
         product.pricinglist = plist
@@ -78,16 +79,39 @@ def read_all_products(db: Session, query: Query):
     return products
 
 
-def update_one(field: str, value: str, product_id: int, db: Session):
-    print(f'field: {field}, value: {value}')
+def read_pricing_labels(db: Session, query: Query):
+    sql_raw = query.SELECT_PRICING_LABELS
+    pricings = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+
+    for rp in resp:
+        pricing = models.Pricing()
+        pricing.id = rp['id']
+        pricing.label = rp['label']
+        pricing.price_key = rp['price_key']
+        pricings.append(pricing)
+
+    return pricings
+
+
+def update_one(pricing_id: int, field: str, value: str, product_id: int, db: Session):
+    print(f'field: {field}, value: {value}, price_column: {pricing_id}')
     # product = db.query(models.Product).get(product_id)
     # if product is not None:
     #     product.update({field: value})
     #
     # print(product)
 
-    sql_raw_update = f'UPDATE product SET {field} = "{value}" WHERE id = %s;'
-    print(sql_raw_update)
     cur = get_cursor(db)
-    cur.execute(sql_raw_update, (product_id,))
+
+    if pricing_id != -1:
+        sql_raw_update = f'UPDATE pricing_list SET price = "{value}" WHERE product_id = %s AND pricing_id = %s;'
+        cur.execute(sql_raw_update, (product_id, pricing_id,))
+    else:
+        sql_raw_update = f'UPDATE product SET {field} = "{value}" WHERE id = %s;'
+        cur.execute(sql_raw_update, (product_id,))
+
+    print(sql_raw_update)
     cur.connection.commit()

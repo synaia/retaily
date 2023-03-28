@@ -69,7 +69,8 @@ class Pricing(Base):
     __tablename__ = "pricing"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
+    label = Column(String, unique=True, index=True)
+    price_key = Column(String, unique=True, index=True)
     user_modified = Column(String)
     date_create = Column(DateTime)
 
