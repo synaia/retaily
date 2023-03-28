@@ -987,6 +987,7 @@ main .recent-orders a {
 
 .data-grid-product {
   height: calc(100vh - 150px);
+  width: calc(100vw - 250px);
 
   color: var(--color-dark-variant);
   font-size: 0.9rem;

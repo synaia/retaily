@@ -16,21 +16,32 @@ export const Products = () => {
     const [rows, setRows] = useState([]);
     const search = useRef();
     const gridRef = useRef(null);
+   
+    const columns = useMemo( () => {
+        // const price_columns = [
+        //     { key: 'DEFAULT', name: 'Default', editor: textEditor },
+        //     { key: 'DISC_15', name: 'Discount -15%', editor: textEditor},
+        //     { key: 'MEGA', name: 'Mega', editor: textEditor },
+        // ];
+        const price_columns = [];
+        pricing_labels.forEach( label => {
+            price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, pricing_id: label.id});
+            // return true;
+        });
 
-    const price_columns = [];
-    pricing_labels.forEach(label => {
-        price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, pricing_id: label.id});
-        // return true;
-    });
+        console.log(price_columns);
+        
 
-    const columns = useMemo(() => {
+        const first_columns = [
+            { key: 'id', name: 'ID', width: 10 },
+            { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
+            { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
+        ];
+
         return [
-            { key: 'id', name: 'ID', resizable: true, width: 10 },
-            { key: 'name', name: 'Product', width: 400, editor: textEditor},
-            { key: 'cost', name: 'Cost', editor: textEditor },
-            // { key: 'price', name: 'Price', editor: textEditor },
+            ...first_columns,
             ...price_columns,
-            { key: 'code', name: 'SKU', editor: textEditor },
+            { key: 'code', name: 'SKU', width: 100, editor: textEditor },
             {
                 key: 'active', 
                 name: 'Active', 
@@ -49,25 +60,29 @@ export const Products = () => {
           ];
     }); 
 
-    const _rows_ = [];
-    products.forEach(product => {
-        const row = {
-            'id': product.id,
-            'name': product.name,
-            'cost': product.cost,
-            'price': product.price,
-            'code': product.code,
-            'active': product.active,
-        };
-        product.pricinglist.forEach(list => {
-            const price = list.price;
-            const pricelist_name = list.pricing.price_key;
-            row[pricelist_name] = price;
-        });
-
-        _rows_.push(row)
-    });
     
+    const get_rows = (_prodducts_) => {
+        const _rows_ = [];
+        _prodducts_.forEach(product => {
+            const row = {
+                'id': product.id,
+                'name': product.name,
+                'cost': product.cost,
+                'price': product.price,
+                'code': product.code,
+                'active': product.active,
+            };
+            product.pricinglist.forEach(list => {
+                const price = list.price;
+                const pricelist_name = list.pricing.price_key;
+                row[pricelist_name] = price;
+            });
+    
+            _rows_.push(row)
+        });
+        return _rows_;
+    };
+   
     
 
     useEffect(()=> {
@@ -84,14 +99,16 @@ export const Products = () => {
                     return false;
                 }
             });
-            setRows(list_filtered);
+            setRows(get_rows(list_filtered));
         } else {
-            setRows(_rows_);
+            setRows(get_rows(products));
         }
 
     }, [products]);
 
     const filter_rows = (event) => {
+         /** @FIX new boomp when scrol much and search 'active' is undefined or something like that */
+         
         const preventDefault = () => {
             event.preventDefault();
         };
@@ -127,7 +144,7 @@ export const Products = () => {
             }
         });
 
-        setRows(list_filtered);
+        setRows(get_rows(list_filtered));
         
         
         if (13 === event.keyCode) {

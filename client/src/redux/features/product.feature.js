@@ -249,36 +249,23 @@ const discardSale = (state, action) => {
 };
 
 const refreshProductList = (state, action) => {
-    /** @TODO logic when the update is on price list. */
-    const { field, value, product_id} = action.payload;
+    const { field, value, product_id, pricing_id} = action.payload;
     const products = [...state.all_products];
     const index = products.findIndex(prod => prod.id == product_id);
-    products[index][field] = value;
+    if(pricing_id != -1) {
+        const pricinglist = [...products[index].pricinglist];
+        pricinglist[field] = value;
+        pricinglist.forEach((ls) => {
+            if(field === ls.pricing.price_key) {
+                // console.log('MATCH:', ls.pricing.price_key)
+                ls.price = value;
+            }
+        });
+        products[index].pricinglist = pricinglist;
+    } else {
+        products[index][field] = value;
+    }
     state.all_products = products;
-
-    /** @TODO  se debe actualizar la mariconada : */
-    // ASI :
-    // product.pricinglist.forEach(list => {
-    //     const price = list.price;
-    //     const pricelist_name = list.pricing.name;
-    //     row[pricelist_name] = price;
-    // });
-
-    // const rows = action.payload;
-    // rows.forEach((product) => {
-    //     let row = {
-    //         'id': product.id,
-    //         'name': product.name,
-    //         'cost': product.cost,
-    //         'price': product.price,
-    //         'code': product.code,
-    //         'inventory': {
-    //             'quantity': product.quantity,
-    //         },
-    //     };
-    //     products.push(row);
-    // });
-    // state.products = products;
 };
 
 const productsSlice = createSlice({
