@@ -16,6 +16,7 @@ export const Products = () => {
     const [rows, setRows] = useState([]);
     const search = useRef();
     const gridRef = useRef(null);
+
    
     const columns = useMemo( () => {
         // const price_columns = [
@@ -29,7 +30,7 @@ export const Products = () => {
             // return true;
         });
 
-        console.log(price_columns);
+        // console.log(price_columns);
         
 
         const first_columns = [
@@ -47,6 +48,9 @@ export const Products = () => {
                 name: 'Active', 
                 width: 10, 
                 formatter({ row, onRowChange, isCellSelected }) {
+                    if(row == undefined) {
+                        console.log('undefined row')
+                    }
                 return (
                   <SelectCellFormatter
                     value={row.active}
@@ -62,6 +66,7 @@ export const Products = () => {
 
     
     const get_rows = (_prodducts_) => {
+        console.log('get_rows()')
         const _rows_ = [];
         _prodducts_.forEach(product => {
             const row = {
@@ -106,9 +111,7 @@ export const Products = () => {
 
     }, [products]);
 
-    const filter_rows = (event) => {
-         /** @FIX new boomp when scrol much and search 'active' is undefined or something like that */
-         
+    const filter_rows = (event) => { 
         const preventDefault = () => {
             event.preventDefault();
         };
@@ -125,8 +128,8 @@ export const Products = () => {
             return;
         }
 
-        // gridRef.setState({ selected: { rowIdx: 0, idx: 0 } });
-        gridRef.current.selectCell({ rowIdx: null, idx: null }); // trick fuck
+        /** @BAWESOME trick fuck, rowIdx: 0, idx: null FIX the row undefined problem. */
+        gridRef.current.selectCell({ rowIdx: 0, idx: null }); 
         // gridRef.current.element.blur();
         // ev.target.focus();
         
@@ -146,17 +149,12 @@ export const Products = () => {
 
         setRows(get_rows(list_filtered));
         
-        
         if (13 === event.keyCode) {
             event.target.select();
         }
         
     };
 
-
-    useEffect(() => {
-        console.log('rows.length: ', rows.length);
-    }, [rows]);
 
     /**
      @todo: return 0 its NOT a option.
@@ -166,6 +164,7 @@ export const Products = () => {
         if (row != undefined) {
             return row.id;
         } else {
+            console.log('WARNING rowKeyGetter row undefined')
             return 0;
         }
     };
@@ -173,7 +172,7 @@ export const Products = () => {
     // bottomSummaryRows\
 
     const rowChange = (rows, changes) => {
-        console.log(changes);
+        // console.log(changes);
         // console.log(rows)
         // console.log('---------------------------------------')
         console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
@@ -297,15 +296,13 @@ export const Products = () => {
         
     };
 
-    const testFunc = (v) => {
-        console.log('testFunc: ', v)
-    };
 
     return (
         <React.Fragment>
             <div className="search-terminal">
                 <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar" />
             </div>
+            <button className="cbutton" onClick={() => setRows(get_rows(products))}>Frefresh</button>
             <DataGrid 
                 ref={gridRef}
                 columns={columns} 
@@ -315,7 +312,6 @@ export const Products = () => {
                 onCellKeyDown={handleCellKeyDown}
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                onSelectedRowsChange={testFunc}
                 className="data-grid-product"
             />
         </React.Fragment>
