@@ -435,12 +435,37 @@ main .search-terminal {
   margin-top: 0.2rem;
   padding: 0.5rem 1.6rem;
 
+  position: relative;
+  overflow: hidden;
+
+  color: var(--color-dark-variant);
+  box-shadow: var(--box-shadow);
+  /* padding: 15px; */
+  margin-bottom: 25px;
+  align-items: center;
+
   /* display: flex;
   justify-content: left; */
   /* gap: 2rem; */
 }
+
+.underline-animation-terminal {
+  transition: all 0.5s;
+  display: inline-block;
+  bottom: 0;
+  left: -100%;
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-primary);
+}
+
+.search-bar:focus + .underline-animation-terminal {
+  left: 0;
+}
+
 main .search-terminal input[type="text"]  {
-  background: transparent;
+  /* background: var(--color-background); */
   color: var(--color-dark);
   font-size: 1.5rem;
   text-transform: uppercase;

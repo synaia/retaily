@@ -184,6 +184,38 @@ export const PriceList = () => {
 
     return (
         <React.Fragment>
+            <div className="price-list">
+                <div>
+                    <span>Label</span>
+                    <div class="price-list-b">
+                        <span class="material-icons-sharp price-list-i"> edit_note </span>
+                        <input type="text" class="price-list-t" />
+                        <span class="underline-animation"></span>
+                    </div>
+                </div>
+                <div>
+                    <span>KEY</span>
+                    <div class="price-list-b">
+                        <span class="material-icons-sharp price-list-i"> vpn_key </span>
+                        <input type="text" class="price-list-t" />
+                        <span class="underline-animation"></span>
+                    </div>
+                </div>
+                <div>
+                    <span>Percent</span>
+                    <div class="price-list-b">
+                        <span class="material-icons-sharp price-list-i"> percent </span>
+                        <input type="number" class="price-list-t" />
+                        <span class="underline-animation"></span>
+                    </div>
+                </div>
+                <div>
+                <button class="fbutton fbutton-price-list">
+                    <span class="material-icons-sharp"> rocket_launch </span>
+                    <span>CREATE PRICE LIST</span>
+                </button>
+                </div>
+            </div>
             <DataGrid 
                 ref={gridRef}
                 columns={columns} 

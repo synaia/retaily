@@ -44,7 +44,7 @@
 * {
   margin: 0;
   padding: 0;
-  /* outline: 0; */
+  outline: 0;
   appearance: none;
   border: 0;
   text-decoration: none;
@@ -995,10 +995,71 @@ main .recent-orders a {
 
 .c1rb4brs7-0-0-beta-27:checked + .c1bvvwcc7-0-0-beta-27 {
   background-color: var(--color-primary);
+  outline: 5px solid var(--rdg-background-color) !important;
 }
-
 
 .data-grid-pricelist {
   color: var(--color-dark-variant);
   font-size: 0.9rem;
+}
+
+.price-list {
+  display: flex;
+  gap: 20px;
+  color: var(--color-dark-variant);
+  box-shadow: var(--box-shadow);
+  background: var(--color-white);
+  padding: 15px;
+  margin-bottom: 45px;
+  align-items: center;
+}
+
+.price-list-b {
+  display: flex;
+  gap: 0px;
+  align-items: center;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.price-list-t {
+  background-color:  var(--color-background);
+  color: var(--color-info-dark);
+  height: 30px;
+  width: 200px;
+  font-size: 16px;
+  padding-left: 5px;
+}
+
+
+.price-list-i {
+  font-size: 20px;
+  background-color:  var(--color-background);
+  height: 10px;
+  padding: 2px;
+  /* padding-top: 10px; */
+  padding-bottom: 28px;
+}
+.fbutton-price-list {
+  margin-top: 12px;
+}
+.fbutton-price-list:hover {
+  background: var(--color-success);
+  
+}
+
+.underline-animation{
+  transition: all 0.5s;
+  display: inline-block;
+  bottom: 0;
+  left: -100%;
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+.price-list-t:focus + .underline-animation{
+  left: 0;
 }

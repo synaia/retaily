@@ -300,7 +300,8 @@ export const Products = () => {
     return (
         <React.Fragment>
             <div className="search-terminal">
-                <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar" />
+                <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
+                <span class="underline-animation-terminal"></span>
             </div>
             <DataGrid 
                 ref={gridRef}
