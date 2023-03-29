@@ -73,6 +73,7 @@ class Pricing(Base):
     price_key = Column(String, unique=True, index=True)
     user_modified = Column(String)
     date_create = Column(DateTime)
+    status = Column(Integer)
 
 
 class PricingList(Base):

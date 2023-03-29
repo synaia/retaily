@@ -996,3 +996,9 @@ main .recent-orders a {
 .c1rb4brs7-0-0-beta-27:checked + .c1bvvwcc7-0-0-beta-27 {
   background-color: var(--color-primary);
 }
+
+
+.data-grid-pricelist {
+  color: var(--color-dark-variant);
+  font-size: 0.9rem;
+}

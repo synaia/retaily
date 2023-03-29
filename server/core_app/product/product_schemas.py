@@ -10,6 +10,7 @@ class Pricing(BaseModel):
     price_key: str | None= None
     user_modified: str | None = None
     date_create: datetime | None = None
+    status: int | None = None
 
     class Config:
         orm_mode = True

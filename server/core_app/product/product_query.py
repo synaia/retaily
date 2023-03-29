@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import server.core_app.product.product_models as models
+from server.core_app.product.product_schemas import Pricing
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 
@@ -115,3 +116,38 @@ def update_one(pricing_id: int, field: str, value: str, product_id: int, db: Ses
 
     print(sql_raw_update)
     cur.connection.commit()
+
+
+def read_pricing(db: Session, query: Query):
+    sql_raw = query.SELECT_PRICING
+    pricings = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+
+    for rp in resp:
+        pricing = models.Pricing()
+        pricing.id = rp['id']
+        pricing.label = rp['label']
+        pricing.price_key = rp['price_key']
+        pricing.date_create = rp['date_create']
+        pricing.status = rp['status']
+        pricing.user_modified = rp['user_modified']
+        pricings.append(pricing)
+
+    return pricings
+
+
+def add_pricing(price: Pricing, percent: float, db: Session, query: Query):
+    sql_raw_insert_pricing = query.INSERT_PRICING
+    cur = get_cursor(db)
+    data = (price.label, price.price_key, price.user_modified)
+    cur.execute(sql_raw_insert_pricing, data)
+    cur.connection.commit()
+    pricing_id = cur.lastrowid
+
+    sql_raw_insert_pricing_list = query.INSERT_PRICING_LIST
+    data = (percent, price.user_modified, pricing_id)
+    cur.execute(sql_raw_insert_pricing_list, data)
+    cur.connection.commit()
+

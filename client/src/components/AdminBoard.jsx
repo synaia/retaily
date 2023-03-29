@@ -63,13 +63,13 @@ export const AdminBoard = ({Content, Title, Search}) => {
                   <span className="material-icons-sharp"> receipt_long </span>
                   <h3>Sales</h3>
                 </a>
+                <a href="/#/admin/inventory">
+                  <span className="material-icons-sharp"> inventory </span>
+                  <h3>Inventory</h3>
+                </a>
                 <a href="/#/admin/users">
                   <span className="material-icons-sharp"> person_outline </span>
                   <h3>Users</h3>
-                </a>
-                <a href="/#/admin/products">
-                  <span className="material-icons-sharp"> inventory </span>
-                  <h3>Products</h3>
                 </a>
                 <a href="#">
                   <span className="material-icons-sharp"> report_gmailerrorred </span>

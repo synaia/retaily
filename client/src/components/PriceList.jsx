@@ -8,41 +8,24 @@ import { refreshProductListAction, updateProduct } from "../redux/features/produ
 import 'react-data-grid/lib/styles.css';
 
 
-export const Products = () => {
-    const products = useSelector((state) => state.product.all_products);
+export const PriceList = () => {
     const pricing_labels = useSelector((state) => state.product.pricing_labels);
+    const pricing = useSelector((state) => state.product.pricing);
     const dispatch = useDispatch();
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
-    const search = useRef();
     const gridRef = useRef(null);
 
    
     const columns = useMemo( () => {
-        // const price_columns = [
-        //     { key: 'DEFAULT', name: 'Default', editor: textEditor },
-        //     { key: 'DISC_15', name: 'Discount -15%', editor: textEditor},
-        //     { key: 'MEGA', name: 'Mega', editor: textEditor },
-        // ];
-        const price_columns = [];
-        pricing_labels.forEach( label => {
-            price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, pricing_id: label.id});
-            // return true;
-        });
-
-        // console.log(price_columns);
-        
-
-        const first_columns = [
-            { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
-            { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
-        ];
-
         return [
+            { key: 'id', name: 'ID', width: 10 },
+            { key: 'label', name: 'Label', resizable: true, width: 200, editor: textEditor},
+            { key: 'price_key', name: 'KEY', editor: textEditor, width: 200 },
+            { key: 'date_create', name: 'Date', width: 150 },
             {
-                key: 'active', 
-                name: 'Active', 
+                key: 'status', 
+                name: 'Status', 
                 width: 10, 
                 formatter({ row, onRowChange, isCellSelected }) {
                     if(row == undefined) {
@@ -50,111 +33,22 @@ export const Products = () => {
                     }
                 return (
                   <SelectCellFormatter
-                    value={row.active}
+                    value={row.status}
                     onChange={() => {
-                      onRowChange({ ...row, active: !row.active });
+                      onRowChange({ ...row, status: !row.status });
                     }}
                     isCellSelected={isCellSelected}
                   />
                 ); },
-            },
-            ...first_columns,
-            ...price_columns,
-            { key: 'code', name: 'SKU', width: 100, editor: textEditor },
+            }
           ];
     }); 
 
     
-    const get_rows = (_prodducts_) => {
-        console.log('get_rows()')
-        const _rows_ = [];
-        _prodducts_.forEach(product => {
-            const row = {
-                'id': product.id,
-                'name': product.name,
-                'cost': product.cost,
-                'price': product.price,
-                'code': product.code,
-                'active': product.active,
-            };
-            product.pricinglist.forEach(list => {
-                const price = list.price;
-                const pricelist_name = list.pricing.price_key;
-                row[pricelist_name] = price;
-            });
-    
-            _rows_.push(row)
-        });
-        return _rows_;
-    };
-   
-    
 
     useEffect(()=> {
-        let keyin = search.current?.value;
-        console.log('keyin', keyin)
-        if (keyin != '') {
-            let list_filtered = products.filter((prod) => {
-                if (prod) {
-                    let exp = keyin.replace(/\ /g, '.+').toUpperCase();
-                    let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
-                    return  has ||
-                        prod.code.toUpperCase().includes(keyin.toUpperCase());
-                } else {
-                    return false;
-                }
-            });
-            setRows(get_rows(list_filtered));
-        } else {
-            setRows(get_rows(products));
-        }
-
-    }, [products]);
-
-    const filter_rows = (event) => { 
-        const preventDefault = () => {
-            event.preventDefault();
-        };
-        // console.log(ev);
-        const { key } = event;
-
-        if (key === "/") {
-            preventDefault();
-            return;
-        }
-
-        if (key === "ArrowDown") {
-            gridRef.current.selectCell({ rowIdx: 0, idx: 1 }); 
-            return;
-        }
-
-        /** @BAWESOME trick fuck, rowIdx: 0, idx: null FIX the row undefined problem. */
-        gridRef.current.selectCell({ rowIdx: 0, idx: null }); 
-        // gridRef.current.element.blur();
-        // ev.target.focus();
-        
-        // console.log(gridRef);
-
-        let keyin = search.current?.value;
-        let list_filtered = products.filter((prod) => {
-            if (prod) {
-                let exp = keyin.replace(/\ /g, '.+').toUpperCase();
-                let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
-                return  has ||
-                    prod.code.toUpperCase().includes(keyin.toUpperCase());
-            } else {
-                return false;
-            }
-        });
-
-        setRows(get_rows(list_filtered));
-        
-        if (13 === event.keyCode) {
-            event.target.select();
-        }
-        
-    };
-
+        setRows(pricing)
+    }, [pricing]);
 
     /**
      @todo: return 0 its NOT a option.
@@ -168,28 +62,19 @@ export const Products = () => {
             return 0;
         }
     };
-    // TODO
-    // bottomSummaryRows\
 
     const rowChange = (rows, changes) => {
-        // console.log(changes);
-        // console.log(rows)
-        // console.log('---------------------------------------')
-        console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
-        // console.log(rows[changes.indexes[0]])
-
-        const pricing_id = (changes.column.pricing_id != undefined) ? changes.column.pricing_id : -1;
-
         const args = {
-            'pricing_id': pricing_id,
             'field': changes.column.key,
             'value': rows[changes.indexes[0]][changes.column.key],
-            'product_id': rows[changes.indexes[0]].id
+            'price_id': rows[changes.indexes[0]].id
         };
 
-        dispatch(refreshProductListAction(args));
+        console.log(args);
+
+        // dispatch(refreshProductListAction(args));
        
-        dispatch(updateProduct(args))
+        // dispatch(updateProduct(args))
     };
 
     const highlightsted = [];
@@ -299,9 +184,6 @@ export const Products = () => {
 
     return (
         <React.Fragment>
-            <div className="search-terminal">
-                <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar" />
-            </div>
             <DataGrid 
                 ref={gridRef}
                 columns={columns} 
@@ -311,7 +193,7 @@ export const Products = () => {
                 onCellKeyDown={handleCellKeyDown}
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                className="data-grid-product"
+                className={"data-grid-pricelist"}
             />
         </React.Fragment>
     )

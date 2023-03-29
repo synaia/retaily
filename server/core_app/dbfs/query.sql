@@ -45,6 +45,7 @@ SELECT
      p.label
 FROM pricing_list pl, pricing p
   WHERE pl.pricing_id = p.id
+   AND p.status = 1
    AND  pl.product_id = %s
 ORDER BY pl.id
 ;
@@ -55,6 +56,29 @@ SELECT
     p.price_key,
     p.label
 FROM pricing p
+WHERE
+   p.status = 1
+;
+
+--SELECT_PRICING
+SELECT
+    p.id,
+	p.label,
+    p.price_key,
+    p.date_create,
+    p.status,
+    p.user_modified
+FROM pricing p
+;
+
+--INSERT_PRICING
+INSERT INTO pricing (label, price_key, user_modified)
+  VALUES (%s, %s, %s)
+;
+
+--INSERT_PRICING_LIST
+INSERT INTO pricing_list (price, user_modified, product_id, pricing_id)
+    SELECT (p.price * %s), %s, p.id, %s FROM product p
 ;
 
 --SELECT_SALES_BY_CLIENT

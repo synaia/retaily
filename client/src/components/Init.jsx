@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { loadProducts } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
+import { getPricing } from  "../redux/features/product.feature.js";
 import { loadClients } from  "../redux/features/client.feature.js";
 import { useEffect } from "react";
 
@@ -25,6 +26,7 @@ export const Init = () => {
     dispatch(loadAllProducts());
     dispatch(loadClients());
     dispatch(getPricingLabels());
+    dispatch(getPricing());
 
     useEffect(() => {
         // // Change Theme

@@ -15,6 +15,7 @@ const initialState = {
     products: [],
     all_products: [],
     pricing_labels: [],
+    pricing: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -54,6 +55,18 @@ export const loadAllProducts = createAsyncThunk('products/load_all_products', as
 export const getPricingLabels = createAsyncThunk('products/get_pricing_labels', async () => {
     console.log('get_pricing_labels...');
     let response = await Axios.get(`${BACKEND_HOST}/products/pricing_labels`, {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+
+    return response.data;
+});
+
+export const getPricing = createAsyncThunk('products/get_pricing', async () => {
+    console.log('get_pricing [table] ...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/pricing`, {
         headers: {
             'Authorization': `bearer ${TOKEN}`,
             'store': STORE
@@ -310,7 +323,17 @@ const productsSlice = createSlice({
         }).addCase(getPricingLabels.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getPricingLabels; ${action.error.message}`
-        })
+        });
+
+        builder.addCase(getPricing.pending, (state, action) => {
+            state.loading = true
+        }).addCase(getPricing.fulfilled, (state, action) => {
+            state.loading = false
+            state.pricing = action.payload
+        }).addCase(getPricing.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR pricing_labels ; ${action.error.message}`
+        });
     }
 });
 
