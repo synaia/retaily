@@ -92,6 +92,39 @@ export const updateProduct = createAsyncThunk('product/update_product', async (a
     });
 });
 
+export const addPricing = createAsyncThunk('product/add_pricing', async (args, ) => {
+    const { pricing } = args;
+    console.log(args);
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_pricing`, pricing,  {
+        params: {
+            percent: args.percent,
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+
+export const updatePricing = createAsyncThunk('product/update_pricing', async (args, ) => {
+    const value = (args.field === 'status') ? (+ args.value) : args.value;
+    console.log(args);
+    let response = await Axios.post(`${BACKEND_HOST}/products/update_pricing`, args,  {
+        params: {
+            price_id: args.price_id,
+            field: args.field,
+            value: value
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 const updateSaleDetail = (productPickedList) => {
     const gran_total = productPickedList.reduce((x, p) => {
         return (x + (p.price_for_sale * p.inventory.quantity_for_sale));
@@ -333,6 +366,26 @@ const productsSlice = createSlice({
         }).addCase(getPricing.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR pricing_labels ; ${action.error.message}`
+        });
+
+        builder.addCase(addPricing.pending, (state, action) => {
+            state.loading = true
+        }).addCase(addPricing.fulfilled, (state, action) => {
+            state.loading = false
+            state.pricing = action.payload
+        }).addCase(addPricing.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR addPricing() ; ${action.error.message}`
+        });
+
+        builder.addCase(updatePricing.pending, (state, action) => {
+            state.loading = true
+        }).addCase(updatePricing.fulfilled, (state, action) => {
+            state.loading = false
+            state.pricing = action.payload
+        }).addCase(updatePricing.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR updatePricing() ; ${action.error.message}`
         });
     }
 });

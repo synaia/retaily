@@ -1009,7 +1009,7 @@ main .recent-orders a {
   color: var(--color-dark-variant);
   box-shadow: var(--box-shadow);
   background: var(--color-white);
-  padding: 15px;
+  padding: 18px;
   margin-bottom: 45px;
   align-items: center;
 }
@@ -1062,4 +1062,12 @@ main .recent-orders a {
 
 .price-list-t:focus + .underline-animation{
   left: 0;
+}
+
+.error-msg {
+  position: absolute;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding-left: 0px;
+  color: var(--color-danger);
 }

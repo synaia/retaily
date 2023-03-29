@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -85,12 +85,24 @@ async def get_pricing_labels(
     return pricings
 
 
-@router.post("/add_pricing")
+@router.post("/add_pricing", response_model=list[schemas.Pricing])
 async def __add_pricing(
                         price: schemas.Pricing,
                         percent: float,
                         db: Session = Depends(get_db)):
     try:
-        add_pricing(price, percent, db, query)
+        return add_pricing(price, percent, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/update_pricing", response_model=list[schemas.Pricing])
+async def __update_pricing(
+                        price_id: int,
+                        field: str,
+                        value: str,
+                        db: Session = Depends(get_db)):
+    try:
+        return update_pricing(price_id, field, value, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))

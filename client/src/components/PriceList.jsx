@@ -3,18 +3,85 @@ import { useState, useMemo } from "react";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
-import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.js";
+import { refreshProductListAction, updateProduct, addPricing, getPricing, updatePricing } from "../redux/features/product.feature.js";
 
 import 'react-data-grid/lib/styles.css';
 
 
 export const PriceList = () => {
-    const pricing_labels = useSelector((state) => state.product.pricing_labels);
     const pricing = useSelector((state) => state.product.pricing);
+    const loading = useSelector((state) => state.product.loading);
+    const errorMessage = useSelector((state) => state.product.errorMessage);
+    const [errorLabel, SetErrorLabel] = useState(null);
+    const [errorPriceKey, SetErrorPriceKey] = useState(null);
+    const [errorPercent, SetErrorPercent] = useState(null);
     const dispatch = useDispatch();
-    const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
     const gridRef = useRef(null);
+
+    const label = useRef();
+    const price_key = useRef();
+    const percent = useRef();
+
+    const cleanInput = () => {
+        label.current.value = '';
+        price_key.current.value = '';
+        percent.current.value = '';
+    };
+
+    const validateInput = (element, type) => {
+        if (element == undefined) {
+            return {'return': false, 'msg': 'Is undefined.'};
+        }
+        if (type === "number") {
+            if (!isNaN(parseFloat(element))) {
+                return {'return': true, 'msg': ''};
+            } else {
+                return {'return': false, 'msg': 'Incorrect number.'};
+            }
+        }
+        if (type === "str") {
+            const val = element == null || element.match(/^ *$/) !== null;
+            return {'return': !val, 'msg': 'Evaluation of string fail'};
+        }
+        return  {'return': false, 'msg': 'Wtf.'};
+    };
+
+    const __addPricing = () => {
+        SetErrorLabel(null);
+        SetErrorPriceKey(null);
+        SetErrorPercent(null);
+        let val = validateInput(label.current?.value, "str");
+        if (!val.return) {
+            SetErrorLabel(`${val.msg}`);
+            return;
+        }
+        val = validateInput(price_key.current?.value, "str");
+        if (!val.return) {
+            SetErrorPriceKey(`${val.msg}`);
+            return;
+        }
+        val = validateInput(percent.current?.value, "number");
+        if (!val.return) {
+            SetErrorPercent(`${val.msg}`);
+            return;
+        }
+
+        const pricing = {
+            'label': label.current?.value,
+            'price_key': price_key.current?.value,
+            'user_modified': 'user_dummy'
+        };
+
+        const args = {
+            'percent': percent.current?.value,
+            'pricing': pricing
+        };
+
+        dispatch(addPricing(args));
+
+        cleanInput();
+    };
 
    
     const columns = useMemo( () => {
@@ -47,7 +114,7 @@ export const PriceList = () => {
     
 
     useEffect(()=> {
-        setRows(pricing)
+        setRows(pricing);
     }, [pricing]);
 
     /**
@@ -69,104 +136,11 @@ export const PriceList = () => {
             'value': rows[changes.indexes[0]][changes.column.key],
             'price_id': rows[changes.indexes[0]].id
         };
-
-        console.log(args);
-
-        // dispatch(refreshProductListAction(args));
        
-        // dispatch(updateProduct(args))
+        dispatch(updatePricing(args))
     };
 
     const highlightsted = [];
-
-    const handleCellKeyDown = (args, event) => {
-        // console.log(args.mode);
-        if (args.mode === 'EDIT') return;
-        const { column, rowIdx, selectCell } = args;
-        const { idx } = column;
-        const { key, shiftKey } = event; 
-    
-        const preventDefault = () => {
-          event.preventGridDefault();
-          event.preventDefault();
-        };
-
-        if (args.mode === 'SELECT' && key === "/" ) {
-            preventDefault();
-            search.current.focus();
-            return;
-        }
-
-        let currentDiv = event.target.parentElement;
-        if (key === 'ArrowDown') {
-            currentDiv = currentDiv.nextElementSibling;
-        }
-
-        if (key === 'ArrowUp') {
-            currentDiv = currentDiv.previousElementSibling;
-        }
-
-        if(currentDiv != undefined) {
-            const row_highlightsrow = (element) => {
-                if (highlightsted.length == 1) {
-                    highlightsted[0].classList.toggle('row-selected-bg');
-                    highlightsted.pop();
-                }
-                highlightsted.push(element);
-                element.classList.toggle('row-selected-bg');
-            };
-            row_highlightsrow(currentDiv);    
-        }
-       
-        const loopOverNavigation = () => {
-          if ((key === 'ArrowRight' || (key === 'Tab' && !shiftKey)) && idx === columns.length - 1) {
-            selectCell({ rowIdx, idx: 0 });
-            preventDefault();
-          } else if ((key === 'ArrowLeft' || (key === 'Tab' && shiftKey)) && idx === 0) {
-            selectCell({ rowIdx, idx: columns.length - 1 });
-            preventDefault();
-          }
-        };
-
-        const changeRowNavigation = () => {
-            if (key === 'ArrowRight' && idx === columns.length - 1) {
-              if (rows.length === 0) return;
-              if (rowIdx === -1) {
-                selectCell({ rowIdx: 0, idx: 0 });
-              } else {
-                if (rowIdx === rows.length - 1) return;
-                selectCell({ rowIdx: rowIdx + 1, idx: 0 });
-              }
-              preventDefault();
-            } else if (key === 'ArrowLeft' && idx === 0) {
-              if (rowIdx === -1) return;
-              selectCell({ rowIdx: rowIdx - 1, idx: columns.length - 1 });
-              preventDefault();
-            }
-        };
-
-        const loopOverColumnNavigation = () => {
-            let newRowIdx;
-            if (rowIdx === -1) {
-              newRowIdx = shiftKey ? rows.length - 1 : 0;
-            } else {
-              newRowIdx = shiftKey ? rowIdx - 1 : rowIdx === rows.length - 1 ? -1 : rowIdx + 1;
-            }
-            selectCell({ rowIdx: newRowIdx, idx });
-            preventDefault();
-        };
-
-        if (cellNavigationMode === 'LOOP_OVER_ROW') {
-            loopOverNavigation();
-        } else if (cellNavigationMode === 'CHANGE_ROW') {
-            changeRowNavigation();
-        } else if (cellNavigationMode === 'LOOP_OVER_COLUMN' && key === 'Tab') {
-            loopOverColumnNavigation();
-        } else if (cellNavigationMode === 'NO_TAB' && key === 'Tab') {
-            // Need to allow default event to focus the next element
-            event.preventGridDefault();
-        }
-    }
 
     
     const highlightsrow = (v, n) => {
@@ -184,34 +158,38 @@ export const PriceList = () => {
 
     return (
         <React.Fragment>
+            {!loading && errorMessage &&  <div className="danger">{errorMessage} </div>}
             <div className="price-list">
                 <div>
                     <span>Label</span>
-                    <div class="price-list-b">
-                        <span class="material-icons-sharp price-list-i"> edit_note </span>
-                        <input type="text" class="price-list-t" />
-                        <span class="underline-animation"></span>
+                    <div className="price-list-b">
+                        <span className="material-icons-sharp price-list-i"> edit_note </span>
+                        <input type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
+                        <span className="underline-animation"></span>
                     </div>
+                    <span className="error-msg">{errorLabel}</span>
                 </div>
                 <div>
                     <span>KEY</span>
-                    <div class="price-list-b">
-                        <span class="material-icons-sharp price-list-i"> vpn_key </span>
-                        <input type="text" class="price-list-t" />
-                        <span class="underline-animation"></span>
+                    <div className="price-list-b">
+                        <span className="material-icons-sharp price-list-i"> vpn_key </span>
+                        <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
+                        <span className="underline-animation"></span>
                     </div>
+                    <span className="error-msg">{errorPriceKey}</span>
                 </div>
                 <div>
                     <span>Percent</span>
-                    <div class="price-list-b">
-                        <span class="material-icons-sharp price-list-i"> percent </span>
-                        <input type="number" class="price-list-t" />
-                        <span class="underline-animation"></span>
+                    <div className="price-list-b">
+                        <span className="material-icons-sharp price-list-i"> percent </span>
+                        <input type="number" className="price-list-t" ref={percent}  onKeyUp={() => SetErrorPercent(null)} />
+                        <span className="underline-animation"></span>
                     </div>
+                    <span className="error-msg">{errorPercent}</span>
                 </div>
                 <div>
-                <button class="fbutton fbutton-price-list">
-                    <span class="material-icons-sharp"> rocket_launch </span>
+                <button className="fbutton fbutton-price-list" onClick={() => __addPricing()}>
+                    <span className="material-icons-sharp"> rocket_launch </span>
                     <span>CREATE PRICE LIST</span>
                 </button>
                 </div>
@@ -222,7 +200,6 @@ export const PriceList = () => {
                 rows={rows} 
                 onRowsChange={rowChange}
                 rowKeyGetter={rowKeyGetter} 
-                onCellKeyDown={handleCellKeyDown}
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
                 className={"data-grid-pricelist"}

@@ -151,3 +151,16 @@ def add_pricing(price: Pricing, percent: float, db: Session, query: Query):
     cur.execute(sql_raw_insert_pricing_list, data)
     cur.connection.commit()
 
+    return read_pricing(db, query)
+
+
+def update_pricing(price_id: int, field: str, value: str, db: Session, query: Query):
+    cur = get_cursor(db)
+
+    sql_raw_update = f'UPDATE pricing SET {field} = "{value}" WHERE id = %s;'
+    cur.execute(sql_raw_update, (price_id,))
+    print(sql_raw_update)
+    cur.connection.commit()
+
+    return read_pricing(db, query)
+
