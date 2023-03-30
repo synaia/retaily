@@ -27,7 +27,7 @@ class User(Base):
     last_login = Column(DateTime)
     scope = relationship("Scope", back_populates='owner')
 
-    store = relationship("Store", back_populates='user', secondary=app_user_store)
+    stores = relationship("Store", back_populates='user', secondary=app_user_store)
 
 
 class Scope(Base):

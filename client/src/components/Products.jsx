@@ -312,7 +312,7 @@ export const Products = () => {
                 onCellKeyDown={handleCellKeyDown}
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                className="data-grid-product"
+                className="data-grid-product rdg-dark"
             />
         </React.Fragment>
     )

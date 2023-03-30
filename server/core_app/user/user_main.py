@@ -55,7 +55,7 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     scopes = [s.name for s in user.scope]
-    stores = [s.name for s in user.store]
+    stores = [s.name for s in user.stores]
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "scopes": scopes, "stores": stores, "is_active": user.is_active},

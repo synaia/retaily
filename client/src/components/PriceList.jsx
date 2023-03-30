@@ -202,7 +202,7 @@ export const PriceList = () => {
                 rowKeyGetter={rowKeyGetter} 
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                className={"data-grid-pricelist"}
+                className={"data-grid-pricelist rdg-dark"}
             />
         </React.Fragment>
     )

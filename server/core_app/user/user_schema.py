@@ -21,7 +21,7 @@ class User(BaseModel):
     date_joined: datetime | None = None
     last_login: datetime | None = None
     scope: list[Scope] = []
-    store: list[Store] = []
+    stores: list[Store] = []
 
     class Config:
         orm_mode = True

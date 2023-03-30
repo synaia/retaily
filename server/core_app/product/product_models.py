@@ -19,7 +19,8 @@ class Product(Base):
     date_create = Column(String)
     active = Column(Integer)
     image_raw = Column(String)
-    inventory = relationship("Inventory", backref='product', uselist=False)
+    user_modified = Column(String)
+    stores = relationship("Store", backref='inventory', uselist=True)
     pricinglist = relationship("PricingList", backref='product', uselist=True)
 
     # inventory = relationship("Inventory", back_populates="product")
@@ -33,25 +34,6 @@ class Product(Base):
         return 0
 
 
-class Inventory(Base):
-    __tablename__ = "app_inventory"
-
-    id = Column(Integer, primary_key=True, index=True)
-    quantity = Column(Integer)
-    product_id = Column(Integer, ForeignKey('product.id'))
-    store_id = Column(Integer, ForeignKey('app_store.id'))
-    store = relationship("Store", backref='inventory', uselist=False)
-
-    # product = relationship("Product", back_populates="inventory")
-    #
-    # store = relationship("Store",  back_populates="inventory")
-
-
-    @hybrid_property
-    def quantity_for_sale(self):
-        return 1
-
-
 class Store(Base):
     __tablename__ = "app_store"
 
@@ -62,7 +44,29 @@ class Store(Base):
 
     # inventory = relationship("Inventory", back_populates="store")
 
+    inventory = relationship("Inventory", backref='product', uselist=False)
+
     user = relationship("User", back_populates='store', secondary=app_user_store)
+
+
+class Inventory(Base):
+    __tablename__ = "app_inventory"
+
+    id = Column(Integer, primary_key=True, index=True)
+    quantity = Column(Integer)
+    product_id = Column(Integer, ForeignKey('product.id'))
+    store_id = Column(Integer, ForeignKey('app_store.id'))
+
+
+    # product = relationship("Product", back_populates="inventory")
+    #
+    # store = relationship("Store",  back_populates="inventory")
+
+
+    @hybrid_property
+    def quantity_for_sale(self):
+        return 1
+
 
 
 class Pricing(Base):

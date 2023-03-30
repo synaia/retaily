@@ -1,17 +1,19 @@
 from sqlalchemy.orm import Session
 import server.core_app.product.product_models as models
 from server.core_app.product.product_schemas import Pricing
+from server.core_app.product.product_schemas import Product
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 
-
+# TODO refactor to find DEFAULT store and NOT a list of stores for keep SIMPLE on UI
+# TODO iterate over stores and SET product.inventory.quantity TO product.quantity
 def read_products(store: str, db: Session, query: Query):
     sql_raw = query.SELECT_PRODUCT
 
     products = []
 
     cur = get_cursor(db)
-    cur.execute(sql_raw, (store, ))
+    cur.execute(sql_raw, (store, )) # TODO yeah, getting DEFAULT store from UI
     resp = cur.fetchall()
 
     for rp in resp:
@@ -30,7 +32,7 @@ def read_products(store: str, db: Session, query: Query):
         product.image_raw = rp['image_raw']
         inventory.quantity = rp['quantity']
         store.name = rp['store_name']
-        inventory.store = store
+        inventory.stores.append(store)
         product.inventory = inventory
         products.append(product)
 
@@ -161,6 +163,23 @@ def update_pricing(price_id: int, field: str, value: str, db: Session, query: Qu
     cur.execute(sql_raw_update, (price_id,))
     print(sql_raw_update)
     cur.connection.commit()
+
+    return read_pricing(db, query)
+
+
+def add_product(product: Product,  db: Session, query: Query):
+    sql_raw_insert_product = query.INSERT_PRODUCT
+    cur = get_cursor(db)
+    data = (product.name, product.cost, product.code, product.user_modified)
+    cur.execute(sql_raw_insert_product, data)
+    cur.connection.commit()
+    product_id = cur.lastrowid
+
+    # sql_raw_insert_product_pricing = query.INSERT_PRUDUCT_PRICING
+    # for s in product.inventory.stores:
+    #     data = (product., price.user_modified, pricing_id)
+    #     cur.execute(sql_raw_insert_product_pricing, data)
+    #     cur.connection.commit()
 
     return read_pricing(db, query)
 

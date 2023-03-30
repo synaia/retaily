@@ -35,6 +35,21 @@ SELECT
   ORDER BY p.id DESC
 ;
 
+--INSERT_PRODUCT
+INSERT INTO product (name, cost, code, date_create, user_modified)
+ VALUES (%s, %s, %s, NOW(), %s)
+;
+
+--INSERT_PRODUCT_INVENTORY
+INSERT INTO app_inventory (quantity, product_id, store_id)
+   VALUES (%s, %s, %s)
+;
+
+--INSERT_PRUDUCT_PRICING
+INSERT INTO pricing_list (price, user_modified, product_id, pricing_id)
+   VALUES (%s, %s, %s, %s)
+;
+
 --SELECT_PRICING_LIST
 SELECT
      pl.id,

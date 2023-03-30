@@ -26,18 +26,18 @@ class PricingList(BaseModel):
         orm_mode = True
 
 
-class Store(BaseModel):
-    name: str
-    date_create: datetime | None = None
+class Inventory(BaseModel):
+    quantity: int | None = None
+    quantity_for_sale: int | None = None
 
     class Config:
         orm_mode = True
 
 
-class Inventory(BaseModel):
-    quantity: int | None = None
-    quantity_for_sale: int | None = None
-    store: Store
+class Store(BaseModel):
+    name: str
+    date_create: datetime | None = None
+    inventory: Inventory | None = None
 
     class Config:
         orm_mode = True
@@ -56,7 +56,8 @@ class Product(BaseModel):
     active: int | None = None
     image_raw: str | None = None
     is_selected: int | None = None
-    inventory: Inventory | None = None
+    user_modified: str | None= None
+    stores: list[Store] = []
     pricinglist: list[PricingList] = []
 
     class Config:
