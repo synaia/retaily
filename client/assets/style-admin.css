@@ -1003,6 +1003,40 @@ main .recent-orders a {
   font-size: 0.9rem;
 }
 
+.new-product {
+  display: grid;
+  grid-template-rows: auto;
+  color: var(--color-dark-variant);
+  box-shadow: var(--box-shadow);
+  background: var(--color-white);
+  padding: 18px;
+  margin-bottom: 45px;
+}
+
+.new-product-p {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.new-product-x {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr;
+  gap: 1.5rem;
+}
+
+.new-product-st, .new-product-img {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.new-product-i {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
 .price-list {
   display: flex;
   gap: 20px;
@@ -1055,7 +1089,7 @@ main .recent-orders a {
   bottom: 0;
   left: -100%;
   position: absolute;
-  width: 100%;
+  width: calc(16rem);
   height: 2px;
   background-color: var(--color-primary);
 }

@@ -35,6 +35,22 @@ SELECT
   ORDER BY p.id DESC
 ;
 
+--SELECT_ALL_PRODUCT_BY_ID
+SELECT
+    p.id,
+    p.name,
+    p.cost,
+    p.price,
+    p.margin,
+    p.code,
+    p.img_path,
+    p.date_create,
+    p.active,
+    p.image_raw
+  FROM product  p
+  WHERE p.id = %s
+;
+
 --INSERT_PRODUCT
 INSERT INTO product (name, cost, code, date_create, user_modified)
  VALUES (%s, %s, %s, NOW(), %s)

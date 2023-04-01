@@ -2,8 +2,12 @@ from sqlalchemy.orm import Session
 import server.core_app.product.product_models as models
 from server.core_app.product.product_schemas import Pricing
 from server.core_app.product.product_schemas import Product
+from server.core_app.product.product_schemas import PricingList
+from server.core_app.product.product_schemas import Inventory
+from server.core_app.product.product_schemas import Store
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
+
 
 # TODO refactor to find DEFAULT store and NOT a list of stores for keep SIMPLE on UI
 # TODO iterate over stores and SET product.inventory.quantity TO product.quantity
@@ -17,9 +21,9 @@ def read_products(store: str, db: Session, query: Query):
     resp = cur.fetchall()
 
     for rp in resp:
-        product = models.Product()
-        inventory = models.Inventory()
-        store = models.Store()
+        product = Product()
+        inventory = Inventory()
+        store = Store()
         product.id = rp['id']
         product.name = rp['name']
         product.cost = rp['cost']
@@ -32,21 +36,26 @@ def read_products(store: str, db: Session, query: Query):
         product.image_raw = rp['image_raw']
         inventory.quantity = rp['quantity']
         store.name = rp['store_name']
-        inventory.stores.append(store)
-        product.inventory = inventory
+        inventory.store = store
+        product.inventory.append(inventory)
         products.append(product)
 
     return products
 
 
-def read_all_products(db: Session, query: Query):
-    sql_raw = query.SELECT_ALL_PRODUCT
+def read_all_products(db: Session, query: Query, product_id: int = -1):
+    sql_raw = query.SELECT_ALL_PRODUCT if product_id == -1 else query.SELECT_ALL_PRODUCT_BY_ID
     sql_raw_pricinglist = query.SELECT_PRICING_LIST
 
     products = []
 
     cur = get_cursor(db)
-    cur.execute(sql_raw)
+
+    if product_id == -1:
+        cur.execute(sql_raw)
+    else:
+        cur.execute(sql_raw, (product_id,))
+
     resp = cur.fetchall()
 
     for rp in resp:
@@ -175,11 +184,17 @@ def add_product(product: Product,  db: Session, query: Query):
     cur.connection.commit()
     product_id = cur.lastrowid
 
-    # sql_raw_insert_product_pricing = query.INSERT_PRUDUCT_PRICING
-    # for s in product.inventory.stores:
-    #     data = (product., price.user_modified, pricing_id)
-    #     cur.execute(sql_raw_insert_product_pricing, data)
-    #     cur.connection.commit()
+    sql_raw_insert_product_inventory = query.INSERT_PRODUCT_INVENTORY
+    for inv in product.inventory:
+        data = (inv.quantity, product_id, inv.store.id)
+        cur.execute(sql_raw_insert_product_inventory, data)
+        cur.connection.commit()
 
-    return read_pricing(db, query)
+    sql_raw_insert_product_pricing = query.INSERT_PRUDUCT_PRICING
+    for pl in product.pricinglist:
+        data = (pl.price, pl.user_modified, product_id, pl.pricing_id)
+        cur.execute(sql_raw_insert_product_pricing, data)
+        cur.connection.commit()
+
+    return read_all_products(db, query, product_id=product_id)
 

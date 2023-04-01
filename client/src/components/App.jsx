@@ -16,6 +16,7 @@ import { Products } from './Products';
 import { SearchBar } from "./SearchBar";
 import { Inventory } from './Inventory';
 import { PriceList } from "./PriceList";
+import { NewProduct } from "./NewProduct";
 
 export const App = () => {
     return (
@@ -36,6 +37,7 @@ export const App = () => {
                   <Route path="/admin/inventory" element={<AdminBoard Content={<Inventory/>} Title="Inventory" />} />
                   <Route path="/admin/inventory/products" element={<AdminBoard Content={<Products/>} Title="Products" />} />
                   <Route path="/admin/inventory/pricelist" element={<AdminBoard Content={<PriceList/>} Title="Price List" />} />
+                  <Route path="/admin/inventory/newproduct" element={<AdminBoard Content={<NewProduct/>} Title="New Product" />} />
                 </Routes>
               </Provider>
             </HashRouter>

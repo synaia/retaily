@@ -21,6 +21,17 @@ class PricingList(BaseModel):
     user_modified: str | None = None
     date_create: datetime | None = None
     pricing: Pricing | None = None
+    product_id: int | None = None
+    pricing_id: int | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class Store(BaseModel):
+    id: int | None = None
+    name: str | None = None
+    date_create: datetime | None = None
 
     class Config:
         orm_mode = True
@@ -29,25 +40,17 @@ class PricingList(BaseModel):
 class Inventory(BaseModel):
     quantity: int | None = None
     quantity_for_sale: int | None = None
-
-    class Config:
-        orm_mode = True
-
-
-class Store(BaseModel):
-    name: str
-    date_create: datetime | None = None
-    inventory: Inventory | None = None
+    store: Store | None = None
 
     class Config:
         orm_mode = True
 
 
 class Product(BaseModel):
-    id: int
+    id: int | None = None
     name: str | None = None
-    cost: float
-    price: float
+    cost: float | None = None
+    price: float | None = None
     price_for_sale: float | None = None
     margin: float | None = None
     code: str | None = None
@@ -56,8 +59,8 @@ class Product(BaseModel):
     active: int | None = None
     image_raw: str | None = None
     is_selected: int | None = None
-    user_modified: str | None= None
-    stores: list[Store] = []
+    user_modified: str | None = None
+    inventory: list[Inventory] = []
     pricinglist: list[PricingList] = []
 
     class Config:

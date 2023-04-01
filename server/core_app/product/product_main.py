@@ -2,10 +2,12 @@ import os
 import sys
 
 from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
+from fastapi import UploadFile, Response
+from server.core_app.ext.remove_bg import remove_it
 from typing import Optional
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -106,3 +108,21 @@ async def __update_pricing(
         return update_pricing(price_id, field, value, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/add_product", response_model=list[schemas.Product])
+async def __add_product(
+                        product: schemas.Product,
+                        db: Session = Depends(get_db)):
+    try:
+        return add_product(product, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/uploadfile",)
+async def  upload_file(file: UploadFile):
+    print("filename", file.filename)
+    byte_in = remove_it(file.file._file)
+    print(byte_in)
+    return byte_in

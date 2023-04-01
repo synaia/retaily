@@ -47,7 +47,7 @@ export const Inventory = () => {
                 </div>
 
                 {/* <!-- INCOME --> */}
-                <div className="income">
+                <div className="income" onClick={() => navigator('newproduct', {replace: true})}>
                     <span className="material-icons-sharp"> stacked_line_chart </span>
                     <div className="middle">
                         <div className="left">

@@ -20,7 +20,7 @@ class Product(Base):
     active = Column(Integer)
     image_raw = Column(String)
     user_modified = Column(String)
-    stores = relationship("Store", backref='inventory', uselist=True)
+    inventory = relationship("Inventory", backref='product', uselist=True)
     pricinglist = relationship("PricingList", backref='product', uselist=True)
 
     # inventory = relationship("Inventory", back_populates="product")
@@ -34,21 +34,6 @@ class Product(Base):
         return 0
 
 
-class Store(Base):
-    __tablename__ = "app_store"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True)
-    date_create = Column(DateTime)
-    # inventory = relationship("Inventory", back_populates='store_owner')
-
-    # inventory = relationship("Inventory", back_populates="store")
-
-    inventory = relationship("Inventory", backref='product', uselist=False)
-
-    user = relationship("User", back_populates='store', secondary=app_user_store)
-
-
 class Inventory(Base):
     __tablename__ = "app_inventory"
 
@@ -56,7 +41,7 @@ class Inventory(Base):
     quantity = Column(Integer)
     product_id = Column(Integer, ForeignKey('product.id'))
     store_id = Column(Integer, ForeignKey('app_store.id'))
-
+    store = relationship("Store", backref='inventory', uselist=False)
 
     # product = relationship("Product", back_populates="inventory")
     #
@@ -67,6 +52,18 @@ class Inventory(Base):
     def quantity_for_sale(self):
         return 1
 
+
+class Store(Base):
+    __tablename__ = "app_store"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, index=True)
+    date_create = Column(DateTime)
+    # inventory = relationship("Inventory", back_populates='store_owner')
+
+    # inventory = relationship("Inventory", back_populates="store")
+
+    user = relationship("User", back_populates='stores', secondary=app_user_store)
 
 
 class Pricing(Base):
