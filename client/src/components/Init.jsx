@@ -15,6 +15,7 @@ import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
 import { getPricing } from  "../redux/features/product.feature.js";
 import { loadClients } from  "../redux/features/client.feature.js";
+import { getStores } from "../redux/features/product.feature.js";
 import { useEffect } from "react";
 
 
@@ -27,6 +28,7 @@ export const Init = () => {
     dispatch(loadClients());
     dispatch(getPricingLabels());
     dispatch(getPricing());
+    dispatch(getStores());
 
     useEffect(() => {
         // // Change Theme

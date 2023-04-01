@@ -17,6 +17,7 @@ import 'react-html5-camera-photo/build/css/index.css';
 
 export const NewProduct = () => {
     const pricing = useSelector((state) => state.product.pricing);
+    const stores = useSelector((state) => state.product.stores);
     const loading = useSelector((state) => state.product.loading);
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const [errorLabel, SetErrorLabel] = useState(null);
@@ -280,33 +281,40 @@ export const NewProduct = () => {
                     <div>
                         <h3 className="new-product-st">Inventory</h3>
                         <div className="new-product-i">
-                            <div>
-                                <span>Store</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> storefront </span>
-                                    <input readOnly type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
-                                    <span className="underline-animation"></span>
+                        { stores.map((st, i) => (
+                            <React.Fragment key={i}>
+                                <div>
+                                    <span>Store</span>
+                                    <div className="price-list-b">
+                                        <span className="material-icons-sharp price-list-i"> storefront </span>
+                                        <input readOnly  value={st.name} type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
+                                        <span className="underline-animation"></span>
+                                    </div>
+                                    <span className="error-msg">{errorLabel}</span>
                                 </div>
-                                <span className="error-msg">{errorLabel}</span>
-                            </div>
-                            <div>
-                                <span>Quantity</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> numbers </span>
-                                    <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
-                                    <span className="underline-animation"></span>
+                                <div>
+                                    <span>Quantity</span>
+                                    <div className="price-list-b">
+                                        <span className="material-icons-sharp price-list-i"> numbers </span>
+                                        <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
+                                        <span className="underline-animation"></span>
+                                    </div>
+                                    <span className="error-msg">{errorPriceKey}</span>
                                 </div>
-                                <span className="error-msg">{errorPriceKey}</span>
-                            </div>
+                            </React.Fragment>
+                            ))
+                        }
                         </div>
 
                         <h3 className="new-product-st">Pricing</h3>
                         <div className="new-product-i">
+                        { pricing.map((pr, i) => (
+                            <React.Fragment key={i}>
                             <div>
                                 <span>Label</span>
                                 <div className="price-list-b">
                                     <span className="material-icons-sharp price-list-i"> label </span>
-                                    <input readOnly type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
+                                    <input readOnly type="text" value={pr.label}  className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
                                     <span className="underline-animation"></span>
                                 </div>
                                 <span className="error-msg">{errorLabel}</span>
@@ -320,24 +328,10 @@ export const NewProduct = () => {
                                 </div>
                                 <span className="error-msg">{errorPriceKey}</span>
                             </div>
-                            <div>
-                                <span>Label</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> label </span>
-                                    <input readOnly type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
-                                    <span className="underline-animation"></span>
-                                </div>
-                                <span className="error-msg">{errorLabel}</span>
-                            </div>
-                            <div>
-                                <span>Price</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> attach_money </span>
-                                    <input type="number" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
-                                    <span className="underline-animation"></span>
-                                </div>
-                                <span className="error-msg">{errorPriceKey}</span>
-                            </div>
+                            </React.Fragment>
+                          ))
+                        }
+                            
                         </div>
                     </div>
                     <div className="new-product-img">

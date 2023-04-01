@@ -11,7 +11,7 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -88,13 +88,22 @@ async def update_product(
 
 
 @router.get("/pricing", response_model=list[schemas.Pricing])
-async def get_pricing_labels(
+async def get_pricing(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     pricings = read_pricing(db, query)
     return pricings
+
+
+@router.get("/stores", response_model=list[schemas.Store])
+async def get_pricing(
+        db: Session = Depends(get_db),
+        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    stores = read_stores(db, query)
+    return stores
 
 
 @router.post("/add_pricing", response_model=list[schemas.Pricing])

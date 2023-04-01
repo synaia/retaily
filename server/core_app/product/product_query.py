@@ -176,6 +176,20 @@ def update_pricing(price_id: int, field: str, value: str, db: Session, query: Qu
     return read_pricing(db, query)
 
 
+def read_stores(db: Session, query: Query):
+    sql_raw = query.SELECT_STORES
+    stores = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+    for rp in resp:
+        store = Store()
+        store.id = rp['id']
+        store.name = rp['name']
+        stores.append(store)
+    return stores
+
+
 def add_product(product: Product,  db: Session, query: Query):
     sql_raw_insert_product = query.INSERT_PRODUCT
     cur = get_cursor(db)

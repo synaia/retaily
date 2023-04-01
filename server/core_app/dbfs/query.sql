@@ -267,3 +267,10 @@ UPDATE sale
   SET status = 'RETURN'
 WHERE id = %s
 ;
+
+--SELECT_STORES
+ SELECT
+      s.id,
+      s.name
+FROM app_store s
+;
