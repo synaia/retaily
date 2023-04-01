@@ -2,19 +2,26 @@ import os
 import sys
 
 from fastapi import APIRouter, Depends, HTTPException, Security, Header, status
-from fastapi import UploadFile, Response
+from fastapi import UploadFile, Response, WebSocket, WebSocketDisconnect
+from aiocache import Cache
 from server.core_app.ext.remove_bg import remove_it
 from typing import Optional
 from sqlalchemy.orm import Session
+from aiocache import Cache
+import asyncio
+
 from server.core_app.database import get_db
 from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
 from server.core_app.dbfs.Query import Query
+from server.core_app.websocket.connectionmanager import ConnectionManager, send_periodically
 
 
 router = APIRouter(prefix='/products', tags=['products'])
+myvar = Cache(Cache.MEMORY)
+
 gettrace = getattr(sys, 'gettrace', None)
 # is debug mode :-) ?
 if gettrace():
@@ -31,6 +38,9 @@ query = Query(path)
 async def startup_event():
     print('Router: Init startup_event....')
     # query = get_query()
+    await myvar.set('sharable', {'image_base64': None})
+    await myvar.set('sharable_per_client', list())
+    await myvar.set('client_uuid_list', list())
     print()
 
 
@@ -120,9 +130,38 @@ async def __add_product(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/uploadfile",)
-async def  upload_file(file: UploadFile):
+@router.post("/uploadfilelocal",)
+async def upload_file(file: UploadFile):
     print("filename", file.filename)
-    byte_in = remove_it(file.file._file)
-    print(byte_in)
-    return byte_in
+    image_base64 = remove_it(file.file._file)
+    return image_base64
+
+
+@router.post("/uploadfile/{client_uuid}",)
+async def upload_file(file: UploadFile, client_uuid: str):
+    client_uuid_list = await myvar.get('client_uuid_list')
+    if client_uuid not in client_uuid_list:
+        return {"message": f"UUID {client_uuid} is not a valid client.", "code": "fail"}
+
+    print("filename", file.filename)
+    image_base64 = remove_it(file.file._file)
+
+    sharable = {'image_base64': image_base64.decode('ascii')}
+    await myvar.set('sharable', sharable)
+    sharable_per_client = await myvar.get('sharable_per_client')
+    for id in client_uuid_list:
+        if id == client_uuid:
+            sharable_per_client.append({'client_uuid': id, 'sharable': sharable})
+            await myvar.set('sharable_per_client', sharable_per_client)
+
+    return {"message": f"UUID {client_uuid} nice.", "code": "success"}
+
+
+@router.websocket("/ws/{client_uuid}")
+async def websocket_endpoint(websocket: WebSocket, client_uuid: str):
+    manager = ConnectionManager()
+    await manager.connect(websocket, client_uuid, myvar=myvar)
+    await websocket.send_json({'Welcome nigga':  client_uuid})
+    print('Wating for new events [send_periodically] ....')
+    await asyncio.create_task(send_periodically(websocket, manager, client_uuid, 0.9, myvar=myvar))
+

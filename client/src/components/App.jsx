@@ -17,6 +17,7 @@ import { SearchBar } from "./SearchBar";
 import { Inventory } from './Inventory';
 import { PriceList } from "./PriceList";
 import { NewProduct } from "./NewProduct";
+import { TakePhoto } from "./TakePhoto";
 
 export const App = () => {
     return (
@@ -38,6 +39,7 @@ export const App = () => {
                   <Route path="/admin/inventory/products" element={<AdminBoard Content={<Products/>} Title="Products" />} />
                   <Route path="/admin/inventory/pricelist" element={<AdminBoard Content={<PriceList/>} Title="Price List" />} />
                   <Route path="/admin/inventory/newproduct" element={<AdminBoard Content={<NewProduct/>} Title="New Product" />} />
+                  <Route path="/admin/inventory/takephoto" element={<TakePhoto />} />
                 </Routes>
               </Provider>
             </HashRouter>

@@ -6,9 +6,9 @@ from PIL import Image
 
 def remove_it(file):
     infile = Image.open(file)
+    infile.thumbnail((300, 200), Image.ANTIALIAS)
     newfile = remove(infile) # remove bg
     newfile.save("newfile-rembg.png")
-    newfile = newfile.resize((300, 300)) # FIX to ratio w h
     buf = io.BytesIO()
     newfile.save(buf, format='PNG')
     byte_im = buf.getvalue()

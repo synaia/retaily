@@ -3,6 +3,7 @@ import sys
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+# from starlette.middleware.cors import CORSMiddleware
 import server.core_app.product.product_main as product_main
 import server.core_app.user.user_main as user_main
 import server.core_app.client.client_main as client_main
@@ -28,6 +29,10 @@ origins = [
     "https://10.0.0.6:9080",
     "https://10.0.0.62:9080",
     "https://10.0.0.233:9080",
+    "https://10.0.0.61:9080",
+    "https://10.0.0.6:9080",
+    "https://10.0.0.6:8001",
+    "https://localhost:8001",
 ]
 
 app = FastAPI(ssl_keyfile=key_pem, ssl_certfile=public_pem)
