@@ -140,7 +140,7 @@ async def __add_product(
 
 
 @router.post("/uploadfilelocal",)
-async def upload_file(file: UploadFile):
+async def uploadfilelocal(file: UploadFile):
     print("filename", file.filename)
     image_base64 = remove_it(file.file._file)
     return image_base64
