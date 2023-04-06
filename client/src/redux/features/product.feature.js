@@ -13,6 +13,7 @@ import { storeInfo } from "../../common/store-info";
 const initialState = {
     loading: false,
     products: [],
+    products_inv: [],
     all_products: [],
     pricing_labels: [],
     pricing: [],
@@ -50,6 +51,21 @@ export const loadAllProducts = createAsyncThunk('products/load_all_products', as
         }
     });
 
+    return response.data;
+});
+
+
+export const getProductsByInventory = createAsyncThunk('products/getProductsByInventory', async (store_name) => {
+    console.log('getProductsByInventory ...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv`, {
+        params: {
+            store_name: store_name
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
     return response.data;
 });
 
@@ -440,6 +456,16 @@ const productsSlice = createSlice({
         }).addCase(addProduct.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR addProduct() ; ${action.error.message}`
+        });
+
+        builder.addCase(getProductsByInventory.pending, (state, action) => {
+            state.loading = true
+        }).addCase(getProductsByInventory.fulfilled, (state, action) => {
+            state.loading = false
+            state.products_inv = action.payload
+        }).addCase(getProductsByInventory.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`
         });
     }
 });

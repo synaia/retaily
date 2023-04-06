@@ -274,3 +274,14 @@ WHERE id = %s
       s.name
 FROM app_store s
 ;
+
+--SELECT_PRODUCT_INV
+ SELECT
+      i.id,
+      i.quantity,
+      st.name
+ FROM app_inventory i, app_store st
+  WHERE i.store_id = st.id
+   AND  i.product_id = %s
+   AND  st.name = %s
+;

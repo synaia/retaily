@@ -109,6 +109,50 @@ def read_pricing_labels(db: Session, query: Query):
     return pricings
 
 
+def read_inv_products(store_name: str, db: Session, query: Query):
+    sql_raw = query.SELECT_ALL_PRODUCT
+    sql_raw_product_inv = query.SELECT_PRODUCT_INV
+
+    products = []
+
+    cur = get_cursor(db)
+
+    cur.execute(sql_raw)
+
+    resp = cur.fetchall()
+
+    for rp in resp:
+        product = Product()
+        product.id = rp['id']
+        product.name = rp['name']
+        product.cost = rp['cost']
+        product.price = rp['price']
+        product.margin = rp['margin']
+        product.code = rp['code']
+        product.img_path = rp['img_path']
+        product.date_create = rp['date_create']
+        product.active = rp['active']
+        product.image_raw = rp['image_raw']
+
+        cur.execute(sql_raw_product_inv, (product.id, store_name))
+        inv = cur.fetchall()
+        invlist = []
+        for l in inv:
+            inventory = Inventory()
+            store = Store()
+            inventory.id = l['id']
+            inventory.quantity = l['quantity']
+            store.name = l['name']
+            inventory.store = store
+            invlist.append(inventory)
+
+        product.inventory = invlist
+
+        products.append(product)
+
+    return products
+
+
 def update_one(pricing_id: int, field: str, value: str, product_id: int, db: Session):
     print(f'field: {field}, value: {value}, price_column: {pricing_id}')
     # product = db.query(models.Product).get(product_id)
@@ -193,9 +237,10 @@ def read_stores(db: Session, query: Query):
 
 def add_product(product: Product,  db: Session, query: Query):
     image_raw = image_to_base64(product.img_path)
+    image_raw = f'data:image/png;base64,{image_raw}' if image_raw is not None else image_raw
     sql_raw_insert_product = query.INSERT_PRODUCT
     cur = get_cursor(db)
-    data = (product.name, product.cost, product.code, product.user_modified, f'data:image/png;base64,{image_raw}')
+    data = (product.name, product.cost, product.code, product.user_modified, image_raw)
     cur.execute(sql_raw_insert_product, data)
     cur.connection.commit()
     product_id = cur.lastrowid

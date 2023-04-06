@@ -6,7 +6,10 @@ from PIL import Image
 
 def image_to_base64(file_name):
     if isinstance(file_name, str):
-        file_name = Image.open(f'../uploaded/{file_name}.png')
+        try:
+            file_name = Image.open(f'../uploaded/{file_name}.png')
+        except Exception as ex:
+            return None
 
     buf = BytesIO()
     file_name.save(buf, format='PNG')

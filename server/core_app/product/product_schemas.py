@@ -38,6 +38,7 @@ class Store(BaseModel):
 
 
 class Inventory(BaseModel):
+    id: int | None = None
     quantity: int | None = None
     quantity_for_sale: int | None = None
     store: Store | None = None
