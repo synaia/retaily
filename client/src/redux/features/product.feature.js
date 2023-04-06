@@ -341,7 +341,7 @@ const refreshProductList = (state, action) => {
 };
 
 const putNewProductInList = (state, action) => {
-    const { product } = action.payload[0]
+    const product = action.payload[0]
     const products = [...state.all_products];
     const index = products.findIndex(prod => prod.id == product.id);
     products[index] = product;

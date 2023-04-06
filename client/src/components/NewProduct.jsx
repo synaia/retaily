@@ -66,14 +66,32 @@ export const NewProduct = () => {
             cost: product_cost.current?.value,
             code: product_code.current?.value,
             user_modified: 'user1',
+            img_path: v_uuid,
             inventory: inventory,
             pricinglist: pricinglist
         };
+        
 
         // console.log(product);
         dispatch(addProduct(product))
     };
 
+    // FIX : weak func because asumMe # 1 as default price INPUT.
+    useEffect(() => {
+        const pricetag = document.querySelector('.pricing');
+        if (pricetag != undefined && pricingRef[1].current != undefined) {
+            pricetag.addEventListener("keyup", (event) => {
+                pricing.forEach((p) => {
+                    if (pricingRef[p.id].current != undefined) {
+                        const val = pricingRef[1].current.value;
+                        if (p.id != 1) {
+                            pricingRef[p.id].current.value = val;
+                        }
+                    }
+                });
+            });
+        }
+    }, [pricing, pricingRef]);
 
     const validateInput = (element, type) => {
         if (element == undefined) {
@@ -97,10 +115,11 @@ export const NewProduct = () => {
     const removeBackground = (image) => {
         const form = new FormData();
         form.append("file", image);
+        // form.append("client_uuid", v_uuid);
       
         const options = {
             method: 'POST',
-            url: 'https://localhost:8500/products/uploadfilelocal',
+            url: `https://localhost:8500/products/uploadfilelocal/${v_uuid}`,
             headers: {
                 'Content-Type': 'multipart/form-data;',
             },
@@ -144,7 +163,7 @@ export const NewProduct = () => {
     useEffect(() => {
         const client_uuid = uuid();
         Set_v_uuid(client_uuid);
-        var ws = new WebSocket(`wss://10.0.0.6:8500/products/ws/${client_uuid}`);
+        var ws = new WebSocket(`wss://10.0.0.62:8500/products/ws/${client_uuid}`);
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);
             if (data.sharable != undefined) {
@@ -157,7 +176,7 @@ export const NewProduct = () => {
     }, []);
 
     const generateQR = async (__uuid) => {
-        const url = `https://10.0.0.6:9080/#/admin/inventory/takephoto?q=${__uuid}`;
+        const url = `https://10.0.0.62:9080/#/admin/inventory/takephoto?q=${__uuid}`;
         console.log(url);
         Set_v_uuid(__uuid);
         try {
@@ -233,7 +252,7 @@ export const NewProduct = () => {
                                 <span>{pr.label}</span>
                                 <div className="price-list-b">
                                     <span className="material-icons-sharp price-list-i"> attach_money </span>
-                                    <input type="number" className="price-list-t" ref={pricingRef[pr.id]} onKeyUp={() => SetErrorPriceKey(null)} />
+                                    <input type="number" className="price-list-t pricing" ref={pricingRef[pr.id]}  />
                                     <span className="underline-animation"></span>
                                 </div>
                                 <span className="error-msg">{errorPriceKey}</span>

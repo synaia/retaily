@@ -139,10 +139,10 @@ async def __add_product(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/uploadfilelocal",)
-async def uploadfilelocal(file: UploadFile):
-    print("filename", file.filename)
-    image_base64 = remove_it(file.file._file)
+@router.post("/uploadfilelocal/{client_uuid}",)
+async def uploadfilelocal(file: UploadFile, client_uuid: str):
+    print("client_uuid", client_uuid)
+    image_base64 = remove_it(file.file._file, client_uuid)
     return image_base64
 
 
@@ -153,9 +153,9 @@ async def upload_file(file: UploadFile, client_uuid: str):
         return {"message": f"UUID {client_uuid} is not a valid client.", "code": "fail"}
 
     print("filename", file.filename)
-    image_base64 = remove_it(file.file._file)
+    image_base64 = remove_it(file.file._file, client_uuid)
 
-    sharable = {'image_base64': image_base64.decode('ascii')}
+    sharable = {'image_base64': image_base64}
     await myvar.set('sharable', sharable)
     sharable_per_client = await myvar.get('sharable_per_client')
     for id in client_uuid_list:

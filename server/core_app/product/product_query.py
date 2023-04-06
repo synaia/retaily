@@ -7,6 +7,7 @@ from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import Store
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
+from server.core_app.ext.remove_bg import image_to_base64
 
 
 # TODO refactor to find DEFAULT store and NOT a list of stores for keep SIMPLE on UI
@@ -191,9 +192,10 @@ def read_stores(db: Session, query: Query):
 
 
 def add_product(product: Product,  db: Session, query: Query):
+    image_raw = image_to_base64(product.img_path)
     sql_raw_insert_product = query.INSERT_PRODUCT
     cur = get_cursor(db)
-    data = (product.name, product.cost, product.code, product.user_modified)
+    data = (product.name, product.cost, product.code, product.user_modified, f'data:image/png;base64,{image_raw}')
     cur.execute(sql_raw_insert_product, data)
     cur.connection.commit()
     product_id = cur.lastrowid
