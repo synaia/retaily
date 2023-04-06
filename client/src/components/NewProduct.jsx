@@ -1,18 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import { useState, useMemo } from "react";
-import DataGrid from 'react-data-grid';
-import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
+import axios from "axios";
 import QRCode from "qrcode";
-
 import Camera, { FACING_MODES, IMAGE_TYPES } from "react-html5-camera-photo";
 
-import { refreshProductListAction, updateProduct, addPricing, getPricing, updatePricing } from "../redux/features/product.feature.js";
+import { refreshProductListAction, addProduct } from "../redux/features/product.feature.js";
 import { uuid } from "../util/Utils.js";
-import axios from "axios";
 
-import 'react-data-grid/lib/styles.css';
+
 import 'react-html5-camera-photo/build/css/index.css';
+import { Inventory } from "./Inventory.jsx";
 
 
 export const NewProduct = () => {
@@ -24,22 +22,58 @@ export const NewProduct = () => {
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
     const [errorPercent, SetErrorPercent] = useState(null);
     const dispatch = useDispatch();
-    const [rows, setRows] = useState([]);
-    const gridRef = useRef(null);
 
     const [image, SetImage] = useState(null);
     const [v_uuid, Set_v_uuid] = useState(null);
     const [imageURL, SetImageURL] = useState(null);
 
-    const label = useRef();
-    const price_key = useRef();
-    const percent = useRef();
+    const product_name = useRef();
+    const product_cost = useRef();
+    const product_code = useRef();
 
-    const cleanInput = () => {
-        label.current.value = '';
-        price_key.current.value = '';
-        percent.current.value = '';
+    const storesRef =  [];
+    stores.forEach( (st) => {
+        storesRef[st.id] = React.createRef();
+    });
+
+    const pricingRef =  [];
+    pricing.forEach( (p) => {
+        pricingRef[p.id] = React.createRef();
+    });
+
+    const __addProduct = () => {
+        const inventory = [];
+        stores.forEach( (st) => {
+            let inv = {
+                quantity: storesRef[st.id].current?.value,
+                store: st
+            }
+            inventory.push(inv);
+        });
+
+        const pricinglist = [];
+        pricing.forEach((p) => {
+            let price = {
+                pricing_id: p.id,
+                price: pricingRef[p.id].current?.value,
+                user_modified: 'user1'
+            };
+            pricinglist.push(price);
+        });
+
+        const product = {
+            name: product_name.current?.value,
+            cost: product_cost.current?.value,
+            code: product_code.current?.value,
+            user_modified: 'user1',
+            inventory: inventory,
+            pricinglist: pricinglist
+        };
+
+        // console.log(product);
+        dispatch(addProduct(product))
     };
+
 
     const validateInput = (element, type) => {
         if (element == undefined) {
@@ -57,114 +91,6 @@ export const NewProduct = () => {
             return {'return': !val, 'msg': 'Evaluation of string fail'};
         }
         return  {'return': false, 'msg': 'Wtf.'};
-    };
-
-    const __addPricing = () => {
-        SetErrorLabel(null);
-        SetErrorPriceKey(null);
-        SetErrorPercent(null);
-        let val = validateInput(label.current?.value, "str");
-        if (!val.return) {
-            SetErrorLabel(`${val.msg}`);
-            return;
-        }
-        val = validateInput(price_key.current?.value, "str");
-        if (!val.return) {
-            SetErrorPriceKey(`${val.msg}`);
-            return;
-        }
-        val = validateInput(percent.current?.value, "number");
-        if (!val.return) {
-            SetErrorPercent(`${val.msg}`);
-            return;
-        }
-
-        const pricing = {
-            'label': label.current?.value,
-            'price_key': price_key.current?.value,
-            'user_modified': 'user_dummy'
-        };
-
-        const args = {
-            'percent': percent.current?.value,
-            'pricing': pricing
-        };
-
-        dispatch(addPricing(args));
-
-        cleanInput();
-    };
-
-   
-    const columns = useMemo( () => {
-        return [
-            { key: 'id', name: 'ID', width: 10 },
-            { key: 'label', name: 'Label', resizable: true, width: 200, editor: textEditor},
-            { key: 'price_key', name: 'KEY', editor: textEditor, width: 200 },
-            { key: 'date_create', name: 'Date', width: 150 },
-            {
-                key: 'status', 
-                name: 'Status', 
-                width: 10, 
-                formatter({ row, onRowChange, isCellSelected }) {
-                    if(row == undefined) {
-                        console.log('undefined row')
-                    }
-                return (
-                  <SelectCellFormatter
-                    value={row.status}
-                    onChange={() => {
-                      onRowChange({ ...row, status: !row.status });
-                    }}
-                    isCellSelected={isCellSelected}
-                  />
-                ); },
-            }
-          ];
-    }); 
-
-    
-
-    useEffect(()=> {
-        setRows(pricing);
-    }, [pricing]);
-
-    /**
-     @todo: return 0 its NOT a option.
-    **/
-    const rowKeyGetter = (row) => {
-        // console.log('aqqui: ', row);
-        if (row != undefined) {
-            return row.id;
-        } else {
-            console.log('WARNING rowKeyGetter row undefined')
-            return 0;
-        }
-    };
-
-    const rowChange = (rows, changes) => {
-        const args = {
-            'field': changes.column.key,
-            'value': rows[changes.indexes[0]][changes.column.key],
-            'price_id': rows[changes.indexes[0]].id
-        };
-       
-        dispatch(updatePricing(args))
-    };
-
-    const highlightsted = [];
-
-    
-    const highlightsrow = (v, n) => {
-        if (highlightsted.length == 1) {
-            highlightsted[0].classList.toggle('row-selected-bg');
-            highlightsted.pop();
-        }
-
-        const e = n.target.parentElement;
-        highlightsted.push(e);
-        e.classList.toggle('row-selected-bg');
-        
     };
 
 
@@ -241,6 +167,8 @@ export const NewProduct = () => {
           console.error(err)
         }
     };
+
+   
    
 
     return (
@@ -252,7 +180,7 @@ export const NewProduct = () => {
                         <span>Name</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> edit_note </span>
-                            <input type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
+                            <input type="text" className="price-list-t" ref={product_name} onKeyUp={() => SetErrorLabel(null)} />
                             <span className="underline-animation"></span>
                         </div>
                         <span className="error-msg">{errorLabel}</span>
@@ -261,7 +189,7 @@ export const NewProduct = () => {
                         <span>Cost</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> attach_money </span>
-                            <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
+                            <input type="text" className="price-list-t" ref={product_cost} onKeyUp={() => SetErrorPriceKey(null)} />
                             <span className="underline-animation"></span>
                         </div>
                         <span className="error-msg">{errorPriceKey}</span>
@@ -270,7 +198,7 @@ export const NewProduct = () => {
                         <span>SKU (code)</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> numbers </span>
-                            <input type="number" className="price-list-t" ref={percent}  onKeyUp={() => SetErrorPercent(null)} />
+                            <input type="number" className="price-list-t" ref={product_code} onKeyUp={() => SetErrorPercent(null)} />
                             <span className="underline-animation"></span>
                         </div>
                         <span className="error-msg">{errorPercent}</span>
@@ -284,19 +212,10 @@ export const NewProduct = () => {
                         { stores.map((st, i) => (
                             <React.Fragment key={i}>
                                 <div>
-                                    <span>Store</span>
-                                    <div className="price-list-b">
-                                        <span className="material-icons-sharp price-list-i"> storefront </span>
-                                        <input readOnly  value={st.name} type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
-                                        <span className="underline-animation"></span>
-                                    </div>
-                                    <span className="error-msg">{errorLabel}</span>
-                                </div>
-                                <div>
-                                    <span>Quantity</span>
+                                    <span>{st.name}</span>
                                     <div className="price-list-b">
                                         <span className="material-icons-sharp price-list-i"> numbers </span>
-                                        <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
+                                        <input type="text" className="price-list-t" ref={storesRef[st.id]} onKeyUp={() => SetErrorPriceKey(null)} />
                                         <span className="underline-animation"></span>
                                     </div>
                                     <span className="error-msg">{errorPriceKey}</span>
@@ -311,19 +230,10 @@ export const NewProduct = () => {
                         { pricing.map((pr, i) => (
                             <React.Fragment key={i}>
                             <div>
-                                <span>Label</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> label </span>
-                                    <input readOnly type="text" value={pr.label}  className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
-                                    <span className="underline-animation"></span>
-                                </div>
-                                <span className="error-msg">{errorLabel}</span>
-                            </div>
-                            <div>
-                                <span>Price</span>
+                                <span>{pr.label}</span>
                                 <div className="price-list-b">
                                     <span className="material-icons-sharp price-list-i"> attach_money </span>
-                                    <input type="number" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
+                                    <input type="number" className="price-list-t" ref={pricingRef[pr.id]} onKeyUp={() => SetErrorPriceKey(null)} />
                                     <span className="underline-animation"></span>
                                 </div>
                                 <span className="error-msg">{errorPriceKey}</span>
@@ -349,12 +259,12 @@ export const NewProduct = () => {
                 </div>
 
                 <div className="new-product-but">
-                    <button className="fbutton fbutton-price-list" >
+                    <button className="fbutton fbutton-price-list" onClick={() => __addProduct()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
                         <span>CREATE PRODUCT</span>
                     </button>
                     <div></div>
-                    <input type="file"  accept="image/png" onChange={fireImage} className="fbutton" />
+                    <input type="file"  accept="image/png, image/jpg" onChange={fireImage} className="fbutton" />
 
                     <button className="fbutton fbutton-price-list" onClick={() => SetImageURL(null)}>
                         <span className="material-icons-sharp"> add_a_photo </span>

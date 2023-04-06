@@ -1064,11 +1064,11 @@ main .recent-orders a {
 
 .new-product-img img {
   /* border: 1px solid var(--color-info-dark); */
-  max-width: 14rem;
-  max-height: 16rem;
+  max-width: calc(100% - 150px);
+  max-height: calc(100% - 30px);
   position: absolute;
-  left: 50%;
-  top: -5%;
+  left: 30%;
+  top: -3%;
   transform: translateX(-50%) translateY( 10%);
 }
 
