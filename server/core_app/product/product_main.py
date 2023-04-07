@@ -11,7 +11,7 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty, reorder_inventory_qty
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -177,13 +177,26 @@ async def get_inventory_head(
 @router.post("/update_next_qty",)
 async def update_next_qty(
                         next_quantity: int,
+                        user_updated: str,
                         product_id: int,
                         store_id: int,
                         db: Session = Depends(get_db),
                         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return update_next_inventory_qty(next_quantity, product_id, store_id, db, query)
+        return update_next_inventory_qty(next_quantity, user_updated,  product_id, store_id, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/close_inventory", response_model=schemas.InventoryHead)
+async def close_inventory(
+                        store: schemas.Store,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return reorder_inventory_qty(store, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

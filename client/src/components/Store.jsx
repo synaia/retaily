@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
-import { getProductsByInventory, openInventory, getInventoryHead, updateNextQty } from "../redux/features/product.feature.js";
+import { getProductsByInventory, openInventory, closeInventory, getInventoryHead, updateNextQty } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 
 
@@ -44,6 +44,11 @@ export const Store = () => {
     useEffect(() => {
         console.log('inventory_head', inventory_head);
         set_inventory_open(inventory_head.id != undefined);
+        // if (inventory_head.id != undefined) {
+        //     set_inventory_open(inventory_head.date_close == undefined)
+        // } else {
+        //     set_inventory_open(false);
+        // }
     }, [inventory_head]);
 
     const __openInventory = () => {
@@ -53,7 +58,18 @@ export const Store = () => {
             store: products_inv[0].inventory[0].store
         }
         dispatch(openInventory(head))
+        dispatch(getProductsByInventory(params.store_name));
         set_inventory_open(true);
+    };
+
+    const __closeinventory = () => {
+        if (!confirm('ARE YOU SURE?')) {
+            return;
+        }
+        const store  = products_inv[0].inventory[0].store;
+        dispatch(closeInventory(store));
+        dispatch(getProductsByInventory(params.store_name));
+        set_inventory_open(false);
     };
 
 
@@ -211,6 +227,7 @@ export const Store = () => {
             'field': changes.column.key,
             'prev_quantity': prod.inventory[0].quantity,
             'next_quantity': rows[changes.indexes[0]][changes.column.key],
+            'user_updated': 'user#1',
             'product_id': product_id,
             'store_id': products_inv[0].inventory[0].store.id
         };
@@ -366,7 +383,7 @@ export const Store = () => {
                     </button>
                 }
                 {!loading && is_inventory_open &&
-                    <button className="fbutton fbutton-price-list" onClick={() => alert('CLOSE INVENTORY')}>
+                    <button className="fbutton fbutton-price-list" onClick={() => __closeinventory()}>
                         <span className="material-icons-sharp"> verified </span>
                         <span>CLOSE INVENTORY</span>
                     </button>

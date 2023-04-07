@@ -302,6 +302,7 @@ SELECT
  FROM app_inventory_head h, app_store st
 	WHERE h.store_id = st.id
 	AND st.name = %s
+	AND h.status = 0
 ;
 
 --INSERT_INVENTORY_HEAD
@@ -309,12 +310,47 @@ INSERT INTO app_inventory_head (name, memo, store_id)
  VALUES (%s, %s, %s)
 ;
 
+--PREPARE_FOR_INVENTORY
+UPDATE
+     app_inventory
+  SET
+     next_quantity = quantity,
+     prev_quantity = quantity,
+     status = 'waiting'
+WHERE
+     store_id = %s
+;
+
+--REORDER_INVENTORY
+UPDATE
+     app_inventory
+  SET
+     quantity = next_quantity,
+     status = 'quiet'
+WHERE
+     store_id = %s
+ AND status = 'changed'
+;
+
 --UPDATE_INVENTORY_NEXT
 UPDATE
      app_inventory
   SET
-     next_quantity = %s
+     next_quantity = %s,
+     user_updated = %s,
+     last_update = NOW(),
+     status = 'changed'
   WHERE
         product_id = %s
    AND  store_id = %s
+;
+
+--CLOSE_INVENTORY_HEAD
+UPDATE
+     app_inventory_head
+SET
+	 date_close = NOW(),
+     status = 1
+WHERE
+	store_id = %s
 ;

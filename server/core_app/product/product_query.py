@@ -293,21 +293,40 @@ def read_inventory_head(store_name: str, db: Session, query: Query):
 
 def add_new_inventory_head(inventory_head: InventoryHead,  db: Session, query: Query):
     sql_raw_insert_inv_head = query.INSERT_INVENTORY_HEAD
+    sql_raw_prepare_for_inv = query.PREPARE_FOR_INVENTORY
     cur = get_cursor(db)
     data = (inventory_head.name, inventory_head.memo, inventory_head.store.id)
     cur.execute(sql_raw_insert_inv_head, data)
     cur.connection.commit()
     inv_head_id = cur.lastrowid
 
+    data = (inventory_head.store.id,)
+    cur.execute(sql_raw_prepare_for_inv, data)
+    cur.connection.commit()
+
     return read_inventory_head(inventory_head.store.name, db, query)
 
 
-def update_next_inventory_qty(next_quantity: int, product_id: int, store_id: int,  db: Session, query: Query):
+def update_next_inventory_qty(next_quantity: int, user_updated: str, product_id: int, store_id: int,  db: Session, query: Query):
     sql_raw_update_next_inventory = query.UPDATE_INVENTORY_NEXT
     cur = get_cursor(db)
-    data = (next_quantity, product_id, store_id)
+    data = (next_quantity, user_updated, product_id, store_id)
     cur.execute(sql_raw_update_next_inventory, data)
     cur.connection.commit()
     app_inventory_id = cur.lastrowid
 
     return {'next_quantity': next_quantity, 'product_id': product_id, 'store_id': store_id}
+
+
+def reorder_inventory_qty(store: Store,  db: Session, query: Query):
+    sql_raw_reorder_inv = query.REORDER_INVENTORY
+    sql_raw_close_inv = query.CLOSE_INVENTORY_HEAD
+    cur = get_cursor(db)
+    data = (store.id,)
+    cur.execute(sql_raw_reorder_inv, data)
+    cur.connection.commit()
+
+    cur.execute(sql_raw_close_inv, data)
+    cur.connection.commit()
+
+    return read_inventory_head(store.name, db, query)

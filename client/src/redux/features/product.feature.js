@@ -90,6 +90,7 @@ export const updateNextQty = createAsyncThunk('product/updateNextQty', async (ar
     let response = await Axios.post(`${BACKEND_HOST}/products/update_next_qty`, args,  {
         params: {
             next_quantity: args.next_quantity,
+            user_updated: args.user_updated,
             product_id: args.product_id,
             store_id: args.store_id,
         },
@@ -194,6 +195,16 @@ export const openInventory = createAsyncThunk('product/openInventory', async (he
     return response.data;
 });
 
+export const closeInventory = createAsyncThunk('product/closeInventory', async (store, ) => {
+    console.log(store);
+    let response = await Axios.post(`${BACKEND_HOST}/products/close_inventory`, store,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
 
 export const updatePricing = createAsyncThunk('product/update_pricing', async (args, ) => {
     const value = (args.field === 'status') ? (+ args.value) : args.value;
