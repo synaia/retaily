@@ -70,7 +70,7 @@ export const Inventory = () => {
 
 
                 { stores.map((st, i) => (
-                    <div className="income" onClick={() => navigator(`store/${st.name}`, {replace: true})}>
+                    <div className="income" key={i} onClick={() => navigator(`store/${st.name}`, {replace: true})}>
                         <span className="material-icons-sharp"> done </span>
                         <div className="middle">
                             <div className="left">

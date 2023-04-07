@@ -11,7 +11,7 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -150,14 +150,43 @@ async def __add_product(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/open_inventory", response_model=list[schemas.Product])
+@router.post("/open_inventory", response_model=schemas.InventoryHead)
 async def open_inventory(
                         head: schemas.InventoryHead,
-                        db: Session = Depends(get_db)):
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
     try:
         return add_new_inventory_head(head, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/inventory_head", response_model=schemas.InventoryHead)
+async def get_inventory_head(
+                        store_name: str,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_inventory_head(store_name, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/update_next_qty",)
+async def update_next_qty(
+                        next_quantity: int,
+                        product_id: int,
+                        store_id: int,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return update_next_inventory_qty(next_quantity, product_id, store_id, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
 
 
 @router.post("/uploadfilelocal/{client_uuid}",)

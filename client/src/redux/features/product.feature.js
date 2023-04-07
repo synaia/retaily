@@ -18,6 +18,7 @@ const initialState = {
     pricing_labels: [],
     pricing: [],
     stores: [],
+    inventory_head: {},
     sale: {
         'client': null, 
         'products': [], 
@@ -68,6 +69,38 @@ export const getProductsByInventory = createAsyncThunk('products/getProductsByIn
     });
     return response.data;
 });
+
+
+export const getInventoryHead = createAsyncThunk('products/getInventoryHead', async (store_name) => {
+    console.log('getInventoryHead ...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/inventory_head`, {
+        params: {
+            store_name: store_name
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+    return response.data;
+});
+
+
+export const updateNextQty = createAsyncThunk('product/updateNextQty', async (args, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/update_next_qty`, args,  {
+        params: {
+            next_quantity: args.next_quantity,
+            product_id: args.product_id,
+            store_id: args.store_id,
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 
 export const getPricingLabels = createAsyncThunk('products/get_pricing_labels', async () => {
     console.log('get_pricing_labels...');
@@ -368,6 +401,16 @@ const refreshProductList = (state, action) => {
     state.all_products = products;
 };
 
+const refreshQtyProductList = (state, action) => {
+    const {next_quantity, product_id, store_id} = action.payload;
+    const products = [...state.products_inv];
+    const index = products.findIndex(prod => prod.id == product_id);
+    const inventory = [...products[index].inventory]
+    inventory[0].next_quantity = next_quantity;
+    products[index].inventory = inventory
+    state.products_inv = products;
+};
+
 const putNewProductInList = (state, action) => {
     const product = action.payload[0]
     const products = [...state.all_products];
@@ -387,7 +430,7 @@ const productsSlice = createSlice({
         pickClientAction: pickClient,
         pickNewClientAction: pickNewClient,
         discardSaleAction: discardSale,
-        refreshProductListAction: refreshProductList
+        refreshProductListAction: refreshProductList,
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -488,6 +531,26 @@ const productsSlice = createSlice({
         }).addCase(openInventory.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR openInventory() ; ${action.error.message}`
+        });
+
+        builder.addCase(getInventoryHead.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getInventoryHead.fulfilled, (state, action) => {
+            state.loading = false;
+            state.inventory_head = action.payload;
+        }).addCase(getInventoryHead.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getInventoryHead() ; ${action.error.message}`
+        });
+
+        builder.addCase(updateNextQty.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(updateNextQty.fulfilled, (state, action) => {
+            state.loading = false;
+            refreshQtyProductList(state, action);
+        }).addCase(updateNextQty.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR updateNextQty() ; ${action.error.message}`
         });
     }
 });

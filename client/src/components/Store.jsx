@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
-import { getProductsByInventory, openInventory } from "../redux/features/product.feature.js";
+import { getProductsByInventory, openInventory, getInventoryHead, updateNextQty } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 
 
@@ -15,6 +15,7 @@ export const Store = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const products_inv = useSelector((state) => state.product.products_inv);
+    const inventory_head = useSelector((state) => state.product.inventory_head);
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
 
@@ -32,11 +33,18 @@ export const Store = () => {
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
     const [errorPercent, SetErrorPercent] = useState(null);
 
+    const [is_inventory_open, set_inventory_open] = useState(false);
+
 
     useEffect(() => {
         dispatch(getProductsByInventory(params.store_name));
-        console.log(products_inv);
+        dispatch(getInventoryHead(params.store_name));
     }, []);
+
+    useEffect(() => {
+        console.log('inventory_head', inventory_head);
+        set_inventory_open(inventory_head.id != undefined);
+    }, [inventory_head]);
 
     const __openInventory = () => {
         const head = {
@@ -45,6 +53,7 @@ export const Store = () => {
             store: products_inv[0].inventory[0].store
         }
         dispatch(openInventory(head))
+        set_inventory_open(true);
     };
 
 
@@ -62,19 +71,35 @@ export const Store = () => {
 
         // console.log(price_columns);
 
-        return [
-            { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 400},
-            { key: 'cost', name: 'Cost', width: 80 },
-            { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Quantity', width: 100 },
-            { key: 'next_quantity', name: 'New Quantity', width: 100, editor: textEditor },
-          ];
+        const next_quantity = { key: 'next_quantity', name: 'New Quantity', width: 100, editor: textEditor };
+
+        if (is_inventory_open) {
+            return [
+                { key: 'id', name: 'ID', width: 10 },
+                { key: 'name', name: 'Product', resizable: true, width: 400},
+
+                { key: 'code', name: 'SKU', width: 100 },
+                { key: 'quantity', name: 'Quantity', width: 100 },
+                next_quantity
+              ];
+        } else {
+            return [
+                { key: 'id', name: 'ID', width: 10 },
+                { key: 'name', name: 'Product', resizable: true, width: 400},
+                { key: 'code', name: 'SKU', width: 100 },
+                { key: 'quantity', name: 'Quantity', width: 100 },
+              ];
+        }
+        
     }); 
 
 
     const get_rows = (_prodducts_) => {
         console.log('get_rows()')
+        // if (_prodducts_[0] != undefined) {
+        //     console.log(_prodducts_[0].inventory);
+        // }
+        
         const _rows_ = [];
         _prodducts_.forEach(product => {
             const row = {
@@ -184,17 +209,15 @@ export const Store = () => {
 
         const args = {
             'field': changes.column.key,
-            'old_value': prod.inventory[0].quantity,
-            'new_value': rows[changes.indexes[0]][changes.column.key],
+            'prev_quantity': prod.inventory[0].quantity,
+            'next_quantity': rows[changes.indexes[0]][changes.column.key],
             'product_id': product_id,
+            'store_id': products_inv[0].inventory[0].store.id
         };
 
         console.log(args);
 
-
-        // dispatch(refreshProductListAction(args));
-       
-        // dispatch(updateProduct(args))
+        dispatch(updateNextQty(args));
     };
 
     const highlightsted = [];
@@ -310,7 +333,7 @@ export const Store = () => {
                     <span>Name</span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> edit_note </span>
-                        <input type="text" ref={inv_name} className="price-list-t" value={inv_default_name} readOnly />
+                        <input type="text" ref={inv_name} className="price-list-t" defaultValue={inv_default_name} readOnly />
                         <span className="underline-animation"></span>
                     </div>
                     <span className="error-msg">{errorLabel}</span>
@@ -319,16 +342,33 @@ export const Store = () => {
                     <span>Memo</span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> vpn_key </span>
-                        <input type="text" ref={inv_memo}  className="price-list-t"  />
+                        <input type="text" ref={inv_memo}  defaultValue={inventory_head.memo}  className="price-list-t"  />
                         <span className="underline-animation"></span>
                     </div>
                     <span className="error-msg">{errorPriceKey}</span>
                 </div>
+                {!loading && is_inventory_open &&
                 <div>
-                {!loading && 
+                     <span>Progress</span>
+                     <div className="price-list-b">
+                         <span className="material-icons-sharp price-list-i"> pending </span>
+                         <input type="text"  defaultValue={inventory_head.status}  className="price-list-t"  />
+                         <span className="underline-animation"></span>
+                     </div>
+                     <span className="error-msg">{errorPriceKey}</span>
+                 </div>
+                }
+                <div>
+                {!loading && !is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
                         <span>OPEN INVENTORY</span>
+                    </button>
+                }
+                {!loading && is_inventory_open &&
+                    <button className="fbutton fbutton-price-list" onClick={() => alert('CLOSE INVENTORY')}>
+                        <span className="material-icons-sharp"> verified </span>
+                        <span>CLOSE INVENTORY</span>
                     </button>
                 }
                 </div>
@@ -338,8 +378,7 @@ export const Store = () => {
                 <span className="underline-animation-terminal"></span>
             </div>
             {loading && <Loading Text="Loading :)" /> }
-            {!loading &&
-                <DataGrid 
+            <DataGrid 
                     ref={gridRef}
                     columns={columns} 
                     rows={rows} 
@@ -349,8 +388,7 @@ export const Store = () => {
                     enableVirtualization={true}
                     onCellClick={highlightsrow}
                     className="data-grid-product rdg-dark"
-                />
-            }
+            />
         </React.Fragment>
     )
 };

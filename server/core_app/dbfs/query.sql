@@ -278,6 +278,7 @@ FROM app_store s
 --SELECT_PRODUCT_INV
  SELECT
       i.id,
+      i.prev_quantity,
       i.quantity,
       i.next_quantity,
       st.name,
@@ -306,4 +307,14 @@ SELECT
 --INSERT_INVENTORY_HEAD
 INSERT INTO app_inventory_head (name, memo, store_id)
  VALUES (%s, %s, %s)
+;
+
+--UPDATE_INVENTORY_NEXT
+UPDATE
+     app_inventory
+  SET
+     next_quantity = %s
+  WHERE
+        product_id = %s
+   AND  store_id = %s
 ;

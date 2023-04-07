@@ -10,6 +10,8 @@ from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
 
+from server.core_app.basemodeler.BaseModelExt import SUCCESS, FAIL
+
 
 # TODO refactor to find DEFAULT store and NOT a list of stores for keep SIMPLE on UI
 # TODO iterate over stores and SET product.inventory.quantity TO product.quantity
@@ -142,6 +144,7 @@ def read_inv_products(store_name: str, db: Session, query: Query):
             inventory = Inventory()
             store = Store()
             inventory.id = l['id']
+            inventory.prev_quantity = l['prev_quantity']
             inventory.quantity = l['quantity']
             inventory.next_quantity = l['next_quantity']
             store.id = l['store_id']
@@ -265,27 +268,27 @@ def add_product(product: Product,  db: Session, query: Query):
 
 def read_inventory_head(store_name: str, db: Session, query: Query):
     sql_raw = query.SELECT_INVENTORY_HEAD
-    headlist = []
     cur = get_cursor(db)
     data = (store_name,)
     cur.execute(sql_raw, data)
     resp = cur.fetchall()
 
-    for rp in resp:
-        head = InventoryHead()
+    head = InventoryHead()
+    if len(resp) > 0:
         store = Store()
-        head.id = rp['id']
-        head.name = rp['name']
-        head.date_create = rp['date_create']
-        head.date_close = rp['date_close']
-        head.status = rp['status']
-        head.memo = rp['memo']
-        store.id = rp['store_id']
-        store.name = rp['store_name']
-        head.store = store
-        headlist.append(head)
+        head.id = resp[0]['id']
+        head.name = resp[0]['name']
+        head.date_create = resp[0]['date_create']
+        head.date_close = resp[0]['date_close']
+        head.status = resp[0]['status']
+        head.memo = resp[0]['memo']
+        store.id = resp[0]['store_id']
+        store.name = resp[0]['store_name']
+        head.build_meta(1, SUCCESS, f'OKAY')
+    else:
+        head.build_meta(0, FAIL, f'Not inventory_head defined for {store_name}')
 
-    return headlist
+    return head
 
 
 def add_new_inventory_head(inventory_head: InventoryHead,  db: Session, query: Query):
@@ -297,3 +300,14 @@ def add_new_inventory_head(inventory_head: InventoryHead,  db: Session, query: Q
     inv_head_id = cur.lastrowid
 
     return read_inventory_head(inventory_head.store.name, db, query)
+
+
+def update_next_inventory_qty(next_quantity: int, product_id: int, store_id: int,  db: Session, query: Query):
+    sql_raw_update_next_inventory = query.UPDATE_INVENTORY_NEXT
+    cur = get_cursor(db)
+    data = (next_quantity, product_id, store_id)
+    cur.execute(sql_raw_update_next_inventory, data)
+    cur.connection.commit()
+    app_inventory_id = cur.lastrowid
+
+    return {'next_quantity': next_quantity, 'product_id': product_id, 'store_id': store_id}

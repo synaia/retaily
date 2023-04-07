@@ -3,6 +3,8 @@ from datetime import datetime
 import typing
 import warnings
 
+from server.core_app.basemodeler.BaseModelExt import BaseModelExt
+
 
 class Pricing(BaseModel):
     id: int | None = None
@@ -51,10 +53,10 @@ class Inventory(BaseModel):
         orm_mode = True
 
 
-class InventoryHead(BaseModel):
+class InventoryHead(BaseModelExt):
     id: int | None = None
     name: str | None = None
-    date_create: datetime | None= None
+    date_create: datetime | None = None
     date_close: datetime | None = None
     status: int | None = None
     memo: str | None = None
