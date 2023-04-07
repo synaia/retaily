@@ -38,7 +38,11 @@ class Inventory(Base):
     __tablename__ = "app_inventory"
 
     id = Column(Integer, primary_key=True, index=True)
+    prev_quantity = Column(Integer)
     quantity = Column(Integer)
+    next_quantity = Column(Integer)
+    last_update = Column(DateTime)
+    user_updated = Column(String)
     product_id = Column(Integer, ForeignKey('product.id'))
     store_id = Column(Integer, ForeignKey('app_store.id'))
     store = relationship("Store", backref='inventory', uselist=False)
@@ -51,6 +55,19 @@ class Inventory(Base):
     @hybrid_property
     def quantity_for_sale(self):
         return 1
+
+
+class InventoryHead(Base):
+    __tablename__ = "app_inventory_head"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    date_create = Column(DateTime)
+    date_close  = Column(DateTime)
+    status = Column(Integer)
+    memo = Column(String)
+    store_id = Column(Integer, ForeignKey('app_store.id'))
+    store = relationship("Store", backref='inventory_head', uselist=False)
 
 
 class Store(Base):

@@ -11,7 +11,7 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -146,6 +146,16 @@ async def __add_product(
                         db: Session = Depends(get_db)):
     try:
         return add_product(product, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/open_inventory", response_model=list[schemas.Product])
+async def open_inventory(
+                        head: schemas.InventoryHead,
+                        db: Session = Depends(get_db)):
+    try:
+        return add_new_inventory_head(head, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

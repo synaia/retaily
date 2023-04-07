@@ -4,7 +4,8 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
-import { getProductsByInventory } from "../redux/features/product.feature.js";
+import { getProductsByInventory, openInventory } from "../redux/features/product.feature.js";
+import { Loading } from "./Loading.jsx";
 
 
 import 'react-data-grid/lib/styles.css';
@@ -14,17 +15,37 @@ export const Store = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const products_inv = useSelector((state) => state.product.products_inv);
+    const errorMessage = useSelector((state) => state.product.errorMessage);
+    const loading = useSelector((state) => state.product.loading);
 
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
 
     const search = useRef();
     const gridRef = useRef(null);
+    const current = new Date();
+    const inv_default_name = `INV-${current.toISOString()}`;
+    const inv_name = useRef();
+    const inv_memo = useRef();
+
+    const [errorLabel, SetErrorLabel] = useState(null);
+    const [errorPriceKey, SetErrorPriceKey] = useState(null);
+    const [errorPercent, SetErrorPercent] = useState(null);
+
 
     useEffect(() => {
         dispatch(getProductsByInventory(params.store_name));
         console.log(products_inv);
     }, []);
+
+    const __openInventory = () => {
+        const head = {
+            name: inv_name.current?.value,
+            memo: inv_memo.current?.value,
+            store: products_inv[0].inventory[0].store
+        }
+        dispatch(openInventory(head))
+    };
 
 
     const columns = useMemo( () => {
@@ -47,7 +68,7 @@ export const Store = () => {
             { key: 'cost', name: 'Cost', width: 80 },
             { key: 'code', name: 'SKU', width: 100 },
             { key: 'quantity', name: 'Quantity', width: 100 },
-            { key: 'new_quantity', name: 'New Quantity', width: 100, editor: textEditor },
+            { key: 'next_quantity', name: 'New Quantity', width: 100, editor: textEditor },
           ];
     }); 
 
@@ -62,7 +83,7 @@ export const Store = () => {
                 'cost': product.cost,
                 'code': product.code,
                 'quantity': product.inventory[0].quantity,
-                'new_quantity': 0, 
+                'next_quantity': product.inventory[0].next_quantity, 
             };
             _rows_.push(row)
         });
@@ -105,7 +126,7 @@ export const Store = () => {
         }
 
         if (key === "ArrowDown") {
-            gridRef.current.selectCell({ rowIdx: 0, idx: 1 }); 
+            gridRef.current.selectCell({ rowIdx: 0, idx: 5 }); 
             return;
         }
 
@@ -284,21 +305,52 @@ export const Store = () => {
     return (
         <React.Fragment>
             <h2>{params.store_name}</h2>
+            <div className="price-list">
+                <div>
+                    <span>Name</span>
+                    <div className="price-list-b">
+                        <span className="material-icons-sharp price-list-i"> edit_note </span>
+                        <input type="text" ref={inv_name} className="price-list-t" value={inv_default_name} readOnly />
+                        <span className="underline-animation"></span>
+                    </div>
+                    <span className="error-msg">{errorLabel}</span>
+                </div>
+                <div>
+                    <span>Memo</span>
+                    <div className="price-list-b">
+                        <span className="material-icons-sharp price-list-i"> vpn_key </span>
+                        <input type="text" ref={inv_memo}  className="price-list-t"  />
+                        <span className="underline-animation"></span>
+                    </div>
+                    <span className="error-msg">{errorPriceKey}</span>
+                </div>
+                <div>
+                {!loading && 
+                    <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
+                        <span className="material-icons-sharp"> rocket_launch </span>
+                        <span>OPEN INVENTORY</span>
+                    </button>
+                }
+                </div>
+            </div>
             <div className="search-terminal">
                 <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
                 <span className="underline-animation-terminal"></span>
             </div>
-            <DataGrid 
-                ref={gridRef}
-                columns={columns} 
-                rows={rows} 
-                onRowsChange={rowChange}
-                rowKeyGetter={rowKeyGetter} 
-                onCellKeyDown={handleCellKeyDown}
-                enableVirtualization={true}
-                onCellClick={highlightsrow}
-                className="data-grid-product rdg-dark"
-            />
+            {loading && <Loading Text="Loading :)" /> }
+            {!loading &&
+                <DataGrid 
+                    ref={gridRef}
+                    columns={columns} 
+                    rows={rows} 
+                    onRowsChange={rowChange}
+                    rowKeyGetter={rowKeyGetter} 
+                    onCellKeyDown={handleCellKeyDown}
+                    enableVirtualization={true}
+                    onCellClick={highlightsrow}
+                    className="data-grid-product rdg-dark"
+                />
+            }
         </React.Fragment>
     )
 };

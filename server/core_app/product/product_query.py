@@ -4,6 +4,7 @@ from server.core_app.product.product_schemas import Pricing
 from server.core_app.product.product_schemas import Product
 from server.core_app.product.product_schemas import PricingList
 from server.core_app.product.product_schemas import Inventory
+from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
@@ -142,6 +143,8 @@ def read_inv_products(store_name: str, db: Session, query: Query):
             store = Store()
             inventory.id = l['id']
             inventory.quantity = l['quantity']
+            inventory.next_quantity = l['next_quantity']
+            store.id = l['store_id']
             store.name = l['name']
             inventory.store = store
             invlist.append(inventory)
@@ -259,3 +262,38 @@ def add_product(product: Product,  db: Session, query: Query):
 
     return read_all_products(db, query, product_id=product_id)
 
+
+def read_inventory_head(store_name: str, db: Session, query: Query):
+    sql_raw = query.SELECT_INVENTORY_HEAD
+    headlist = []
+    cur = get_cursor(db)
+    data = (store_name,)
+    cur.execute(sql_raw, data)
+    resp = cur.fetchall()
+
+    for rp in resp:
+        head = InventoryHead()
+        store = Store()
+        head.id = rp['id']
+        head.name = rp['name']
+        head.date_create = rp['date_create']
+        head.date_close = rp['date_close']
+        head.status = rp['status']
+        head.memo = rp['memo']
+        store.id = rp['store_id']
+        store.name = rp['store_name']
+        head.store = store
+        headlist.append(head)
+
+    return headlist
+
+
+def add_new_inventory_head(inventory_head: InventoryHead,  db: Session, query: Query):
+    sql_raw_insert_inv_head = query.INSERT_INVENTORY_HEAD
+    cur = get_cursor(db)
+    data = (inventory_head.name, inventory_head.memo, inventory_head.store.id)
+    cur.execute(sql_raw_insert_inv_head, data)
+    cur.connection.commit()
+    inv_head_id = cur.lastrowid
+
+    return read_inventory_head(inventory_head.store.name, db, query)

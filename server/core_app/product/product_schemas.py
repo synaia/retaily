@@ -39,8 +39,25 @@ class Store(BaseModel):
 
 class Inventory(BaseModel):
     id: int | None = None
+    prev_quantity: int | None = None
     quantity: int | None = None
+    next_quantity: int | None = None
+    last_update: datetime | None = None
+    user_updated: str | None = None
     quantity_for_sale: int | None = None
+    store: Store | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class InventoryHead(BaseModel):
+    id: int | None = None
+    name: str | None = None
+    date_create: datetime | None= None
+    date_close: datetime | None = None
+    status: int | None = None
+    memo: str | None = None
     store: Store | None = None
 
     class Config:

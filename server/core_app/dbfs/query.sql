@@ -279,9 +279,31 @@ FROM app_store s
  SELECT
       i.id,
       i.quantity,
-      st.name
+      i.next_quantity,
+      st.name,
+      st.id as store_id
  FROM app_inventory i, app_store st
   WHERE i.store_id = st.id
    AND  i.product_id = %s
    AND  st.name = %s
+;
+
+--SELECT_INVENTORY_HEAD
+SELECT
+	h.id,
+    h.name,
+    h.date_create,
+    h.date_close,
+    h.status,
+    h.memo,
+    st.id as store_id,
+    st.name as store_name
+ FROM app_inventory_head h, app_store st
+	WHERE h.store_id = st.id
+	AND st.name = %s
+;
+
+--INSERT_INVENTORY_HEAD
+INSERT INTO app_inventory_head (name, memo, store_id)
+ VALUES (%s, %s, %s)
 ;

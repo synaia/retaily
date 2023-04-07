@@ -150,6 +150,18 @@ export const addProduct = createAsyncThunk('product/add_product', async (product
 });
 
 
+export const openInventory = createAsyncThunk('product/openInventory', async (head, ) => {
+    console.log(head);
+    let response = await Axios.post(`${BACKEND_HOST}/products/open_inventory`, head,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+
 export const updatePricing = createAsyncThunk('product/update_pricing', async (args, ) => {
     const value = (args.field === 'status') ? (+ args.value) : args.value;
     console.log(args);
@@ -466,6 +478,16 @@ const productsSlice = createSlice({
         }).addCase(getProductsByInventory.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`
+        });
+
+        builder.addCase(openInventory.pending, (state, action) => {
+            state.loading = true
+        }).addCase(openInventory.fulfilled, (state, action) => {
+            state.loading = false
+            // TODO UPDATE IN LIST
+        }).addCase(openInventory.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR openInventory() ; ${action.error.message}`
         });
     }
 });
