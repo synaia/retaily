@@ -64,7 +64,7 @@ async def get_products(
     return products
 
 
-@router.get("/all_inv", response_model=list[schemas.Product])
+@router.get("/all_inv",)
 async def get_all_inv_products(
         store_name: str,
         db: Session = Depends(get_db),

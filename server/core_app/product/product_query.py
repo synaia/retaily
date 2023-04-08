@@ -1,3 +1,4 @@
+import numpy as np
 from sqlalchemy.orm import Session
 import server.core_app.product.product_models as models
 from server.core_app.product.product_schemas import Pricing
@@ -147,6 +148,7 @@ def read_inv_products(store_name: str, db: Session, query: Query):
             inventory.prev_quantity = l['prev_quantity']
             inventory.quantity = l['quantity']
             inventory.next_quantity = l['next_quantity']
+            inventory.status = l['status']
             store.id = l['store_id']
             store.name = l['name']
             inventory.store = store
@@ -155,8 +157,24 @@ def read_inv_products(store_name: str, db: Session, query: Query):
         product.inventory = invlist
 
         products.append(product)
+        # sort changed to top
+        products = sorted(products, key=lambda p: p.inventory[0].status, reverse=False)
 
-    return products
+        # some resume info
+        changed_count = len([p for p in products if p.inventory[0].status == 'changed'])
+        inv_valuation = np.sum([(p.cost * p.inventory[0].quantity) for p in products])
+        inv_valuation_changed = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.inventory[0].status == 'changed'])
+        inv_valuation_not_changed = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.inventory[0].status != 'changed'])
+
+        result = {
+            'products': products,
+            'changed_count': changed_count,
+            'inv_valuation': inv_valuation,
+            'inv_valuation_changed': inv_valuation_changed,
+            'inv_valuation_not_changed': inv_valuation_not_changed
+        }
+
+    return result
 
 
 def update_one(pricing_id: int, field: str, value: str, product_id: int, db: Session):
@@ -244,7 +262,11 @@ def read_stores(db: Session, query: Query):
 def read_stores_inv(db: Session, query: Query):
     sql_raw = query.SELECT_STORES
     sql_raw_inv_head = query.SELECT_INV_HEAD
+    sql_raw_inv_valuation = query.SELECT_INV_VALUATION
+    sql_raw_inv_valuation_changed = query.SELECT_INV_VALUATION_CHANGED
+
     inventory_head_list = []
+    resume = {}
     cur = get_cursor(db)
     cur.execute(sql_raw)
     resp = cur.fetchall()
@@ -265,7 +287,29 @@ def read_stores_inv(db: Session, query: Query):
             head.memo = r[0]['memo']
 
         inventory_head_list.append(head)
-    return inventory_head_list
+
+        cur.execute(sql_raw_inv_valuation, (store.name,))
+        iv = cur.fetchall()
+        inv_valuation = iv[0]['inv_valuation']
+
+        cur.execute(sql_raw_inv_valuation_changed, (store.name,))
+        ivc = cur.fetchall()
+        inv_valuation_changed = 0 if ivc[0]['inv_valuation_changed'] is None else ivc[0]['inv_valuation_changed']
+        count_inv_valuation_changed = ivc[0]['count_inv_valuation_changed']
+
+        resume[store.name] = {
+            'changed_count': count_inv_valuation_changed,
+            'inv_valuation': inv_valuation,
+            'inv_valuation_changed': inv_valuation_changed,
+            'inv_valuation_not_changed': (inv_valuation - inv_valuation_changed)
+        }
+
+    result = {
+        'inventory_head_list': inventory_head_list,
+        'resume': resume
+    }
+
+    return result
 
 
 def add_product(product: Product,  db: Session, query: Query):

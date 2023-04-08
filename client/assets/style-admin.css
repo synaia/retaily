@@ -1188,3 +1188,48 @@ main .recent-orders a {
 .infoTakePhoto > h3 {
   padding: 12px;
 }
+
+.inventory-resume {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  background: var(--color-white);
+  padding: var(--card-padding);
+  margin-top: 1rem;
+  box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
+}
+
+.inv-success {
+  background: var(--color-success) !important;
+}
+
+.inv-in-progress {
+  background: var(--color-danger) !important;
+}
+
+.inventory-resume-r {
+  /* background: var(--color-white); */
+  display: grid;
+  grid-template-rows: 1fr;
+  /* align-items: center; */
+  gap: 1rem;
+  /* margin-bottom: 0.7rem;
+  padding: 1.4rem var(--card-padding); */
+  /* border-radius: var(--border-radius-3); */
+  /* box-shadow: var(--box-shadow);
+  transition: all 300ms ease; */
+}
+
+.inventory-resume-c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.info h3 {
+  margin: 0 !important;
+}
+
+.name-inv {
+  font-size: 10px !important;
+}

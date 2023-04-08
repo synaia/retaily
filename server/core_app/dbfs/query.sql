@@ -297,6 +297,7 @@ AND i.status = 0
       i.prev_quantity,
       i.quantity,
       i.next_quantity,
+      i.status,
       st.name,
       st.id as store_id
  FROM app_inventory i, app_store st
@@ -369,4 +370,26 @@ SET
      status = 1
 WHERE
 	store_id = %s
+;
+
+--SELECT_INV_VALUATION
+SELECT
+     SUM(p.cost * i.quantity) AS inv_valuation
+FROM app_inventory i, app_store st, product p
+ WHERE
+	  st.id = i.store_id
+  AND i.product_id = p.id
+  AND st.name = %s
+;
+
+--SELECT_INV_VALUATION_CHANGED
+SELECT
+     SUM(p.cost * i.quantity) AS inv_valuation_changed,
+     COUNT(*) AS count_inv_valuation_changed
+FROM app_inventory i, app_store st, product p
+ WHERE
+	  st.id = i.store_id
+  AND i.product_id = p.id
+  AND i.status = 'changed'
+  AND st.name = %s
 ;

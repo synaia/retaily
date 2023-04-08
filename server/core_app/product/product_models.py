@@ -43,6 +43,7 @@ class Inventory(Base):
     next_quantity = Column(Integer)
     last_update = Column(DateTime)
     user_updated = Column(String)
+    status = Column(String)
     product_id = Column(Integer, ForeignKey('product.id'))
     store_id = Column(Integer, ForeignKey('app_store.id'))
     store = relationship("Store", backref='inventory', uselist=False)

@@ -20,6 +20,7 @@ const initialState = {
     stores: [],
     inventory_head_list: [],
     inventory_head: {},
+    resume_inv: {},
     sale: {
         'client': null, 
         'products': [], 
@@ -510,7 +511,9 @@ const productsSlice = createSlice({
             state.loading = true
         }).addCase(getStoresInv.fulfilled, (state, action) => {
             state.loading = false
-            state.inventory_head_list = action.payload
+            const {inventory_head_list, resume} = action.payload
+            state.inventory_head_list = inventory_head_list
+            state.resume_inv = resume
         }).addCase(getStoresInv.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getStoresInv ; ${action.error.message}`
@@ -550,7 +553,8 @@ const productsSlice = createSlice({
             state.loading = true
         }).addCase(getProductsByInventory.fulfilled, (state, action) => {
             state.loading = false
-            state.products_inv = action.payload
+            const { products } = action.payload
+            state.products_inv = products
         }).addCase(getProductsByInventory.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`

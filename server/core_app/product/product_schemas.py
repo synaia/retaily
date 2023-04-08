@@ -47,6 +47,7 @@ class Inventory(BaseModel):
     last_update: datetime | None = None
     user_updated: str | None = None
     quantity_for_sale: int | None = None
+    status: str | None = None
     store: Store | None = None
 
     class Config:
