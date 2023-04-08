@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export const Inventory = () => {
-    const stores = useSelector((state) => state.product.stores);
+    const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
     const navigator = useNavigate();
 
     return (
@@ -69,12 +69,13 @@ export const Inventory = () => {
                 </div>
 
 
-                { stores.map((st, i) => (
-                    <div className="income" key={i} onClick={() => navigator(`store/${st.name}`, {replace: true})}>
+                { inventory_head_list.map((head, i) => (
+                    <div className="income" key={i} onClick={() => navigator(`store/${head.store.name}`, {replace: true})}>
                         <span className="material-icons-sharp"> done </span>
                         <div className="middle">
                             <div className="left">
-                                <h2>{st.name}</h2>
+                                <h2>{head.store.name}</h2>
+                                <h3>{head.name}</h3>
                                 <h3>$10,864</h3>
                             </div>
                             <div className="progress">

@@ -10,7 +10,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loadProducts } from  "../redux/features/product.feature.js";
+import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
 import { getPricing } from  "../redux/features/product.feature.js";
@@ -29,6 +29,7 @@ export const Init = () => {
     dispatch(getPricingLabels());
     dispatch(getPricing());
     dispatch(getStores());
+    dispatch(getStoresInv());
 
     useEffect(() => {
         // // Change Theme

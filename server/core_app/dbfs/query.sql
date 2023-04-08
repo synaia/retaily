@@ -275,6 +275,22 @@ WHERE id = %s
 FROM app_store s
 ;
 
+--SELECT_INV_HEAD
+SELECT
+     i.id,
+     i.name,
+     i.date_create,
+     i.date_close,
+     i.status,
+     i.memo
+FROM
+    app_inventory_head i
+WHERE
+    i.store_id = %s
+AND i.status = 0
+;
+
+
 --SELECT_PRODUCT_INV
  SELECT
       i.id,

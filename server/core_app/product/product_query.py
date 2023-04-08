@@ -241,6 +241,33 @@ def read_stores(db: Session, query: Query):
     return stores
 
 
+def read_stores_inv(db: Session, query: Query):
+    sql_raw = query.SELECT_STORES
+    sql_raw_inv_head = query.SELECT_INV_HEAD
+    inventory_head_list = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+    for rp in resp:
+        store = Store()
+        head = InventoryHead()
+        store.id = rp['id']
+        store.name = rp['name']
+        head.store = store
+        cur.execute(sql_raw_inv_head, (store.id,))
+        r = cur.fetchall()
+        if len(r) > 0:
+            head.id = r[0]['id']
+            head.name = r[0]['name']
+            head.date_create = r[0]['date_create']
+            head.date_close = r[0]['date_close']
+            head.status = r[0]['status']
+            head.memo = r[0]['memo']
+
+        inventory_head_list.append(head)
+    return inventory_head_list
+
+
 def add_product(product: Product,  db: Session, query: Query):
     image_raw = image_to_base64(product.img_path)
     image_raw = f'data:image/png;base64,{image_raw}' if image_raw is not None else image_raw

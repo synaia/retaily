@@ -11,7 +11,7 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty, reorder_inventory_qty
+from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty, reorder_inventory_qty, read_stores_inv
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -109,11 +109,20 @@ async def get_pricing(
 
 
 @router.get("/stores", response_model=list[schemas.Store])
-async def get_pricing(
+async def get_stores(
         db: Session = Depends(get_db),
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     stores = read_stores(db, query)
+    return stores
+
+
+@router.get("/stores_inv")
+async def get_stores_inv(
+        db: Session = Depends(get_db),
+        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    stores = read_stores_inv(db, query)
     return stores
 
 
