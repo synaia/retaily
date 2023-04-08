@@ -4,8 +4,11 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
+import { Row } from "react-data-grid";
+
 import { getProductsByInventory, openInventory, closeInventory, getInventoryHead, updateNextQty } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
+
 
 
 import 'react-data-grid/lib/styles.css';
@@ -25,21 +28,34 @@ export const Store = () => {
     const search = useRef();
     const gridRef = useRef(null);
     const current = new Date();
-    const inv_default_name = `INV-${current.toISOString()}`;
+    const inv_default_name = `INV-${current.toISOString().substring(0, 10)}`;
     const inv_name = useRef();
     const inv_memo = useRef();
+    const inv_progress = useRef();
 
     const [errorLabel, SetErrorLabel] = useState(null);
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
     const [errorPercent, SetErrorPercent] = useState(null);
 
     const [is_inventory_open, set_inventory_open] = useState(false);
+    const [inchanged, set_inchanged] = useState(0);
 
 
     useEffect(() => {
         dispatch(getProductsByInventory(params.store_name));
+        const changed = products_inv.filter(p => p.inventory[0].status === "changed");
+        set_inchanged(changed.length)
+    }, []);
+
+    useEffect(() => {
         dispatch(getInventoryHead(params.store_name));
     }, []);
+
+    useEffect(() => {
+        inv_name.current.value = inventory_head.name == undefined ? inv_default_name : inventory_head.name ;
+        inv_memo.current.value = inventory_head.memo;
+        inv_progress.current.value = inventory_head.status == 0 ? `${inchanged} In Progress` : "Close";
+    }, [inventory_head])
 
     useEffect(() => {
         console.log('inventory_head', inventory_head);
@@ -87,15 +103,27 @@ export const Store = () => {
 
         // console.log(price_columns);
 
-        const next_quantity = { key: 'next_quantity', name: 'New Quantity', width: 100, editor: textEditor };
+        const next_quantity = { 
+            key: 'next_quantity', 
+            name: 'New Quantity', 
+            width: 100, 
+            editor: textEditor, 
+            formatter: ({ row }) => {
+                if (row.status == "changed") {
+                    return <div className="row-bg-changed">{row.next_quantity}</div>;
+                } else {
+                    return <div className="row-bg-no-changed">{row.next_quantity}</div>;
+                }
+            }  };
 
         if (is_inventory_open) {
             return [
                 { key: 'id', name: 'ID', width: 10 },
                 { key: 'name', name: 'Product', resizable: true, width: 400},
-
                 { key: 'code', name: 'SKU', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100 },
+                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                    return <div className="row-bg-no-changed">{row.quantity}</div>;
+                }},
                 next_quantity
               ];
         } else {
@@ -103,7 +131,9 @@ export const Store = () => {
                 { key: 'id', name: 'ID', width: 10 },
                 { key: 'name', name: 'Product', resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100 },
+                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                    return <div className="row-bg-no-changed">{row.quantity}</div>;
+                }},
               ];
         }
         
@@ -125,6 +155,7 @@ export const Store = () => {
                 'code': product.code,
                 'quantity': product.inventory[0].quantity,
                 'next_quantity': product.inventory[0].next_quantity, 
+                'status': product.inventory[0].status
             };
             _rows_.push(row)
         });
@@ -150,6 +181,10 @@ export const Store = () => {
         } else {
             setRows(get_rows(products_inv));
         }
+
+        // const changed = products_inv.filter(p => p.inventory[0].status === "changed");
+        // set_inchanged(changed.length)
+        // console.log(changed.length)
 
     }, [products_inv]);
 
@@ -212,7 +247,9 @@ export const Store = () => {
     };
 
     const rowChange = (rows, changes) => {
-        // console.log(changes);
+
+        console.log(changes);
+        console.log(gridRef)
         // console.log(rows)
         // console.log('---------------------------------------')
         console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
@@ -341,7 +378,10 @@ export const Store = () => {
         
     };
     
-
+    const rowRenderer = ({ renderBaseRow, ...props }) => {
+        console.log(props.idx)
+    }
+   
     return (
         <React.Fragment>
             <h2>{params.store_name}</h2>
@@ -349,8 +389,11 @@ export const Store = () => {
                 <div>
                     <span>Name</span>
                     <div className="price-list-b">
-                        <span className="material-icons-sharp price-list-i"> edit_note </span>
-                        <input type="text" ref={inv_name} className="price-list-t" defaultValue={inv_default_name} readOnly />
+                        <span className="material-icons-sharp price-list-i"> more_vert </span>
+                        {/* {!loading && */}
+                            <input type="text" ref={inv_name} className="price-list-t" 
+                               />
+                        {/* } */}
                         <span className="underline-animation"></span>
                     </div>
                     <span className="error-msg">{errorLabel}</span>
@@ -358,23 +401,23 @@ export const Store = () => {
                 <div>
                     <span>Memo</span>
                     <div className="price-list-b">
-                        <span className="material-icons-sharp price-list-i"> vpn_key </span>
-                        <input type="text" ref={inv_memo}  defaultValue={inventory_head.memo}  className="price-list-t"  />
+                        <span className="material-icons-sharp price-list-i"> more_vert </span>
+                        {/* {!loading && */}
+                            <input type="text" ref={inv_memo}  className="price-list-t"  />
+                        {/* } */}
                         <span className="underline-animation"></span>
                     </div>
                     <span className="error-msg">{errorPriceKey}</span>
                 </div>
-                {!loading && is_inventory_open &&
                 <div>
-                     <span>Progress</span>
+                     <span>Status</span>
                      <div className="price-list-b">
-                         <span className="material-icons-sharp price-list-i"> pending </span>
-                         <input type="text"  defaultValue={inventory_head.status}  className="price-list-t"  />
+                         <span className="material-icons-sharp price-list-i"> more_vert </span>
+                         <input type="text"  ref={inv_progress} className="price-list-t"  />
                          <span className="underline-animation"></span>
                      </div>
                      <span className="error-msg">{errorPriceKey}</span>
-                 </div>
-                }
+                </div>
                 <div>
                 {!loading && !is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
@@ -391,6 +434,7 @@ export const Store = () => {
                 </div>
             </div>
             <div className="search-terminal">
+                <span className="material-icons-sharp"> searchk </span>
                 <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
                 <span className="underline-animation-terminal"></span>
             </div>

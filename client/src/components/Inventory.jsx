@@ -89,22 +89,22 @@ export const Inventory = () => {
                             <div className="inventory-resume-c">
                                 <div className="info">
                                     <h3>{head.store.name}</h3>
-                                    <small class="text-muted"> Store </small>
+                                    <small className="text-muted"> Store </small>
                                 </div>
                                 <div className="info">
                                     <h3>{F_(resume_inv[head.store.name].inv_valuation)}</h3>
-                                    <small class="text-muted"> Value Inventory </small>
+                                    <small className="text-muted"> Value Inventory </small>
                                 </div>
                             </div>
                             {head.name != undefined &&
                                 <div className="inventory-resume-c">
                                     <div className="info">
                                         <h3>In Progress</h3>
-                                        <small class="text-muted"> Status </small>
+                                        <small className="text-muted"> Status </small>
                                     </div>
                                     <div className="info">
                                         <h3>{resume_inv[head.store.name].changed_count}</h3>
-                                        <small class="text-muted"> Products Changed </small>
+                                        <small className="text-muted"> Products Changed </small>
                                     </div>
                                 </div>
                             }
@@ -112,11 +112,11 @@ export const Inventory = () => {
                                 <div className="inventory-resume-c">
                                     <div className="info">
                                         <h3 className="name-inv">{head.name}</h3>
-                                        <small class="text-muted"> Name </small>
+                                        <small className="text-muted"> Name </small>
                                     </div>
                                     <div className="info">
                                         <h3>{F_(resume_inv[head.store.name].inv_valuation_changed)}</h3>
-                                        <small class="text-muted"> Value Changed </small>
+                                        <small className="text-muted"> Value Changed </small>
                                     </div>
                                 </div>
                             }

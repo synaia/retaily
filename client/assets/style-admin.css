@@ -15,6 +15,7 @@
   --color-primary-variant: #111e88;
   --color-dark-variant: #677483;
   --color-background: #f6f6f9;
+  --color-cell-changed: #b5b9dc;
 
   --card-border-radius: 2rem;
   --border-radius-1: 0.4rem;
@@ -1232,4 +1233,14 @@ main .recent-orders a {
 
 .name-inv {
   font-size: 10px !important;
+}
+
+.row-bg-changed {
+  text-align: center;
+  background-color: var(--color-cell-changed);
+  color: var(--color-dark);
+}
+
+.row-bg-no-changed {
+  text-align: center;
 }
