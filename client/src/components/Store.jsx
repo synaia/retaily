@@ -18,6 +18,9 @@ export const Store = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const products_inv = useSelector((state) => state.product.products_inv);
+    const changed_count = useSelector((state) => state.product.changed_count);
+    const inv_valuation = useSelector((state) => state.product.inv_valuation);
+    const inv_valuation_changed = useSelector((state) => state.product.inv_valuation_changed);
     const inventory_head = useSelector((state) => state.product.inventory_head);
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
@@ -38,13 +41,11 @@ export const Store = () => {
     const [errorPercent, SetErrorPercent] = useState(null);
 
     const [is_inventory_open, set_inventory_open] = useState(false);
-    const [inchanged, set_inchanged] = useState(0);
+
 
 
     useEffect(() => {
         dispatch(getProductsByInventory(params.store_name));
-        const changed = products_inv.filter(p => p.inventory[0].status === "changed");
-        set_inchanged(changed.length)
     }, []);
 
     useEffect(() => {
@@ -54,8 +55,11 @@ export const Store = () => {
     useEffect(() => {
         inv_name.current.value = inventory_head.name == undefined ? inv_default_name : inventory_head.name ;
         inv_memo.current.value = inventory_head.memo;
-        inv_progress.current.value = inventory_head.status == 0 ? `${inchanged} In Progress` : "Close";
     }, [inventory_head])
+
+    useEffect(() => {
+        inv_progress.current.value = inventory_head.status == 0 ? `${changed_count} In Progress` : "Close";
+    }, [changed_count]);
 
     useEffect(() => {
         console.log('inventory_head', inventory_head);
@@ -85,6 +89,7 @@ export const Store = () => {
         const store  = products_inv[0].inventory[0].store;
         dispatch(closeInventory(store));
         dispatch(getProductsByInventory(params.store_name));
+        dispatch(getInventoryHead(params.store_name));
         set_inventory_open(false);
     };
 

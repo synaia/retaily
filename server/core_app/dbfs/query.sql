@@ -384,7 +384,7 @@ FROM app_inventory i, app_store st, product p
 
 --SELECT_INV_VALUATION_CHANGED
 SELECT
-     SUM(p.cost * i.quantity) AS inv_valuation_changed,
+     SUM(p.cost * i.next_quantity) AS inv_valuation_changed,
      COUNT(*) AS count_inv_valuation_changed
 FROM app_inventory i, app_store st, product p
  WHERE

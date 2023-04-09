@@ -1,12 +1,20 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getStoresInv } from "../redux/features/product.feature.js";
 import { F_ } from "../util/Utils";
 
 export const Inventory = () => {
     const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
     const resume_inv = useSelector((state) => state.product.resume_inv);
     const navigator = useNavigate();
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(getStoresInv());
+    }, []);
 
     useEffect(() => {
         console.log(resume_inv['LOPE'])
@@ -72,6 +80,10 @@ export const Inventory = () => {
                         </div>
                     </div>
                     <small className="text-muted"> Last 24 hours </small>
+                </div>
+
+                <div className="wide-box">
+                    <h2>Stores</h2>
                 </div>
 
 

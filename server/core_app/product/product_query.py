@@ -163,7 +163,7 @@ def read_inv_products(store_name: str, db: Session, query: Query):
         # some resume info
         changed_count = len([p for p in products if p.inventory[0].status == 'changed'])
         inv_valuation = np.sum([(p.cost * p.inventory[0].quantity) for p in products])
-        inv_valuation_changed = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.inventory[0].status == 'changed'])
+        inv_valuation_changed = np.sum([(p.cost * p.inventory[0].next_quantity) for p in products if p.inventory[0].status == 'changed'])
         inv_valuation_not_changed = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.inventory[0].status != 'changed'])
 
         result = {

@@ -29,7 +29,7 @@ export const Init = () => {
     dispatch(getPricingLabels());
     dispatch(getPricing());
     dispatch(getStores());
-    dispatch(getStoresInv());
+
 
     useEffect(() => {
         // // Change Theme

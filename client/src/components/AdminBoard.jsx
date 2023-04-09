@@ -4,12 +4,13 @@ import { Insights} from './Insights';
 
 import '../../assets/style-admin.css';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
 import { loadSales } from "../redux/features/sale.feature.js";
 
 export const AdminBoard = ({Content, Title, Search}) => {
   const dispatch = useDispatch();
+  const [menu_open, set_menu_open] = useState("close");
 
 
   useEffect(() => {
@@ -22,6 +23,13 @@ export const AdminBoard = ({Content, Title, Search}) => {
     sidebar.forEach(item => item.addEventListener('click', () => highlights(sidebar, item)));
 
   }, []);
+
+  const hideSideBar = () => {
+    document.querySelectorAll('.sidebar a').forEach(h => { h.classList.toggle('aside-width'); })
+    document.querySelectorAll('.sidebar h3').forEach(h => { h.classList.toggle('aside-hide'); });
+    document.querySelector('.container').classList.toggle('container-left-width');
+    set_menu_open(menu_open == "menu" ? "close" : "menu");
+  };
 
 
   useEffect(() => {
@@ -50,6 +58,9 @@ export const AdminBoard = ({Content, Title, Search}) => {
               </div>
 
               <div className="sidebar">
+                <div className="sidebar-btn" onClick={() => hideSideBar()}>
+                  <span className="material-icons-sharp"> {menu_open} </span>
+                </div>
                 <a href="/#/admin/" className="active">
                   <span className="material-icons-sharp"> dashboard </span>
                   <h3>Dashboard</h3>

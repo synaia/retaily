@@ -14,6 +14,9 @@ const initialState = {
     loading: false,
     products: [],
     products_inv: [],
+    changed_count: 0,
+    inv_valuation: 0,
+    inv_valuation_changed: 0,
     all_products: [],
     pricing_labels: [],
     pricing: [],
@@ -553,8 +556,14 @@ const productsSlice = createSlice({
             state.loading = true
         }).addCase(getProductsByInventory.fulfilled, (state, action) => {
             state.loading = false
-            const { products } = action.payload
+            // 'changed_count': changed_count,
+            // 'inv_valuation': inv_valuation,
+            // 'inv_valuation_changed': inv_valuation_changed,
+            // 'inv_valuation_not_changed': inv_valuation_not_changed
+            const { products, changed_count, inv_valuation, inv_valuation_changed } = action.payload
             state.products_inv = products
+            state.changed_count = changed_count
+            state.inv_valuation_changed = inv_valuation_changed
         }).addCase(getProductsByInventory.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`
@@ -574,7 +583,9 @@ const productsSlice = createSlice({
             state.loading = true;
         }).addCase(getInventoryHead.fulfilled, (state, action) => {
             state.loading = false;
+            // const changed = state.products_inv.filter(p => p.inventory[0].status === "changed");
             state.inventory_head = action.payload;
+            // state.inventory_head.changed = changed.length;
         }).addCase(getInventoryHead.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR getInventoryHead() ; ${action.error.message}`
