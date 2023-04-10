@@ -273,6 +273,7 @@ WHERE id = %s
       s.id,
       s.name
 FROM app_store s
+ ORDER BY s.id
 ;
 
 --SELECT_INV_HEAD

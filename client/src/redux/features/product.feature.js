@@ -609,6 +609,12 @@ const productsSlice = createSlice({
         }).addCase(updateNextQty.fulfilled, (state, action) => {
             state.loading = false;
             refreshQtyProductList(state, action);
+
+            const { stores_inv } = action.payload
+            const {inventory_head_list, resume} = stores_inv
+            state.inventory_head_list = inventory_head_list
+            state.resume_inv = resume
+
         }).addCase(updateNextQty.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR updateNextQty() ; ${action.error.message}`

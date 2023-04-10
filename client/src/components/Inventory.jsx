@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getStoresInv, addStore } from "../redux/features/product.feature.js";
-import { F_ } from "../util/Utils";
+import { F_, validateInputX } from "../util/Utils";
 
 export const Inventory = () => {
     const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
@@ -12,6 +12,7 @@ export const Inventory = () => {
     const dispatch = useDispatch();
 
     const store_name = useRef();
+    const [errorStoreName, SeterrorStoreName] = useState(null);
 
 
     useEffect(() => {
@@ -23,6 +24,9 @@ export const Inventory = () => {
     }, [resume_inv]);
 
     const __addStore = () => {
+        if (!validateInputX(store_name, "str", SeterrorStoreName)) {
+            return;
+        }
         const args = store_name.current?.value;
         dispatch(addStore(args));
     };
@@ -92,16 +96,16 @@ export const Inventory = () => {
                 <div className="wide-box">
                     <h2>Stores</h2>
                     <div>
-                        <span>STORE NAME</span>
+                        <p>STORE NAME</p>
                         <div className="price-list-b">
-                            <span className="material-icons-sharp price-list-i"> edit_note </span>
+                            <p className="material-icons-sharp price-list-i"> edit_note </p>
                             <input ref={store_name} type="text" className="price-list-t" />
-                            <span className="underline-animation"></span>
+                            <p className="underline-animation"></p>
                         </div>
-                            <span className="error-msg"></span>
+                            <p className="error-msg">{errorStoreName}</p>
                         </div>
                     <button className="fbutton fbutton-price-list" onClick={() => __addStore()}>
-                        <span className="material-icons-sharp"> rocket_launch </span>
+                        <p className="material-icons-sharp"> add_business </p>
                         <h3>CREATE STORE</h3>
                     </button>
                 </div>

@@ -30,3 +30,51 @@ export const uuid = () => { // Public Domain/MIT
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+
+// TODO: keep ONE function
+export const validateInput = (element, type) => {
+    if (element == undefined) {
+        return {'return': false, 'msg': 'Is undefined.'};
+    }
+    if (type === "number") {
+        if (!isNaN(parseFloat(element))) {
+            return {'return': true, 'msg': ''};
+        } else {
+            return {'return': false, 'msg': 'Incorrect number.'};
+        }
+    }
+    if (type === "str") {
+        const val = element == null || element.match(/^ *$/) !== null;
+        return {'return': !val, 'msg': 'Evaluation of string fail'};
+    }
+    return  {'return': false, 'msg': 'Wtf.'};
+};
+
+// TODO: keep ONE function :-)
+export const validateInputX = (element, type, SetFunc) => {
+    const valix = (elementval, type) => {
+        if (elementval == undefined) {
+            return {'return': false, 'msg': 'Is undefined.'};
+        }
+        if (type === "number") {
+            if (!isNaN(parseFloat(elementval))) {
+                return {'return': true, 'msg': ''};
+            } else {
+                return {'return': false, 'msg': 'Incorrect number.'};
+            }
+        }
+        if (type === "str") {
+            const val = elementval == null || elementval.match(/^ *$/) !== null;
+            return {'return': !val, 'msg': val ? 'Evaluation of string fail' : 'Okay'};
+        }
+        return  {'return': false, 'msg': 'Wtf.'};
+    };
+    const res = valix(element.current?.value, type);
+    console.log(res);
+    SetFunc(null);
+    if (!res.return) {
+        SetFunc(res.msg);
+        return false;
+    }
+    return true;
+};

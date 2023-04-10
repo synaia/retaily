@@ -386,7 +386,13 @@ def update_next_inventory_qty(next_quantity: int, user_updated: str, product_id:
     cur.connection.commit()
     app_inventory_id = cur.lastrowid
 
-    return {'next_quantity': next_quantity, 'product_id': product_id, 'store_id': store_id}
+    stores_inv = read_stores_inv(db, query)
+    return {
+        'next_quantity': next_quantity,
+        'product_id': product_id,
+        'store_id': store_id,
+        'stores_inv': stores_inv
+    }
 
 
 def reorder_inventory_qty(store: Store,  db: Session, query: Query):

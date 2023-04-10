@@ -6,8 +6,9 @@ import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { Row } from "react-data-grid";
 
-import { getProductsByInventory, openInventory, closeInventory, getInventoryHead, updateNextQty } from "../redux/features/product.feature.js";
+import { getProductsByInventory, openInventory, closeInventory, getInventoryHead, updateNextQty, getStoresInv } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
+import { F_, validateInputX } from "../util/Utils.js";
 
 
 
@@ -18,6 +19,7 @@ export const Store = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const products_inv = useSelector((state) => state.product.products_inv);
+    const resume_inv = useSelector((state) => state.product.resume_inv);
     const changed_count = useSelector((state) => state.product.changed_count);
     const inv_valuation = useSelector((state) => state.product.inv_valuation);
     const inv_valuation_changed = useSelector((state) => state.product.inv_valuation_changed);
@@ -40,21 +42,53 @@ export const Store = () => {
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
     const [errorPercent, SetErrorPercent] = useState(null);
 
+    const [valuation, SetValuation] = useState(null);
+    const [valuationChanged, SetValuationChanged] = useState(null);
+    const [changedCount, SetChangedCount] = useState(0);
+    const [daysBack, SetDaysBack] = useState(0);
+    const [daysBackIcon, SetDaysBackIcon] = useState("");
+
+    const [errorInvMemo, SetErrorInvMemo] = useState(null);
+    const [errorInvName, SetErrorInvName] = useState(null);
+
     const [is_inventory_open, set_inventory_open] = useState(false);
 
+
+    useEffect(()=> {
+        console.log('resume_inv', resume_inv)
+        if (resume_inv[params.store_name] != undefined) {
+            SetValuation(resume_inv[params.store_name].inv_valuation);
+            SetValuationChanged(resume_inv[params.store_name].inv_valuation_changed);
+            SetChangedCount(resume_inv[params.store_name].changed_count);
+        }
+    }, [resume_inv]);
 
 
     useEffect(() => {
         dispatch(getProductsByInventory(params.store_name));
-    }, []);
-
-    useEffect(() => {
         dispatch(getInventoryHead(params.store_name));
+        dispatch(getStoresInv());
     }, []);
 
     useEffect(() => {
         inv_name.current.value = inventory_head.name == undefined ? inv_default_name : inventory_head.name ;
         inv_memo.current.value = inventory_head.memo;
+        if (inventory_head.date_create != undefined) {
+            const currentDate = new Date();
+            const date_create = new Date(inventory_head.date_create);
+            const days_back = currentDate.getDate() - date_create.getDate();
+            SetDaysBack(days_back);
+            if (days_back == 0) {
+                SetDaysBackIcon("thumb_up");
+            } else if (days_back >= 1 && days_back <= 2 ) {
+                SetDaysBackIcon("sentiment_very_dissatisfied");
+            } else if (days_back >= 3 ) {
+                SetDaysBackIcon("local_fire_department");
+            }
+        } else {
+            SetDaysBack(0);
+            SetDaysBackIcon("");
+        }
     }, [inventory_head])
 
     useEffect(() => {
@@ -72,6 +106,12 @@ export const Store = () => {
     }, [inventory_head]);
 
     const __openInventory = () => {
+        if (!validateInputX(inv_name, "str", SetErrorInvName)) {
+            return;
+        }
+        if (!validateInputX(inv_memo, "str", SetErrorInvMemo)) {
+            return;
+        }
         const head = {
             name: inv_name.current?.value,
             memo: inv_memo.current?.value,
@@ -276,17 +316,24 @@ export const Store = () => {
 
         console.log(args);
 
-        dispatch(updateNextQty(args));
+        // dispatch(updateNextQty(args));
     };
 
     const highlightsted = [];
 
     const handleCellKeyDown = (args, event) => {
         // console.log(args.mode);
+        const { key, shiftKey } = event; 
+
+        // TODO: change cell bg is a headache.
+        // if (key === "Enter" && args.mode === 'EDIT') {
+        //     event.target.parentElement.parentElement.classList.add('danger');
+        // }
+
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
-        const { key, shiftKey } = event; 
+        
     
         const preventDefault = () => {
           event.preventGridDefault();
@@ -389,7 +436,32 @@ export const Store = () => {
    
     return (
         <React.Fragment>
-            <h2>{params.store_name}</h2>
+            <div className="store-header">
+                <div className="info">
+                <h2>{params.store_name}</h2>
+                    <small className="text-muted"> Store </small>
+                </div>
+                <div className="info">
+                    <h2>{F_(valuation)}</h2>
+                    <small className="text-muted"> Value Inventory </small>
+                </div>
+                <div className="info">
+                    <h2>{F_(valuationChanged)}</h2>
+                    <small className="text-muted"> Value Inventory Changed</small>
+                </div>
+                <div className="info">
+                    <h2>{changedCount}</h2>
+                    <small className="text-muted"> Changed Count</small>
+                </div>
+                <div className="info">
+                    <h2>{daysBack}</h2>
+                    <small className="text-muted">Days Open</small>
+                </div>
+                <div className="info">
+                    <span className="material-icons-sharp"> {daysBackIcon} </span>
+                    <small className="text-muted"></small>
+                </div>
+            </div>
             <div className="price-list">
                 <div>
                     <span>Name</span>
@@ -401,7 +473,7 @@ export const Store = () => {
                         {/* } */}
                         <span className="underline-animation"></span>
                     </div>
-                    <span className="error-msg">{errorLabel}</span>
+                    <span className="error-msg">{errorInvName}</span>
                 </div>
                 <div>
                     <span>Memo</span>
@@ -412,7 +484,7 @@ export const Store = () => {
                         {/* } */}
                         <span className="underline-animation"></span>
                     </div>
-                    <span className="error-msg">{errorPriceKey}</span>
+                    <span className="error-msg">{errorInvMemo}</span>
                 </div>
                 <div>
                      <span>Status</span>
@@ -426,7 +498,7 @@ export const Store = () => {
                 <div>
                 {!loading && !is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
-                        <span className="material-icons-sharp"> rocket_launch </span>
+                        <span className="material-icons-sharp"> build </span>
                         <span>OPEN INVENTORY</span>
                     </button>
                 }
@@ -443,7 +515,7 @@ export const Store = () => {
                 <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
                 <span className="underline-animation-terminal"></span>
             </div>
-            {loading && <Loading Text="Loading :)" /> }
+            {/* {loading && <Loading Text="Loading :)" /> } */}
             <DataGrid 
                     ref={gridRef}
                     columns={columns} 

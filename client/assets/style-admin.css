@@ -1251,8 +1251,16 @@ main .recent-orders a {
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
+  gap: 5rem;
   margin-top: 1.4rem;
+}
+
+.store-header {
+  display: flex;
+  /* align-items: center; */
+  justify-content: start;
+  gap: 5rem;
 }
 
 .aside-hide {

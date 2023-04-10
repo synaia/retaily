@@ -4,6 +4,7 @@ import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
 import { refreshProductListAction, updateProduct, addPricing, getPricing, updatePricing } from "../redux/features/product.feature.js";
+import { validateInput } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
@@ -27,24 +28,6 @@ export const PriceList = () => {
         label.current.value = '';
         price_key.current.value = '';
         percent.current.value = '';
-    };
-
-    const validateInput = (element, type) => {
-        if (element == undefined) {
-            return {'return': false, 'msg': 'Is undefined.'};
-        }
-        if (type === "number") {
-            if (!isNaN(parseFloat(element))) {
-                return {'return': true, 'msg': ''};
-            } else {
-                return {'return': false, 'msg': 'Incorrect number.'};
-            }
-        }
-        if (type === "str") {
-            const val = element == null || element.match(/^ *$/) !== null;
-            return {'return': !val, 'msg': 'Evaluation of string fail'};
-        }
-        return  {'return': false, 'msg': 'Wtf.'};
     };
 
     const __addPricing = () => {
