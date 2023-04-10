@@ -156,6 +156,19 @@ export const getStoresInv = createAsyncThunk('products/getStoresInv', async () =
     return response.data;
 });
 
+export const addStore = createAsyncThunk('product/add_store', async (args, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_store`, args,  {
+        params: {
+            'store_name': args
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 export const updateProduct = createAsyncThunk('product/update_product', async (args, ) => {
     const value = (args.field === 'active') ? (+ args.value) : args.value;
     let response = await Axios.post(`${BACKEND_HOST}/products/update`, args,  {
@@ -599,6 +612,19 @@ const productsSlice = createSlice({
         }).addCase(updateNextQty.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR updateNextQty() ; ${action.error.message}`
+        });
+
+        builder.addCase(addStore.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(addStore.fulfilled, (state, action) => {
+            state.loading = false;
+            // refresh :)
+            const {inventory_head_list, resume} = action.payload
+            state.inventory_head_list = inventory_head_list
+            state.resume_inv = resume
+        }).addCase(addStore.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR addStore() ; ${action.error.message}`
         });
     }
 });

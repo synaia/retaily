@@ -1248,6 +1248,11 @@ main .recent-orders a {
 
 .wide-box {
   grid-column: span 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.4rem;
 }
 
 .aside-hide {

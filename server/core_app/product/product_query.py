@@ -401,3 +401,21 @@ def reorder_inventory_qty(store: Store,  db: Session, query: Query):
     cur.connection.commit()
 
     return read_inventory_head(store.name, db, query)
+
+
+def add_app_store(store_name: str, db: Session, query: Query):
+    sql_raw_app_store = query.INSERT_APP_STORE
+    cur = get_cursor(db)
+    data = (store_name,)
+    cur.execute(sql_raw_app_store, data)
+    cur.connection.commit()
+    store_id = cur.lastrowid
+
+    sql_raw_insert_app_inv_store = query.INSERT_APP_INV_STORE
+    data = (store_id,)
+    cur.execute(sql_raw_insert_app_inv_store, data)
+    cur.connection.commit()
+
+    return read_stores_inv(db, query)
+
+

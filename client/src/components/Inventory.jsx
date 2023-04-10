@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { getStoresInv } from "../redux/features/product.feature.js";
+import { getStoresInv, addStore } from "../redux/features/product.feature.js";
 import { F_ } from "../util/Utils";
 
 export const Inventory = () => {
@@ -10,6 +10,8 @@ export const Inventory = () => {
     const resume_inv = useSelector((state) => state.product.resume_inv);
     const navigator = useNavigate();
     const dispatch = useDispatch();
+
+    const store_name = useRef();
 
 
     useEffect(() => {
@@ -19,6 +21,11 @@ export const Inventory = () => {
     useEffect(() => {
         console.log(resume_inv['LOPE'])
     }, [resume_inv]);
+
+    const __addStore = () => {
+        const args = store_name.current?.value;
+        dispatch(addStore(args));
+    };
 
     return (
         <React.Fragment>
@@ -84,6 +91,19 @@ export const Inventory = () => {
 
                 <div className="wide-box">
                     <h2>Stores</h2>
+                    <div>
+                        <span>STORE NAME</span>
+                        <div className="price-list-b">
+                            <span className="material-icons-sharp price-list-i"> edit_note </span>
+                            <input ref={store_name} type="text" className="price-list-t" />
+                            <span className="underline-animation"></span>
+                        </div>
+                            <span className="error-msg"></span>
+                        </div>
+                    <button className="fbutton fbutton-price-list" onClick={() => __addStore()}>
+                        <span className="material-icons-sharp"> rocket_launch </span>
+                        <h3>CREATE STORE</h3>
+                    </button>
                 </div>
 
 

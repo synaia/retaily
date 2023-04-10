@@ -393,3 +393,13 @@ FROM app_inventory i, app_store st, product p
   AND i.status = 'changed'
   AND st.name = %s
 ;
+
+--INSERT_APP_STORE
+INSERT INTO app_store (name) VALUES (%s)
+;
+
+--INSERT_APP_INV_STORE
+INSERT INTO app_inventory (quantity, product_id, store_id)
+ SELECT 0, id, %s FROM product
+;
+
