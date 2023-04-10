@@ -91,9 +91,9 @@ export const Store = () => {
         }
     }, [inventory_head])
 
-    useEffect(() => {
-        inv_progress.current.value = inventory_head.status == 0 ? `${changed_count} In Progress` : "Close";
-    }, [changed_count]);
+    // useEffect(() => {
+    //     inv_progress.current.value = inventory_head.status == 0 ? `${changed_count} In Progress` : "Close";
+    // }, [changed_count]);
 
     useEffect(() => {
         console.log('inventory_head', inventory_head);
@@ -247,7 +247,7 @@ export const Store = () => {
         }
 
         if (key === "ArrowDown") {
-            gridRef.current.selectCell({ rowIdx: 0, idx: 5 }); 
+            gridRef.current.selectCell({ rowIdx: 0, idx: 4 }); 
             return;
         }
 
@@ -316,7 +316,7 @@ export const Store = () => {
 
         console.log(args);
 
-        // dispatch(updateNextQty(args));
+        dispatch(updateNextQty(args));
     };
 
     const highlightsted = [];
@@ -486,7 +486,7 @@ export const Store = () => {
                     </div>
                     <span className="error-msg">{errorInvMemo}</span>
                 </div>
-                <div>
+                {/* <div>
                      <span>Status</span>
                      <div className="price-list-b">
                          <span className="material-icons-sharp price-list-i"> more_vert </span>
@@ -494,7 +494,7 @@ export const Store = () => {
                          <span className="underline-animation"></span>
                      </div>
                      <span className="error-msg">{errorPriceKey}</span>
-                </div>
+                </div> */}
                 <div>
                 {!loading && !is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
@@ -505,7 +505,7 @@ export const Store = () => {
                 {!loading && is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __closeinventory()}>
                         <span className="material-icons-sharp"> verified </span>
-                        <span>CLOSE INVENTORY</span>
+                        <span>CLOSE INVENTORY IN PROGRESS</span>
                     </button>
                 }
                 </div>
