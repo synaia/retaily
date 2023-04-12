@@ -1,12 +1,13 @@
 import React from "react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { Row } from "react-data-grid";
 
-import { getProductsByInventory, openInventory, closeInventory, getInventoryHead, updateNextQty, getStoresInv } from "../redux/features/product.feature.js";
+import { getProductsByInventory, openInventory, closeInventory, cancelInventory, getInventoryHead, updateNextQty, getStoresInv } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
 
@@ -18,6 +19,7 @@ import 'react-data-grid/lib/styles.css';
 export const Store = () => {
     const params = useParams();
     const dispatch = useDispatch();
+    const navigator = useNavigate()
     const products_inv = useSelector((state) => state.product.products_inv);
     const resume_inv = useSelector((state) => state.product.resume_inv);
     const changed_count = useSelector((state) => state.product.changed_count);
@@ -52,6 +54,8 @@ export const Store = () => {
     const [errorInvName, SetErrorInvName] = useState(null);
 
     const [is_inventory_open, set_inventory_open] = useState(false);
+
+    const [productFound, SetProductFound] = useState(0);
 
 
     useEffect(()=> {
@@ -128,6 +132,17 @@ export const Store = () => {
         }
         const store  = products_inv[0].inventory[0].store;
         dispatch(closeInventory(store));
+        dispatch(getProductsByInventory(params.store_name));
+        dispatch(getInventoryHead(params.store_name));
+        set_inventory_open(false);
+    };
+
+    const __cancelInventory = () => {
+        if (!confirm('CANCEL THIS INVENTORY ... ARE YOU SURE?')) {
+            return;
+        }
+        const store  = products_inv[0].inventory[0].store;
+        dispatch(cancelInventory(store));
         dispatch(getProductsByInventory(params.store_name));
         dispatch(getInventoryHead(params.store_name));
         set_inventory_open(false);
@@ -223,13 +238,16 @@ export const Store = () => {
                 }
             });
             setRows(get_rows(list_filtered));
+            SetProductFound(`${list_filtered.length} products found`);
         } else {
             setRows(get_rows(products_inv));
+            SetProductFound(`${products_inv.length} products in total`);
         }
 
         // const changed = products_inv.filter(p => p.inventory[0].status === "changed");
         // set_inchanged(changed.length)
         // console.log(changed.length)
+
 
     }, [products_inv]);
 
@@ -271,6 +289,7 @@ export const Store = () => {
         });
 
         setRows(get_rows(list_filtered));
+        SetProductFound(`${list_filtered.length} products found`);
         
         if (13 === event.keyCode) {
             event.target.select();
@@ -509,11 +528,22 @@ export const Store = () => {
                     </button>
                 }
                 </div>
+                {!loading && is_inventory_open &&
+                <div>
+                    <button className="fbutton fbutton-price-list" onClick={() => __cancelInventory()}>
+                        <span className="material-icons-sharp"> waving_hand </span>
+                        <span>CANCEL THIS INVENTORY</span>
+                    </button>
+                </div>
+                }
             </div>
-            <div className="search-terminal">
-                <span className="material-icons-sharp"> searchk </span>
-                <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
-                <span className="underline-animation-terminal"></span>
+            <div className="search-terminal-c">
+                <div className="search-terminal">
+                    <span className="material-icons-sharp"> searchk </span>
+                    <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
+                    <span className="underline-animation-terminal"></span>
+                </div>
+                <small className="text-muted search-count"> {productFound} </small>
             </div>
             {/* {loading && <Loading Text="Loading :)" /> } */}
             <DataGrid 

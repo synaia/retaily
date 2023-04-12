@@ -371,6 +371,31 @@ SET
      status = 1
 WHERE
 	store_id = %s
+ORDER BY date_create DESC
+ LIMIT 1
+;
+
+--CLOSE_INVENTORY_HEAD_CANCEL
+UPDATE
+     app_inventory_head
+SET
+	 date_close = NOW(),
+     status = 1,
+     memo = CONCAT('CANCELLED: ', memo)
+WHERE
+	store_id = %s
+ORDER BY date_create DESC
+ LIMIT 1
+;
+
+--CLOSE_INVENTORY_CANCEL
+UPDATE
+     app_inventory
+  SET
+     status = 'quiet'
+WHERE
+     store_id = %s
+ AND status = 'changed'
 ;
 
 --SELECT_INV_VALUATION
@@ -404,3 +429,71 @@ INSERT INTO app_inventory (quantity, product_id, store_id)
  SELECT 0, id, %s FROM product
 ;
 
+--SELECT_FROM_PRODUCT_ORDER
+SELECT
+       o.id,
+       o.name,
+       o.memo,
+       o.order_type,
+       o.user_requester,
+       o.user_receiver,
+       o.date_opened,
+       o.date_closed
+ FROM  product_order o
+ ORDER BY o.id
+;
+
+--SELECT_FROM_PRODUCT_ORDER_BYID
+SELECT
+       o.id,
+       o.name,
+       o.memo,
+       o.order_type,
+       o.user_requester,
+       o.user_receiver,
+       o.date_opened,
+       o.date_closed
+ FROM  product_order o
+  WHERE o.id = %s
+;
+
+--SELECT_FROM_PRODUCT_ORDER_HIST
+SELECT
+       h.id,
+       h.product_id,
+       h.from_store_id,
+       h.to_store_id,
+       h.product_order_id,
+       h.quantity,
+       h.status,
+       h.date_create
+ FROM  product_order_hist h
+ WHERE
+     h.product_order_id = %s
+ ORDER BY h.id DESC
+;
+
+--SELECT_FROM_PRODUCT_ORDER_HIST_BYID
+SELECT
+       h.id,
+       h.product_id,
+       h.from_store_id,
+       h.to_store_id,
+       h.product_order_id,
+       h.quantity,
+       h.status,
+       h.date_create
+ FROM  product_order_hist h
+ WHERE
+     h.id = %s
+;
+
+--INSERT_PRODUCT_ORDER
+INSERT INTO product_order (name, memo, order_type, user_requester)
+  VALUES (%s, %s, %s, %s)
+;
+
+--INSERT_PRODUCT_ORDER_HIST
+INSERT INTO product_order_hist (product_id, from_store_id, to_store_id, product_order_id, quantity)
+   VALUES (%s, %s, %s, %s, %s)
+;

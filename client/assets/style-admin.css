@@ -1207,7 +1207,7 @@ main .recent-orders a {
 }
 
 .inv-in-progress {
-  background: var(--color-danger) !important;
+  background: var(--color-warning) !important;
 }
 
 .inventory-resume-r {
@@ -1288,4 +1288,25 @@ main .recent-orders a {
 
 .sidebar-btn:hover {
   color: var(--color-primary);
+}
+
+.search-terminal-c {
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: 0rem;
+}
+
+.search-count {
+  position: absolute;
+  padding-top: 42px;
+  padding-left: 23px;
+}
+
+.avatar-icon-heat {
+  font-size: 26px !important;
+  color: var(--color-danger) !important;
+  background-color: transparent !important;
+  position: absolute;
+  padding-top: 20px !important;
+  padding-left: 30px !important;
 }

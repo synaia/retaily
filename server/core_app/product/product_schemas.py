@@ -86,3 +86,32 @@ class Product(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ProductOrderHist(BaseModelExt):
+    id: int | None = None
+    product_id: int | None = None
+    from_store: Store | None = None
+    to_store: Store | None = None
+    product_order_id: int | None = None  # Optional?
+    quantity: int | None = None
+    status: str | None = None
+    date_create: datetime | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class ProductOrder(BaseModelExt):
+    id: int | None = None
+    name: str | None = None
+    memo: str | None = None
+    order_type: str | None = None
+    user_requester: str | None = None
+    user_receiver: str | None = None
+    date_opened: datetime | None = None
+    date_closed: datetime | None = None
+    product_order_hist: list[ProductOrderHist] = []
+
+    class Config:
+        orm_mode = True

@@ -235,6 +235,17 @@ export const closeInventory = createAsyncThunk('product/closeInventory', async (
     return response.data;
 });
 
+
+export const cancelInventory = createAsyncThunk('product/cancelInventory', async (store, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/cancel_inventory`, store,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 export const updatePricing = createAsyncThunk('product/update_pricing', async (args, ) => {
     const value = (args.field === 'status') ? (+ args.value) : args.value;
     console.log(args);

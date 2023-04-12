@@ -15,6 +15,23 @@ export const Inventory = () => {
     const [errorStoreName, SeterrorStoreName] = useState(null);
 
 
+    const getStatusIcon = (date_create) => {
+        if (date_create != undefined) {
+            const currentDate = new Date();
+            const dc = new Date(date_create);
+            const days_back = currentDate.getDate() - dc.getDate();
+            if (days_back == 0) {
+                return "";
+            } else if (days_back >= 1 && days_back <= 2 ) {
+                return "sentiment_very_dissatisfied";
+            } else if (days_back >= 3 ) {
+                return "local_fire_department";
+            }
+        } else {
+            return "";
+        }
+    }
+
     useEffect(() => {
         dispatch(getStoresInv());
     }, []);
@@ -115,8 +132,12 @@ export const Inventory = () => {
                     <div className="inventory-resume" key={i} onClick={() => navigator(`store/${head.store.name}`, {replace: true})}>
                         <div className="icon">
                         {head.name != undefined &&
+                                <span className="material-icons-sharp avatar-icon-heat"> {getStatusIcon(head.date_create)} </span>
+                        }
+                        {head.name != undefined &&
                                 <span className="material-icons-sharp inv-in-progress"> storefront </span>
                         }
+
                         {head.name == undefined &&
                                 <span className="material-icons-sharp inv-success"> storefront </span>
                         }

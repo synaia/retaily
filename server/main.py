@@ -1,7 +1,7 @@
 import os
 import sys
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 # from starlette.middleware.cors import CORSMiddleware
 import server.core_app.product.product_main as product_main
@@ -9,6 +9,7 @@ import server.core_app.user.user_main as user_main
 import server.core_app.client.client_main as client_main
 import server.core_app.sale.sale_main as sale_main
 import uvicorn
+import time
 
 # import logging
 # logging.basicConfig()
@@ -55,6 +56,15 @@ app.add_middleware(
 @app.get('/')
 async def root():
     return {'message': 'Message from root.'}
+
+
+@app.middleware("http")
+async def add_time_simulate_latency(request: Request, call_next):
+    secs = 0.1
+    print(f'### Wow Latency, Wait for {secs} secs ###')
+    response = await call_next(request)
+    time.sleep(secs)
+    return response
 
 
 # debug mode :-)

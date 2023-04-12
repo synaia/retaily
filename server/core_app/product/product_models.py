@@ -107,6 +107,31 @@ class PricingList(Base):
     pricing = relationship("Pricing", backref='pricing_list', uselist=False)
 
 
+class ProductOrder(Base):
+    __tablename__ = "product_order"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    memo = Column(String)
+    order_type = Column(String)
+    user_requester = Column(String)
+    user_receiver = Column(String)
+    date_opened = Column(DateTime)
+    date_closed = Column(DateTime)
+
+
+class ProductOrderHist(Base):
+    __tablename__ = "product_order_hist"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey('product.id'))
+    from_store_id = Column(Integer, ForeignKey('app_store.id'))
+    to_store_id = Column(Integer, ForeignKey('app_store.id'))
+    product_order_id = Column(Integer, ForeignKey('product_order.id'))
+    quantity = Column(Integer)
+    status = Column(String)
+    date_create = Column(DateTime)
+
 
 # from core_app.database import engine
 # Inventory.__table__.create(engine)

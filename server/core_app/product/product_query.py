@@ -7,6 +7,7 @@ from server.core_app.product.product_schemas import PricingList
 from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
+from server.core_app.product.product_schemas import ProductOrder, ProductOrderHist
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
@@ -409,6 +410,20 @@ def reorder_inventory_qty(store: Store,  db: Session, query: Query):
     return read_inventory_head(store.name, db, query)
 
 
+def cancel_inventory_in_progress(store: Store,  db: Session, query: Query):
+    sql_raw_calcel_inv = query.CLOSE_INVENTORY_HEAD_CANCEL
+    sql_raw_calcel = query.CLOSE_INVENTORY_CANCEL
+    cur = get_cursor(db)
+    data = (store.id,)
+    cur.execute(sql_raw_calcel_inv, data)
+    cur.connection.commit()
+
+    cur.execute(sql_raw_calcel, data)
+    cur.connection.commit()
+
+    return read_inventory_head(store.name, db, query)
+
+
 def add_app_store(store_name: str, db: Session, query: Query):
     sql_raw_app_store = query.INSERT_APP_STORE
     cur = get_cursor(db)
@@ -423,5 +438,135 @@ def add_app_store(store_name: str, db: Session, query: Query):
     cur.connection.commit()
 
     return read_stores_inv(db, query)
+
+
+def read_product_order(db: Session, query: Query):
+    sql_raw = query.SELECT_FROM_PRODUCT_ORDER
+    sql_raw_product_order_hist = query.SELECT_FROM_PRODUCT_ORDER_HIST
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+
+    product_order_hist = []
+
+    for r in resp:
+        order = ProductOrder()
+        order.id = r['id']
+        order.name = r['name']
+        order.memo = r['memo']
+        order.order_type = r['order_type']
+        order.user_requester = r['user_requester']
+        order.user_receiver = r['user_receiver']
+        order.date_opened = r['date_opened']
+        order.date_closed = r['date_closed']
+
+        data = (order.id,)
+        cur.execute(sql_raw_product_order_hist, data)
+        hresp = cur.fetchall()
+        for h in hresp:
+            hist = ProductOrderHist()
+            hist.id = h['id']
+            hist.product_id = h['product_id']
+            hist.from_store_id = h['from_store_id']
+            hist.to_store_id = h['to_store_id']
+            hist.product_order_id = h['product_order_id']
+            hist.quantity = h['quantity']
+            hist.status = h['status']
+            hist.date_create = h['date_create']
+            product_order_hist.append(hist)
+
+        order.product_order_hist = product_order_hist
+
+    return order
+
+
+def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
+    sql_raw = query.SELECT_FROM_PRODUCT_ORDER_BYID
+    sql_raw_product_order_hist = query.SELECT_FROM_PRODUCT_ORDER_HIST
+    cur = get_cursor(db)
+    data = (product_order_id,)
+    cur.execute(sql_raw, data)
+    resp = cur.fetchall()
+
+    product_order_hist = []
+
+    for r in resp:
+        order = ProductOrder()
+        order.id = r['id']
+        order.name = r['name']
+        order.memo = r['memo']
+        order.order_type = r['order_type']
+        order.user_requester = r['user_requester']
+        order.user_receiver = r['user_receiver']
+        order.date_opened = r['date_opened']
+        order.date_closed = r['date_closed']
+
+        data = (order.id,)
+        cur.execute(sql_raw_product_order_hist, data)
+        hresp = cur.fetchall()
+        for h in hresp:
+            hist = ProductOrderHist()
+            hist.id = h['id']
+            hist.product_id = h['product_id']
+            hist.from_store_id = h['from_store_id']
+            hist.to_store_id = h['to_store_id']
+            hist.product_order_id = h['product_order_id']
+            hist.quantity = h['quantity']
+            hist.status = h['status']
+            hist.date_create = h['date_create']
+            product_order_hist.append(hist)
+
+        order.product_order_hist = product_order_hist
+
+    return order
+
+
+def read_product_order_hist_by_id(product_order_hist_id: int, db: Session, query: Query):
+    sql_raw = query.SELECT_FROM_PRODUCT_ORDER_HIST_BYID
+    cur = get_cursor(db)
+    data = (product_order_hist_id,)
+    cur.execute(sql_raw, data)
+    resp = cur.fetchall()
+    hist = ProductOrderHist()
+    for h in resp:
+        hist.id = h['id']
+        hist.product_id = h['product_id']
+        store = Store()
+        store.id = h['from_store_id']
+        hist.from_store = store
+        store.id = h['to_store_id']
+        hist.to_store = store
+        hist.product_order_id = h['product_order_id']
+        hist.quantity = h['quantity']
+        hist.status = h['status']
+        hist.date_create = h['date_create']
+        hist.build_meta(1, SUCCESS, SUCCESS)
+    return hist
+
+
+def read_product_order_by_store(store_id: int, db: Session, query: Query):
+    pass
+
+
+def add_product_order(product_order: ProductOrder, db: Session, query: Query):
+    sql_raw_add_product_order = query.INSERT_PRODUCT_ORDER
+    cur = get_cursor(db)
+    data = (product_order.name, product_order.memo, product_order.order_type, product_order.user_requester,)
+    cur.execute(sql_raw_add_product_order, data)
+    cur.connection.commit()
+    product_order_id = cur.lastrowid
+
+    return read_product_order_by_id(product_order_id, db, query)
+
+
+def add_product_order_hist(hist: ProductOrderHist, db: Session, query: Query):
+    sql_raw_add_product_order_hist = query.INSERT_PRODUCT_ORDER_HIST
+    cur = get_cursor(db)
+    data = (hist.product_id, hist.from_store.id, hist.to_store.id, hist.product_order_id, hist.quantity)
+    cur.execute(sql_raw_add_product_order_hist, data)
+    cur.connection.commit()
+    product_order_hist_id = cur.lastrowid
+
+    return read_product_order_hist_by_id(product_order_hist_id, db, query)
 
 
