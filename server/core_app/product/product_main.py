@@ -11,7 +11,30 @@ from aiocache import Cache
 import asyncio
 
 from server.core_app.database import get_db
-from server.core_app.product.product_query import read_products, read_all_products, read_pricing_labels,  update_one, add_pricing, read_pricing, update_pricing, add_product, read_stores, read_inv_products, add_new_inventory_head, read_inventory_head, update_next_inventory_qty, reorder_inventory_qty, read_stores_inv, add_app_store, cancel_inventory_in_progress, add_product_order, add_product_order_hist
+from server.core_app.product.product_query import (
+    read_products,
+    read_all_products,
+    read_pricing_labels,
+    update_one,
+    add_pricing,
+    read_pricing,
+    update_pricing,
+    add_product,
+    read_stores,
+    read_inv_products,
+    add_new_inventory_head,
+    read_inventory_head,
+    update_next_inventory_qty,
+    reorder_inventory_qty,
+    read_stores_inv,
+    add_app_store,
+    cancel_inventory_in_progress,
+    add_product_order,
+    add_product_order_line,
+    read_product_order,
+    read_product_order_by_id,
+    process_order
+)
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import validate_permissions
@@ -244,16 +267,53 @@ async def __add_product_order(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/add_product_order_hist", response_model=schemas.ProductOrderHist)
-async def __add_product_order_hist(
-                        hist: schemas.ProductOrderHist,
+@router.post("/add_product_order_line", response_model=schemas.ProductOrderLine)
+async def __add_product_order_line(
+                        line: schemas.ProductOrderLine,
                         db: Session = Depends(get_db),
                         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return add_product_order_hist(hist, db, query)
+        return add_product_order_line(line, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/product_order", response_model=list[schemas.ProductOrder])
+async def __read_product_order(
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_product_order(db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/product_order/{product_order_id}", response_model=schemas.ProductOrder)
+async def __read_product_order_by_id(
+                        product_order_id: int,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_product_order_by_id(product_order_id, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/process_order", response_model=schemas.ProductOrder)
+async def __process_order(
+                        order: schemas.ProductOrder,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return process_order(order, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
 
 
 @router.post("/uploadfilelocal/{client_uuid}",)

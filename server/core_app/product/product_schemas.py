@@ -88,7 +88,7 @@ class Product(BaseModel):
         orm_mode = True
 
 
-class ProductOrderHist(BaseModelExt):
+class ProductOrderLine(BaseModelExt):
     id: int | None = None
     product_id: int | None = None
     from_store: Store | None = None
@@ -97,6 +97,7 @@ class ProductOrderHist(BaseModelExt):
     quantity: int | None = None
     status: str | None = None
     date_create: datetime | None = None
+    product: Product | None = None
 
     class Config:
         orm_mode = True
@@ -111,7 +112,7 @@ class ProductOrder(BaseModelExt):
     user_receiver: str | None = None
     date_opened: datetime | None = None
     date_closed: datetime | None = None
-    product_order_hist: list[ProductOrderHist] = []
+    product_order_line: list[ProductOrderLine] = []
 
     class Config:
         orm_mode = True

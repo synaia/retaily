@@ -457,7 +457,7 @@ SELECT
   WHERE o.id = %s
 ;
 
---SELECT_FROM_PRODUCT_ORDER_HIST
+--SELECT_FROM_PRODUCT_ORDER_LINE
 SELECT
        h.id,
        h.product_id,
@@ -466,14 +466,19 @@ SELECT
        h.product_order_id,
        h.quantity,
        h.status,
-       h.date_create
- FROM  product_order_hist h
+       h.date_create,
+       p.name AS product_name,
+       p.cost,
+       p.code,
+       p.active
+ FROM  product_order_line h, product p
  WHERE
-     h.product_order_id = %s
+        h.product_order_id = %s
+   AND  h.product_id = p.id
  ORDER BY h.id DESC
 ;
 
---SELECT_FROM_PRODUCT_ORDER_HIST_BYID
+--SELECT_FROM_PRODUCT_ORDER_LINE_BYID
 SELECT
        h.id,
        h.product_id,
@@ -483,9 +488,19 @@ SELECT
        h.quantity,
        h.status,
        h.date_create
- FROM  product_order_hist h
+ FROM  product_order_line h
  WHERE
      h.id = %s
+;
+
+--SELECT_FROM_PRODUCT_ORDER_LINE_BYARGS
+SELECT
+       h.id,
+       h.quantity
+ FROM  product_order_line h
+ WHERE
+     h.product_order_id = %s
+ AND h.product_id = %s
 ;
 
 --INSERT_PRODUCT_ORDER
@@ -493,7 +508,77 @@ INSERT INTO product_order (name, memo, order_type, user_requester)
   VALUES (%s, %s, %s, %s)
 ;
 
---INSERT_PRODUCT_ORDER_HIST
-INSERT INTO product_order_hist (product_id, from_store_id, to_store_id, product_order_id, quantity)
+--INSERT_PRODUCT_ORDER_LINE
+INSERT INTO product_order_line (product_id, from_store_id, to_store_id, product_order_id, quantity)
    VALUES (%s, %s, %s, %s, %s)
+;
+
+--VALIDATE_PRODUCT_ORDER_LINE_EXIST
+SELECT
+		COUNT(*) AS line_count
+FROM product_order_line l
+WHERE
+    l.product_order_id = %s
+AND l.product_id = %s
+;
+
+--UPDATE_PRODUCT_ORDER_LINE
+UPDATE product_order_line
+  SET quantity = %s
+WHERE
+	product_order_id = %s
+AND product_id = %s
+;
+
+--SUBSTRACT_FROM_STORE
+UPDATE app_inventory
+ SET prev_quantity = quantity,
+     quantity = quantity - %s,
+     last_update = NOW(),
+     user_updated = %s
+ WHERE store_id = %s
+  AND  product_id = %s
+;
+
+--SUBSTRACT_FROM_STORE_DONTTOUCH_PREV_QUANTITY
+UPDATE app_inventory
+ SET
+     quantity = quantity - %s,
+     last_update = NOW(),
+     user_updated = %s
+ WHERE store_id = %s
+  AND  product_id = %s
+;
+
+--PROCESS_APP_INVENTORY
+UPDATE app_inventory i,
+  (
+    SELECT l.*
+	FROM product_order_line l
+    WHERE
+		 l.product_order_id = %s
+  ) AS line
+  SET
+	   i.prev_quantity = i.quantity,
+       i.user_updated = %s,
+       i.last_update = NOW(),
+	   i.quantity = i.quantity + line.quantity
+ WHERE
+       i.store_id = line.to_store_id
+   AND i.product_id = line.product_id
+;
+
+--UPDATE_ORDER_LINE_PROCESS
+UPDATE product_order_line l
+  SET l.status = 'transfered'
+WHERE
+	l.product_order_id = %s
+;
+
+--UPDATE_PRODUCT_ORDER_PROCESS
+UPDATE product_order o
+   SET o.user_receiver = %s,
+       o.date_closed = NOW()
+WHERE
+      o.id = %s
 ;

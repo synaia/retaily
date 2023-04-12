@@ -7,7 +7,7 @@ from server.core_app.product.product_schemas import PricingList
 from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
-from server.core_app.product.product_schemas import ProductOrder, ProductOrderHist
+from server.core_app.product.product_schemas import ProductOrder, ProductOrderLine
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
@@ -440,14 +440,41 @@ def add_app_store(store_name: str, db: Session, query: Query):
     return read_stores_inv(db, query)
 
 
+def __iterate_over_order_line(hresp: tuple):
+    product_order_line = []
+    for h in hresp:
+        line = ProductOrderLine()
+        line.id = h['id']
+        line.product_id = h['product_id']
+        from_store = Store()
+        from_store.id = h['from_store_id']
+        line.from_store = from_store
+        to_store = Store()
+        to_store.id = h['to_store_id']
+        line.to_store = to_store
+        line.product_order_id = h['product_order_id']
+        line.quantity = h['quantity']
+        line.status = h['status']
+        line.date_create = h['date_create']
+        product = Product()
+        product.id = line.product_id
+        product.name = h['product_name']
+        product.cost = h['cost']
+        product.code = h['code']
+        product.active = h['active']
+        line.product = product
+        product_order_line.append(line)
+    return product_order_line
+
+
 def read_product_order(db: Session, query: Query):
     sql_raw = query.SELECT_FROM_PRODUCT_ORDER
-    sql_raw_product_order_hist = query.SELECT_FROM_PRODUCT_ORDER_HIST
+    sql_raw_product_order_line = query.SELECT_FROM_PRODUCT_ORDER_LINE
     cur = get_cursor(db)
     cur.execute(sql_raw)
     resp = cur.fetchall()
 
-    product_order_hist = []
+    orders = []
 
     for r in resp:
         order = ProductOrder()
@@ -461,36 +488,23 @@ def read_product_order(db: Session, query: Query):
         order.date_closed = r['date_closed']
 
         data = (order.id,)
-        cur.execute(sql_raw_product_order_hist, data)
+        cur.execute(sql_raw_product_order_line, data)
         hresp = cur.fetchall()
-        for h in hresp:
-            hist = ProductOrderHist()
-            hist.id = h['id']
-            hist.product_id = h['product_id']
-            hist.from_store_id = h['from_store_id']
-            hist.to_store_id = h['to_store_id']
-            hist.product_order_id = h['product_order_id']
-            hist.quantity = h['quantity']
-            hist.status = h['status']
-            hist.date_create = h['date_create']
-            product_order_hist.append(hist)
+        order.product_order_line = __iterate_over_order_line(hresp)
+        orders.append(order)
 
-        order.product_order_hist = product_order_hist
-
-    return order
+    return orders
 
 
 def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
     sql_raw = query.SELECT_FROM_PRODUCT_ORDER_BYID
-    sql_raw_product_order_hist = query.SELECT_FROM_PRODUCT_ORDER_HIST
+    sql_raw_product_order_line = query.SELECT_FROM_PRODUCT_ORDER_LINE
     cur = get_cursor(db)
     data = (product_order_id,)
     cur.execute(sql_raw, data)
     resp = cur.fetchall()
 
-    product_order_hist = []
-
-    for r in resp:
+    for r in resp:   # Get ONE record because product_order_id
         order = ProductOrder()
         order.id = r['id']
         order.name = r['name']
@@ -502,46 +516,35 @@ def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
         order.date_closed = r['date_closed']
 
         data = (order.id,)
-        cur.execute(sql_raw_product_order_hist, data)
+        cur.execute(sql_raw_product_order_line, data)
         hresp = cur.fetchall()
-        for h in hresp:
-            hist = ProductOrderHist()
-            hist.id = h['id']
-            hist.product_id = h['product_id']
-            hist.from_store_id = h['from_store_id']
-            hist.to_store_id = h['to_store_id']
-            hist.product_order_id = h['product_order_id']
-            hist.quantity = h['quantity']
-            hist.status = h['status']
-            hist.date_create = h['date_create']
-            product_order_hist.append(hist)
-
-        order.product_order_hist = product_order_hist
+        order.product_order_line = __iterate_over_order_line(hresp)
 
     return order
 
 
-def read_product_order_hist_by_id(product_order_hist_id: int, db: Session, query: Query):
-    sql_raw = query.SELECT_FROM_PRODUCT_ORDER_HIST_BYID
+def read_product_order_line_by_id(product_order_line_id: int, db: Session, query: Query):
+    sql_raw = query.SELECT_FROM_PRODUCT_ORDER_LINE_BYID
     cur = get_cursor(db)
-    data = (product_order_hist_id,)
+    data = (product_order_line_id,)
     cur.execute(sql_raw, data)
     resp = cur.fetchall()
-    hist = ProductOrderHist()
+    line = ProductOrderLine()
     for h in resp:
-        hist.id = h['id']
-        hist.product_id = h['product_id']
-        store = Store()
-        store.id = h['from_store_id']
-        hist.from_store = store
-        store.id = h['to_store_id']
-        hist.to_store = store
-        hist.product_order_id = h['product_order_id']
-        hist.quantity = h['quantity']
-        hist.status = h['status']
-        hist.date_create = h['date_create']
-        hist.build_meta(1, SUCCESS, SUCCESS)
-    return hist
+        line.id = h['id']
+        line.product_id = h['product_id']
+        from_store = Store()
+        from_store.id = h['from_store_id']
+        line.from_store = from_store
+        to_store = Store()
+        to_store.id = h['to_store_id']
+        line.to_store = to_store
+        line.product_order_id = h['product_order_id']
+        line.quantity = h['quantity']
+        line.status = h['status']
+        line.date_create = h['date_create']
+        line.build_meta(1, SUCCESS, SUCCESS)
+    return line
 
 
 def read_product_order_by_store(store_id: int, db: Session, query: Query):
@@ -559,14 +562,69 @@ def add_product_order(product_order: ProductOrder, db: Session, query: Query):
     return read_product_order_by_id(product_order_id, db, query)
 
 
-def add_product_order_hist(hist: ProductOrderHist, db: Session, query: Query):
-    sql_raw_add_product_order_hist = query.INSERT_PRODUCT_ORDER_HIST
+def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
+    sql_raw_add_product_order_line = query.INSERT_PRODUCT_ORDER_LINE
+    sql_raw_validate_line = query.VALIDATE_PRODUCT_ORDER_LINE_EXIST
+    sql_raw_update_line = query.UPDATE_PRODUCT_ORDER_LINE
+    sql_raw_select_line_byargs = query.SELECT_FROM_PRODUCT_ORDER_LINE_BYARGS
+    sql_raw_substract_from_store = query.SUBSTRACT_FROM_STORE
+    sql_raw_substract_from_store_dtpq = query.SUBSTRACT_FROM_STORE_DONTTOUCH_PREV_QUANTITY
+
     cur = get_cursor(db)
-    data = (hist.product_id, hist.from_store.id, hist.to_store.id, hist.product_order_id, hist.quantity)
-    cur.execute(sql_raw_add_product_order_hist, data)
+    data = (line.product_order_id, line.product_id)
+    cur.execute(sql_raw_validate_line, data)
+    resp = cur.fetchall()
+    line_count: int = 0 if resp[0]['line_count'] is None else resp[0]['line_count']
+    if line_count == 0: # add quantity
+        # substract quantity from store
+        data = (line.quantity, 'userwhat', line.from_store.id, line.product_id)
+        cur.execute(sql_raw_substract_from_store, data)
+        cur.connection.commit()
+
+        # reserve quantity
+        data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity)
+        cur.execute(sql_raw_add_product_order_line, data)
+        cur.connection.commit()
+        product_order_line_id = cur.lastrowid
+    else:              # update quantity
+        data = (line.product_order_id, line.product_id)
+        cur.execute(sql_raw_select_line_byargs, data)
+        resp = cur.fetchall()
+        product_order_quantity = resp[0]['quantity']
+        abs_quantity = line.quantity - product_order_quantity
+
+        data = (abs_quantity, 'userdam', line.from_store.id, line.product_id)
+        cur.execute(sql_raw_substract_from_store_dtpq, data)
+        cur.connection.commit()
+
+        data = (line.quantity, line.product_order_id, line.product_id)
+        cur.execute(sql_raw_update_line, data)
+        cur.connection.commit()
+
+        data = (line.product_order_id, line.product_id)
+        cur.execute(sql_raw_select_line_byargs, data)
+        resp = cur.fetchall()
+        product_order_line_id = resp[0]['id']
+
+    return read_product_order_line_by_id(product_order_line_id, db, query)
+
+
+def process_order(product_order: ProductOrder, db: Session, query: Query):
+    sql_raw_process_app_inv = query.PROCESS_APP_INVENTORY
+    sql_raw_process_order_line = query.UPDATE_ORDER_LINE_PROCESS
+    sql_raw_product_order_process = query.UPDATE_PRODUCT_ORDER_PROCESS
+
+    cur = get_cursor(db)
+    data = (product_order.id, product_order.user_receiver)
+    cur.execute(sql_raw_process_app_inv, data)
     cur.connection.commit()
-    product_order_hist_id = cur.lastrowid
 
-    return read_product_order_hist_by_id(product_order_hist_id, db, query)
+    data = (product_order.id,)
+    cur.execute(sql_raw_process_order_line, data)
+    cur.connection.commit()
 
+    data = (product_order.user_receiver, product_order.id,)
+    cur.execute(sql_raw_product_order_process, data)
+    cur.connection.commit()
 
+    return read_product_order_by_id(product_order.id, db, query)

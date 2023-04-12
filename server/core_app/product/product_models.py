@@ -120,8 +120,8 @@ class ProductOrder(Base):
     date_closed = Column(DateTime)
 
 
-class ProductOrderHist(Base):
-    __tablename__ = "product_order_hist"
+class ProductOrderLine(Base):
+    __tablename__ = "product_order_line"
 
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey('product.id'))
