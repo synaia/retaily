@@ -95,8 +95,12 @@ class ProductOrderLine(BaseModelExt):
     to_store: Store | None = None
     product_order_id: int | None = None  # Optional?
     quantity: int | None = None
+    quantity_observed: int | None = None
+    user_receiver: str | None = None
+    receiver_memo: str | None = None
     status: str | None = None
     date_create: datetime | None = None
+    receiver_last_update: datetime | None = None
     product: Product | None = None
 
     class Config:

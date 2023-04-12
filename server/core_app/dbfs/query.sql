@@ -509,8 +509,8 @@ INSERT INTO product_order (name, memo, order_type, user_requester)
 ;
 
 --INSERT_PRODUCT_ORDER_LINE
-INSERT INTO product_order_line (product_id, from_store_id, to_store_id, product_order_id, quantity)
-   VALUES (%s, %s, %s, %s, %s)
+INSERT INTO product_order_line (product_id, from_store_id, to_store_id, product_order_id, quantity, quantity_observed)
+   VALUES (%s, %s, %s, %s, %s, %s)
 ;
 
 --VALIDATE_PRODUCT_ORDER_LINE_EXIST
@@ -553,7 +553,14 @@ UPDATE app_inventory
 --PROCESS_APP_INVENTORY
 UPDATE app_inventory i,
   (
-    SELECT l.*
+    SELECT
+            l.id,
+            l.to_store_id,
+            l.product_id,
+            (CASE
+              WHEN l.status = 'issue' THEN l.quantity_observed
+              ELSE l.quantity
+             END) as abs_quantity
 	FROM product_order_line l
     WHERE
 		 l.product_order_id = %s
@@ -562,7 +569,7 @@ UPDATE app_inventory i,
 	   i.prev_quantity = i.quantity,
        i.user_updated = %s,
        i.last_update = NOW(),
-	   i.quantity = i.quantity + line.quantity
+	   i.quantity = i.quantity + line.abs_quantity
  WHERE
        i.store_id = line.to_store_id
    AND i.product_id = line.product_id
@@ -581,4 +588,17 @@ UPDATE product_order o
        o.date_closed = NOW()
 WHERE
       o.id = %s
+;
+
+--UPDATE_PRODUCT_ORDER_LINE_ISSUE_COUNT
+UPDATE product_order_line
+  SET
+      quantity_observed = %s,
+      user_receiver = %s,
+      receiver_memo = %s,
+      status = 'issue',
+      receiver_last_update = NOW()
+WHERE
+	product_order_id = %s
+AND product_id = %s
 ;

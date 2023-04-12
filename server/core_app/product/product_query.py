@@ -582,7 +582,7 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         cur.connection.commit()
 
         # reserve quantity
-        data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity)
+        data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity, line.quantity)
         cur.execute(sql_raw_add_product_order_line, data)
         cur.connection.commit()
         product_order_line_id = cur.lastrowid
@@ -628,3 +628,13 @@ def process_order(product_order: ProductOrder, db: Session, query: Query):
     cur.connection.commit()
 
     return read_product_order_by_id(product_order.id, db, query)
+
+
+def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
+    sql_raw_update_line_issue = query.UPDATE_PRODUCT_ORDER_LINE_ISSUE_COUNT
+    cur = get_cursor(db)
+    data = (line.quantity_observed, line.user_receiver, line.receiver_memo, line.product_order_id, line.product_id)
+    cur.execute(sql_raw_update_line_issue, data)
+    cur.connection.commit()
+
+    return 0
