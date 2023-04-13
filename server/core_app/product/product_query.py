@@ -637,6 +637,28 @@ def process_order(product_order: ProductOrder, db: Session, query: Query):
     return read_product_order_by_id(product_order.id, db, query)
 
 
+def rollback_order(product_order: ProductOrder, db: Session, query: Query):
+    sql_raw_rollback_app_inv = query.ROLLBACK_APP_INVENTORY
+    sql_raw_cancel_order_line = query.CANCEL_ORDER_LINE
+    sql_raw_cancel_order = query.CANCEL_ORDER
+
+    cur = get_cursor(db)
+
+    data = (product_order.id, product_order.user_receiver)
+    cur.execute(sql_raw_rollback_app_inv, data)
+    cur.connection.commit()
+
+    data = (product_order.id,)
+    cur.execute(sql_raw_cancel_order_line, data)
+    cur.connection.commit()
+
+    data = (f' CANCELLED: [{product_order.memo}]', product_order.id)
+    cur.execute(sql_raw_cancel_order, data)
+    cur.connection.commit()
+
+    return read_product_order_by_id(product_order.id, db, query)
+
+
 def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     sql_raw_update_line_issue = query.UPDATE_PRODUCT_ORDER_LINE_ISSUE_COUNT
     cur = get_cursor(db)

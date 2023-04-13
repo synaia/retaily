@@ -598,6 +598,44 @@ UPDATE app_inventory i,
    AND i.product_id = line.product_id
 ;
 
+--ROLLBACK_APP_INVENTORY
+UPDATE app_inventory i,
+  (
+    SELECT
+            l.id,
+            l.from_store_id,
+            l.product_id,
+            l.quantity
+	FROM product_order_line l
+    WHERE
+		 l.product_order_id = %s
+  ) AS line
+  SET
+       i.user_updated = %s,
+       i.last_update = NOW(),
+	   i.quantity = i.quantity + line.quantity
+ WHERE
+       i.store_id = line.from_store_id
+   AND i.product_id = line.product_id
+;
+
+--CANCEL_ORDER_LINE
+UPDATE product_order_line l
+  SET
+       l.status = 'cancelled'
+ WHERE
+       l.product_order_id = %s
+;
+
+--CANCEL_ORDER
+UPDATE product_order o
+  SET
+       o.memo = CONCAT(o.memo, %s),
+       o.date_closed = NOW()
+ WHERE
+       o.id = %s
+;
+
 --UPDATE_ORDER_LINE_PROCESS
 UPDATE product_order_line l
   SET l.status = 'transfered'
