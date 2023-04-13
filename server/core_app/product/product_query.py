@@ -178,6 +178,96 @@ def read_inv_products(store_name: str, db: Session, query: Query):
     return result
 
 
+def read_all_inv_products(db: Session, query: Query):
+    sql_raw: str = query.SELECT_ALL_PRODUCT
+    sql_raw_product_inv: str = query.SELECT_PRODUCT_ALL_INV
+
+    products: list = []
+    count_resume: dict = {}
+
+    cur = get_cursor(db)
+
+    cur.execute(sql_raw)
+
+    resp = cur.fetchall()
+
+    for rp in resp:
+        product = Product()
+        product.id = rp['id']
+        product.name = rp['name']
+        product.cost = rp['cost']
+        product.price = rp['price']
+        product.margin = rp['margin']
+        product.code = rp['code']
+        product.img_path = rp['img_path']
+        product.date_create = rp['date_create']
+        product.active = rp['active']
+        product.image_raw = rp['image_raw']
+
+        cur.execute(sql_raw_product_inv, (product.id,))
+        inv = cur.fetchall()
+        invlist: list = []
+        changed_count: int = 0
+        inv_valuation: float = 0.0
+        inv_valuation_changed: float = 0.0
+        for l in inv:
+            inventory = Inventory()
+            store = Store()
+            inventory.id = l['id']
+            inventory.prev_quantity = l['prev_quantity']
+            inventory.quantity = l['quantity']
+            inventory.next_quantity = l['next_quantity']
+            inventory.status = l['status']
+            store.id = l['store_id']
+            store.name = l['name']
+            inventory.store = store
+            invlist.append(inventory)
+
+            if inventory.status == 'changed':
+                changed_count = count_resume[store.name]['changed_count'] + 1
+            else:
+                try:
+                    changed_count = count_resume[store.name]['changed_count']
+                except Exception as ex:
+                    changed_count = 0
+
+            try:
+                inv_valuation = count_resume[store.name]['inv_valuation'] + (product.cost * inventory.quantity)
+            except Exception as ex:
+                inv_valuation = (product.cost * inventory.quantity)
+
+            if inventory.status == 'changed':
+                try:
+                    inv_valuation_changed = count_resume[store.name]['inv_valuation_changed'] + (product.cost * inventory.quantity)
+                except Exception as ex:
+                    inv_valuation_changed = (product.cost * inventory.quantity)
+            else:
+                try:
+                    inv_valuation_changed = count_resume[store.name]['inv_valuation_changed']
+                except Exception as ex:
+                    inv_valuation_changed = 0
+
+            count_resume[store.name]: dict = {
+                'changed_count': changed_count,
+                'inv_valuation': inv_valuation,
+                'inv_valuation_changed': inv_valuation_changed
+            }
+
+        product.inventory = invlist
+
+        products.append(product)
+        # sort changed to top
+        # TODO: depend on inventory/store selectec
+        # products = sorted(products, key=lambda p: p.inventory[0].status, reverse=False)
+
+        result = {
+            'products': products,
+            'count_resume': count_resume
+        }
+
+    return result
+
+
 def update_one(pricing_id: int, field: str, value: str, product_id: int, db: Session):
     print(f'field: {field}, value: {value}, price_column: {pricing_id}')
     # product = db.query(models.Product).get(product_id)

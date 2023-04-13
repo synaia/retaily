@@ -307,6 +307,20 @@ AND i.status = 0
    AND  st.name = %s
 ;
 
+--SELECT_PRODUCT_ALL_INV
+ SELECT
+      i.id,
+      i.prev_quantity,
+      i.quantity,
+      i.next_quantity,
+      i.status,
+      st.name,
+      st.id as store_id
+ FROM app_inventory i, app_store st
+  WHERE i.store_id = st.id
+   AND  i.product_id = %s
+;
+
 --SELECT_INVENTORY_HEAD
 SELECT
 	h.id,

@@ -14,6 +14,7 @@ from server.core_app.database import get_db
 from server.core_app.product.product_query import (
     read_products,
     read_all_products,
+    read_all_inv_products,
     read_pricing_labels,
     update_one,
     add_pricing,
@@ -98,6 +99,20 @@ async def get_all_inv_products(
 ):
     products = read_inv_products(store_name, db, query)
     return products
+
+
+@router.get("/all_inv_new_version",)
+async def __all_inv_new_version(
+        db: Session = Depends(get_db),
+        store: Optional[str] = Header(None),
+        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        products = read_all_inv_products(db, query)
+        return products
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
 
 
 @router.get("/pricing_labels", response_model=list[schemas.Pricing])
