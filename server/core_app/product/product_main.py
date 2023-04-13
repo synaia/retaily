@@ -33,7 +33,8 @@ from server.core_app.product.product_query import (
     add_product_order_line,
     read_product_order,
     read_product_order_by_id,
-    process_order
+    process_order,
+    issue_order_line
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -275,6 +276,18 @@ async def __add_product_order_line(
 ):
     try:
         return add_product_order_line(line, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/issue_order_line",)
+async def __issue_order_line(
+                        line: schemas.ProductOrderLine,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return issue_order_line(line, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

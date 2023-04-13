@@ -611,10 +611,17 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
 
 def process_order(product_order: ProductOrder, db: Session, query: Query):
     sql_raw_process_app_inv = query.PROCESS_APP_INVENTORY
+    sql_raw_process_app_inv_issue_back = query.PROCESS_APP_INVENTORY_ISSUE_BACK
     sql_raw_process_order_line = query.UPDATE_ORDER_LINE_PROCESS
     sql_raw_product_order_process = query.UPDATE_PRODUCT_ORDER_PROCESS
 
     cur = get_cursor(db)
+
+    # first: check for any issue correction.
+    data = (product_order.id, product_order.user_receiver)
+    cur.execute(sql_raw_process_app_inv_issue_back, data)
+    cur.connection.commit()
+
     data = (product_order.id, product_order.user_receiver)
     cur.execute(sql_raw_process_app_inv, data)
     cur.connection.commit()

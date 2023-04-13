@@ -575,6 +575,29 @@ UPDATE app_inventory i,
    AND i.product_id = line.product_id
 ;
 
+--PROCESS_APP_INVENTORY_ISSUE_BACK
+UPDATE app_inventory i,
+  (
+    SELECT
+            l.id,
+            l.from_store_id,
+            l.product_id,
+            l.quantity_observed,
+            l.quantity
+	FROM product_order_line l
+    WHERE
+		 l.product_order_id = %s
+	AND  l.status = 'issue'
+  ) AS line
+  SET
+       i.user_updated = %s,
+       i.last_update = NOW(),
+	   i.quantity = i.quantity + (line.quantity - line.quantity_observed)
+ WHERE
+       i.store_id = line.from_store_id
+   AND i.product_id = line.product_id
+;
+
 --UPDATE_ORDER_LINE_PROCESS
 UPDATE product_order_line l
   SET l.status = 'transfered'
