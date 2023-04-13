@@ -56,7 +56,9 @@ export const StoreMovementList = () => {
             { key: 'memo', name: 'Memo',  width: 300 },
             { key: 'date_opened', name: 'Date', width: 150 },
             { key: 'date_closed', name: 'Date', width: 150 },
-            { key: 'status', name: 'Order Status' }
+            { key: 'status', name: 'Order Status' },
+            { key: 'lines', name: 'Qty' },
+            { key: 'issue_lines', name: 'Issue Qty' }
           ];
     }); 
 
@@ -72,7 +74,9 @@ export const StoreMovementList = () => {
                 'memo': ls.memo,
                 'status': ls.status,
                 'date_opened': ls.date_opened,
-                'date_closed': ls.date_closed
+                'date_closed': ls.date_closed,
+                'lines': ls.products_in_order,
+                'issue_lines': ls.products_in_order_issue,
             };
             _rows_.push(row)
         });

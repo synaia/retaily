@@ -461,7 +461,18 @@ SELECT
        ) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
-       ) AS to_store_name
+       ) AS to_store_name,
+       (
+         SELECT COUNT(*)
+         FROM product_order_line l
+         WHERE l.product_order_id = o.id
+       ) AS products_in_order,
+       (
+         SELECT COUNT(*)
+         FROM product_order_line l
+         WHERE l.product_order_id = o.id
+          AND l.status = 'issue'
+       ) AS products_in_order_issue
  FROM  product_order o
  ORDER BY o.id DESC
 ;
@@ -484,7 +495,18 @@ SELECT
        ) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
-       ) AS to_store_name
+       ) AS to_store_name,
+       (
+         SELECT COUNT(*)
+         FROM product_order_line l
+         WHERE l.product_order_id = o.id
+       ) AS products_in_order,
+       (
+         SELECT COUNT(*)
+         FROM product_order_line l
+         WHERE l.product_order_id = o.id
+          AND l.status = 'issue'
+       ) AS products_in_order_issue
  FROM  product_order o
   WHERE o.id = %s
 ;
