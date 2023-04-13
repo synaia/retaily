@@ -6,6 +6,8 @@ import { getStoresInv, addStore } from "../redux/features/product.feature.js";
 import { F_, validateInputX } from "../util/Utils";
 
 export const Inventory = () => {
+    const count_resume = useSelector((state) => state.product.count_resume);
+
     const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
     const resume_inv = useSelector((state) => state.product.resume_inv);
     const navigator = useNavigate();
@@ -125,11 +127,15 @@ export const Inventory = () => {
                         <p className="material-icons-sharp"> add_business </p>
                         <h3>CREATE STORE</h3>
                     </button>
+                    <button className="fbutton fbutton-price-list" onClick={() => navigator(`storemovlist/`, {replace: false})} >
+                        <p className="material-icons-sharp"> layers </p>
+                        <h3>MOV INVENTORY MANAGEMENT</h3>
+                    </button>
                 </div>
 
 
                 { inventory_head_list.map((head, i) => (
-                    <div className="inventory-resume" key={i} onClick={() => navigator(`store/${head.store.name}`, {replace: true})}>
+                    <div className="inventory-resume" key={i} >
                         <div className="icon">
                         {head.name != undefined &&
                                 <span className="material-icons-sharp avatar-icon-heat"> {getStatusIcon(head.date_create)} </span>
@@ -178,29 +184,23 @@ export const Inventory = () => {
                                 </div>
                             }
                         </div>
-                       
-                        {/* <div className="middle">
-                            <div className="left">
-                                <h2>{head.store.name}</h2>
-                                <h3>Current Inv: {head.name}</h3>
-                                <h3>Products Changed: {resume_inv[head.store.name].changed_count}</h3>
-                                <h3>inv_valuation_changed: {resume_inv[head.store.name].inv_valuation_changed}</h3>
-                                <h3>inv_valuation: {resume_inv[head.store.name].inv_valuation}</h3>
-                            </div>
-                            <div className="progress">
-                                <svg>
-                                    <circle cx="38" cy="38" r="36"></circle>
-                                </svg>
-                                <div className="number">
-                                    <p>44%</p>
-                                </div>
-                            </div>
+                        <div className="inventory-resume-spand">
+                            <button className="inv-button" onClick={() => navigator(`store/${head.store.name}`, {replace: false})}>
+                                <p className="material-icons-sharp inv-button-fi"> auto_fix_normal </p>
+                                <h3 className="inv-button-f">FIX INV</h3>
+                            </button>
+                            <button className="inv-button" onClick={() => navigator(`storemov/${head.store.name}`, {replace: false})}>
+                                <p className="material-icons-sharp inv-button-fi"> layers </p>
+                                <h3 className="inv-button-f">MOV INV</h3>
+                            </button>
+                            <button className="inv-button" >
+                                <p className="material-icons-sharp inv-button-fi"> near_me </p>
+                                <h3 className="inv-button-f">ORDERS</h3>
+                            </button>
                         </div>
-                        <small className="text-muted"> Last 24 hours </small> */}
                     </div>
                     ))
                 }
-                
         </div>
     </React.Fragment>
     )

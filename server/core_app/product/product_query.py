@@ -572,10 +572,19 @@ def read_product_order(db: Session, query: Query):
         order.name = r['name']
         order.memo = r['memo']
         order.order_type = r['order_type']
+        order.status = r['status']
         order.user_requester = r['user_requester']
         order.user_receiver = r['user_receiver']
         order.date_opened = r['date_opened']
         order.date_closed = r['date_closed']
+        from_store = Store()
+        from_store.id = r['from_store_id']
+        from_store.name = r['from_store_name']
+        order.from_store = from_store
+        to_store = Store()
+        to_store.id = r['to_store_id']
+        to_store.name = r['to_store_name']
+        order.to_store = to_store
 
         data = (order.id,)
         cur.execute(sql_raw_product_order_line, data)
@@ -600,10 +609,19 @@ def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
         order.name = r['name']
         order.memo = r['memo']
         order.order_type = r['order_type']
+        order.status = r['status']
         order.user_requester = r['user_requester']
         order.user_receiver = r['user_receiver']
         order.date_opened = r['date_opened']
         order.date_closed = r['date_closed']
+        from_store = Store()
+        from_store.id = r['from_store_id']
+        from_store.name = r['from_store_name']
+        order.from_store = from_store
+        to_store = Store()
+        to_store.id = r['to_store_id']
+        to_store.name = r['to_store_name']
+        order.to_store = to_store
 
         data = (order.id,)
         cur.execute(sql_raw_product_order_line, data)
@@ -644,7 +662,8 @@ def read_product_order_by_store(store_id: int, db: Session, query: Query):
 def add_product_order(product_order: ProductOrder, db: Session, query: Query):
     sql_raw_add_product_order = query.INSERT_PRODUCT_ORDER
     cur = get_cursor(db)
-    data = (product_order.name, product_order.memo, product_order.order_type, product_order.user_requester,)
+    data = (product_order.name, product_order.memo, product_order.order_type,
+            product_order.user_requester, product_order.from_store.id, product_order.to_store.id)
     cur.execute(sql_raw_add_product_order, data)
     cur.connection.commit()
     product_order_id = cur.lastrowid

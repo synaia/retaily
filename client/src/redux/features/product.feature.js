@@ -14,6 +14,8 @@ const initialState = {
     loading: false,
     products: [],
     products_inv: [],
+    products_all_inv: [],
+    count_resume: {},
     changed_count: 0,
     inv_valuation: 0,
     inv_valuation_changed: 0,
@@ -24,6 +26,7 @@ const initialState = {
     inventory_head_list: [],
     inventory_head: {},
     resume_inv: {},
+    orders: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -67,6 +70,18 @@ export const getProductsByInventory = createAsyncThunk('products/getProductsByIn
         params: {
             store_name: store_name
         },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+    return response.data;
+});
+
+
+export const getProductsAllInventory = createAsyncThunk('products/all_inv_new_version', async () => {
+    console.log('getProductsAllInventory: [products, count_resume]');
+    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv_new_version`, {
         headers: {
             'Authorization': `bearer ${TOKEN}`,
             'store': STORE
@@ -262,6 +277,29 @@ export const updatePricing = createAsyncThunk('product/update_pricing', async (a
     });
     return response.data;
 });
+
+
+export const addProductOrder = createAsyncThunk('product/add_product_order', async (order, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order`, order,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+
+export const getProductOrders = createAsyncThunk('product/product_order', async () => {
+    let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 
 const updateSaleDetail = (productPickedList) => {
     const gran_total = productPickedList.reduce((x, p) => {
@@ -593,6 +631,18 @@ const productsSlice = createSlice({
             state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`
         });
 
+        builder.addCase(getProductsAllInventory.pending, (state, action) => {
+            state.loading = true
+        }).addCase(getProductsAllInventory.fulfilled, (state, action) => {
+            state.loading = false
+            const { products, count_resume} = action.payload
+            state.products_all_inv = products
+            state.count_resume = count_resume
+        }).addCase(getProductsAllInventory.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR getProductsAllInventory() ; ${action.error.message}`
+        });
+
         builder.addCase(openInventory.pending, (state, action) => {
             state.loading = true
         }).addCase(openInventory.fulfilled, (state, action) => {
@@ -642,6 +692,16 @@ const productsSlice = createSlice({
         }).addCase(addStore.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR addStore() ; ${action.error.message}`
+        });
+
+        builder.addCase(getProductOrders.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getProductOrders.fulfilled, (state, action) => {
+            state.loading = false;
+            state.orders = action.payload
+        }).addCase(getProductOrders.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getProductOrders() ; ${action.error.message}`
         });
     }
 });

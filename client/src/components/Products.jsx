@@ -300,7 +300,7 @@ export const Products = () => {
     return (
         <React.Fragment>
             <div className="search-terminal">
-                <span class="material-icons-sharp"> search </span>
+                <span className="material-icons-sharp"> search </span>
                 <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
                 <span className="underline-animation-terminal"></span>
             </div>

@@ -8,15 +8,18 @@
 
 
 import React from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
 import { getPricing } from  "../redux/features/product.feature.js";
 import { loadClients } from  "../redux/features/client.feature.js";
 import { getStores } from "../redux/features/product.feature.js";
-import { useEffect } from "react";
+import { getProductsAllInventory } from "../redux/features/product.feature.js";
+import { getProductOrders } from "../redux/features/product.feature.js";
 
 
 
@@ -29,6 +32,8 @@ export const Init = () => {
     dispatch(getPricingLabels());
     dispatch(getPricing());
     dispatch(getStores());
+    dispatch(getProductsAllInventory());
+    dispatch(getProductOrders());
 
 
     useEffect(() => {

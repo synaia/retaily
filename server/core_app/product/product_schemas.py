@@ -112,10 +112,13 @@ class ProductOrder(BaseModelExt):
     name: str | None = None
     memo: str | None = None
     order_type: str | None = None
+    status: str | None = None
     user_requester: str | None = None
     user_receiver: str | None = None
     date_opened: datetime | None = None
     date_closed: datetime | None = None
+    from_store: Store | None = None
+    to_store: Store | None = None
     product_order_line: list[ProductOrderLine] = []
 
     class Config:

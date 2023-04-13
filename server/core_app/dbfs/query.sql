@@ -449,12 +449,21 @@ SELECT
        o.name,
        o.memo,
        o.order_type,
+       o.status,
        o.user_requester,
        o.user_receiver,
        o.date_opened,
-       o.date_closed
+       o.date_closed,
+       o.from_store_id,
+       o.to_store_id,
+       (
+         SELECT s.name FROM app_store s WHERE s.id = o.from_store_id
+       ) AS from_store_name,
+       (
+         SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
+       ) AS to_store_name
  FROM  product_order o
- ORDER BY o.id
+ ORDER BY o.id DESC
 ;
 
 --SELECT_FROM_PRODUCT_ORDER_BYID
@@ -463,10 +472,19 @@ SELECT
        o.name,
        o.memo,
        o.order_type,
+       o.status,
        o.user_requester,
        o.user_receiver,
        o.date_opened,
-       o.date_closed
+       o.date_closed,
+       o.from_store_id,
+       o.to_store_id,
+       (
+         SELECT s.name FROM app_store s WHERE s.id = o.from_store_id
+       ) AS from_store_name,
+       (
+         SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
+       ) AS to_store_name
  FROM  product_order o
   WHERE o.id = %s
 ;
@@ -518,8 +536,8 @@ SELECT
 ;
 
 --INSERT_PRODUCT_ORDER
-INSERT INTO product_order (name, memo, order_type, user_requester)
-  VALUES (%s, %s, %s, %s)
+INSERT INTO product_order (name, memo, order_type, user_requester, from_store_id, to_store_id)
+  VALUES (%s, %s, %s, %s, %s, %s)
 ;
 
 --INSERT_PRODUCT_ORDER_LINE
@@ -645,7 +663,8 @@ UPDATE product_order_line l
 UPDATE product_order o
   SET
        o.memo = CONCAT(o.memo, %s),
-       o.date_closed = NOW()
+       o.date_closed = NOW(),
+       o.status = 'cancelled'
  WHERE
        o.id = %s
 ;
@@ -660,7 +679,8 @@ WHERE
 --UPDATE_PRODUCT_ORDER_PROCESS
 UPDATE product_order o
    SET o.user_receiver = %s,
-       o.date_closed = NOW()
+       o.date_closed = NOW(),
+       o.status = 'closed'
 WHERE
       o.id = %s
 ;
