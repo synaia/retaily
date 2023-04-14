@@ -1015,7 +1015,7 @@ main .recent-orders a {
 
 .data-grid-product {
   height: calc(100vh - 150px);
-  width: calc(100vw - 250px);
+  /* width: calc(100vw - 250px); */
 
   color: var(--color-dark-variant);
   font-size: 0.9rem;
@@ -1202,6 +1202,48 @@ main .recent-orders a {
   transition: all 300ms ease;
 }
 
+.movement {
+  display: grid;
+  grid-template-columns: 0.005fr auto;
+  gap: 1rem;
+  background: var(--color-white);
+  margin-top: 1rem;
+  box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
+}
+
+.movement:hover {
+  cursor: pointer;
+  box-shadow: none; 
+}
+
+.movement-c {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.movement-top {
+  height: calc(100vh - 250px);
+  overflow-y: auto;
+}
+
+.movement-cancelled {
+  background: var(--color-danger);
+  width: 2px;
+}
+
+.movement-completed {
+  background: var(--color-primary);
+  width: 2px;
+}
+
+.movement-inprogress {
+  background: var(--color-warning);
+  width: 2px;
+}
+
 .inv-success {
   background: var(--color-success) !important;
 }
@@ -1353,4 +1395,11 @@ main .recent-orders a {
 .inv-button-fi {
   padding-left: 8px;
   font-size: 20px !important;
+}
+
+.movement-split-screen {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* align-items: center; */
+  gap: 3rem;
 }

@@ -115,6 +115,7 @@ class ProductOrder(BaseModelExt):
     status: str | None = None
     products_in_order: int | None = None
     products_in_order_issue: int | None = None
+    value_in_order: float | None = None
     user_requester: str | None = None
     user_receiver: str | None = None
     date_opened: datetime | None = None

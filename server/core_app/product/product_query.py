@@ -579,6 +579,7 @@ def read_product_order(db: Session, query: Query):
         order.user_receiver = r['user_receiver']
         order.date_opened = r['date_opened']
         order.date_closed = r['date_closed']
+        order.value_in_order = r['value_in_order']
         from_store = Store()
         from_store.id = r['from_store_id']
         from_store.name = r['from_store_name']
@@ -619,6 +620,7 @@ def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
         order.user_receiver = r['user_receiver']
         order.date_opened = r['date_opened']
         order.date_closed = r['date_closed']
+        order.value_in_order = r['value_in_order']
         from_store = Store()
         from_store.id = r['from_store_id']
         from_store.name = r['from_store_name']

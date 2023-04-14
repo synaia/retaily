@@ -472,9 +472,17 @@ SELECT
          FROM product_order_line l
          WHERE l.product_order_id = o.id
           AND l.status = 'issue'
-       ) AS products_in_order_issue
+       ) AS products_in_order_issue,
+       (
+         SELECT
+            SUM(l.quantity_observed * p.cost)
+        FROM product_order_line l, product p
+        WHERE
+            l.product_id = p.id
+        AND l.product_order_id = o.id
+       ) AS value_in_order
  FROM  product_order o
- ORDER BY o.id DESC
+ ORDER BY o.id
 ;
 
 --SELECT_FROM_PRODUCT_ORDER_BYID
@@ -506,7 +514,15 @@ SELECT
          FROM product_order_line l
          WHERE l.product_order_id = o.id
           AND l.status = 'issue'
-       ) AS products_in_order_issue
+       ) AS products_in_order_issue,
+       (
+         SELECT
+            SUM(l.quantity_observed * p.cost)
+        FROM product_order_line l, product p
+        WHERE
+            l.product_id = p.id
+        AND l.product_order_id = o.id
+       ) AS value_in_order
  FROM  product_order o
   WHERE o.id = %s
 ;
