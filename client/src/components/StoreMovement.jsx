@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { getProductsByInventory, openInventory, closeInventory, cancelInventory, getInventoryHead, updateNextQty, getStoresInv } from "../redux/features/product.feature.js";
+import { addProductOrderLine } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
 
@@ -39,51 +39,83 @@ export const StoreMovement = () => {
 
     const [productFound, SetProductFound] = useState(0);
 
+    const get_rows = (_prodducts_, _order) => {
+        console.log('get_rows()')
+        const _rows_ = [];
+        const store_id = _order.from_store.id;
+        const lines = _order.product_order_line;
+        _prodducts_.forEach(product => {
+            let index = 0;
+            let quantity_to_move = 0;
+            try {
+                index = product.inventory.findIndex(inv => inv.store.id == store_id);
+                const line = lines.filter( ln => ln.product.id == product.id)[0]
+                if (line != undefined) {
+                    quantity_to_move = line.quantity_observed;
+                }
+            } catch (error) {
+                index = 0;
+                quantity_to_move = 0;
+                console.log('order not defined yet ... ', error);
+            }
+            const row = {
+                'id': product.id,
+                'name': product.name,
+                'cost': product.cost,
+                'code': product.code,
+                'quantity': product.inventory[index].quantity,
+                'quantity_to_move': quantity_to_move, 
+                'status': product.inventory[index].status
+            };
+            _rows_.push(row);
+        });
+        return _rows_;
+    };
+
     useEffect(() => {
         if (orders.length > 0) {
             const order = orders.filter( o => { return o.id == params.order_id})[0];
             setOrder(order)
             setRowsOrder(get_rows_order(order));
             console.log(order)
+    
+            let keyin = search.current?.value;
+            console.log('keyin', keyin)
+            if (keyin != '') {
+                let list_filtered = products_all_inv.filter((prod) => {
+                    if (prod) {
+                        let exp = keyin.replace(/\ /g, '.+').toUpperCase();
+                        let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
+                        return  has ||
+                            prod.code.toUpperCase().includes(keyin.toUpperCase());
+                    } else {
+                        return false;
+                    }
+                });
+                setRows(get_rows(list_filtered, order));
+                SetProductFound(`${list_filtered.length} products found`);
+            } else {
+                setRows(get_rows(products_all_inv, order));
+                SetProductFound(`${products_all_inv.length} products in total`);
+            }
+
         }
-    }, [orders]);
+
+    }, [orders, products_all_inv]);
 
 
     const columns = useMemo( () => {
-        const next_quantity = { 
-            key: 'next_quantity', 
-            name: 'New Quantity', 
-            width: 100, 
-            editor: textEditor, 
-            formatter: ({ row }) => {
-                if (row.status == "changed") {
-                    return <div className="row-bg-changed">{row.next_quantity}</div>;
-                } else {
-                    return <div className="row-bg-no-changed">{row.next_quantity}</div>;
-                }
-            }  };
-
-        if (is_inventory_open) {
-            return [
-                { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 300},
-                { key: 'code', name: 'SKU', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
-                    return <div className="row-bg-no-changed">{row.quantity}</div>;
-                }},
-                next_quantity
-              ];
-        } else {
-            return [
-                { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 300},
-                { key: 'code', name: 'SKU', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
-                    return <div className="row-bg-no-changed">{row.quantity}</div>;
-                }},
-              ];
-        }
-        
+        return [
+            { key: 'id', name: 'ID', width: 10 },
+            { key: 'name', name: 'Product', resizable: true, width: 300},
+            { key: 'code', name: 'SKU', width: 100 },
+            { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                return <div className="row-bg-no-changed">{row.quantity}</div>;
+            }},
+            { key: 'quantity_to_move', name: 'Move Quantity', editor: textEditor, width: 100, formatter: ({ row }) => {
+                return <div className="row-bg-no-changed">{row.quantity_to_move}</div>;
+            }}
+          ];
     }); 
 
 
@@ -99,23 +131,7 @@ export const StoreMovement = () => {
     }); 
 
 
-    const get_rows = (_prodducts_) => {
-        console.log('get_rows()')
-        const _rows_ = [];
-        _prodducts_.forEach(product => {
-            const row = {
-                'id': product.id,
-                'name': product.name,
-                'cost': product.cost,
-                'code': product.code,
-                'quantity': product.inventory[0].quantity,
-                'next_quantity': product.inventory[0].next_quantity, 
-                'status': product.inventory[0].status
-            };
-            _rows_.push(row)
-        });
-        return _rows_;
-    };
+    
 
     const get_rows_order = (_order_) => {
         const line  = _order_.product_order_line;
@@ -134,29 +150,11 @@ export const StoreMovement = () => {
 
 
     useEffect(()=> {
-        let keyin = search.current?.value;
-        console.log('keyin', keyin)
-        if (keyin != '') {
-            let list_filtered = products_all_inv.filter((prod) => {
-                if (prod) {
-                    let exp = keyin.replace(/\ /g, '.+').toUpperCase();
-                    let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
-                    return  has ||
-                        prod.code.toUpperCase().includes(keyin.toUpperCase());
-                } else {
-                    return false;
-                }
-            });
-            setRows(get_rows(list_filtered));
-            SetProductFound(`${list_filtered.length} products found`);
-        } else {
-            setRows(get_rows(products_all_inv));
-            SetProductFound(`${products_all_inv.length} products in total`);
-        }
+       
     }, [products_all_inv]);
 
 
-    const filter_rows = (event, grid, rowList, searchObj, _get_rows_func) => {
+    const filter_rows = (event, grid, rowList, searchObj, _get_rows_func, order_id) => {
         const preventDefault = () => {
             event.preventDefault();
         };
@@ -168,7 +166,7 @@ export const StoreMovement = () => {
         }
 
         if (key === "ArrowDown") {
-            grid.current.selectCell({ rowIdx: 0, idx: 3 }); 
+            grid.current.selectCell({ rowIdx: 0, idx: 4 }); 
             return;
         }
 
@@ -186,7 +184,7 @@ export const StoreMovement = () => {
             }
         });
 
-        setRows(_get_rows_func(list_filtered));
+        setRows(_get_rows_func(list_filtered, order));
         SetProductFound(`${list_filtered.length} products found`);
         
         if (13 === event.keyCode) {
@@ -209,26 +207,32 @@ export const StoreMovement = () => {
     };
 
     const rowChange = (rows, changes) => {
-
-        console.log(changes);
-        console.log(gridRef)
-        console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
+        // console.log(changes);
+        // console.log(gridRef)
+        // console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
 
         const product_id = rows[changes.indexes[0]].id;
-        const index = products_all_inv.findIndex(prod => prod.id == product_id);
-        const prod = products_all_inv[index];
-
+        const qty = rows[changes.indexes[0]][changes.column.key];
+        const from_store_id = order.from_store.id;
+        const to_store_id = order.to_store.id;
+        const product_order_id = order.id;
 
         const args = {
-            'field': changes.column.key,
-            'prev_quantity': prod.inventory[0].quantity,
-            'next_quantity': rows[changes.indexes[0]][changes.column.key],
-            'user_updated': 'user#1',
-            'product_id': product_id,
-            'store_id': products_all_inv[0].inventory[0].store.id
-        };
+            "product_id": product_id,
+            "quantity": qty,
+            "user_receiver": "USERHERE",
+            "from_store": {
+              "id": from_store_id
+            },
+            "to_store": {
+              "id": to_store_id
+            },
+            "product_order_id": product_order_id
+          }
 
         console.log(args);
+
+        dispatch(addProductOrderLine(args))
     };
 
     const highlightsted = [];
@@ -385,7 +389,9 @@ export const StoreMovement = () => {
                     <div className="search-terminal-c">
                         <div className="search-terminal">
                             <span className="material-icons-sharp"> search </span>
-                            <input ref={search} type="text" onKeyUp={(event) => filter_rows(event, gridRef, products_all_inv, search, get_rows)} className="search-bar"  />
+                            {orders.length > 0 && products_all_inv.length > 0 &&
+                                <input ref={search} type="text" onKeyUp={(event) => filter_rows(event, gridRef, products_all_inv, search, get_rows, order.from_store.id)} className="search-bar"  />
+                            }
                             <span className="underline-animation-terminal"></span>
                         </div>
                         <small className="text-muted search-count"> {productFound} </small>

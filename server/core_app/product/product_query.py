@@ -616,7 +616,6 @@ def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
         order.status = r['status']
         order.products_in_order = r['products_in_order']
         order.products_in_order_issue = r['products_in_order_issue']
-        order.issue_lines = r['issue_lines']
         order.user_requester = r['user_requester']
         order.user_receiver = r['user_receiver']
         order.date_opened = r['date_opened']
@@ -657,6 +656,7 @@ def read_product_order_line_by_id(product_order_line_id: int, db: Session, query
         line.to_store = to_store
         line.product_order_id = h['product_order_id']
         line.quantity = h['quantity']
+        line.quantity_observed = h['quantity_observed']
         line.status = h['status']
         line.date_create = h['date_create']
         line.build_meta(1, SUCCESS, SUCCESS)
@@ -694,7 +694,7 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     line_count: int = 0 if resp[0]['line_count'] is None else resp[0]['line_count']
     if line_count == 0: # add quantity
         # substract quantity from store
-        data = (line.quantity, 'userwhat', line.from_store.id, line.product_id)
+        data = (line.quantity, line.user_receiver, line.from_store.id, line.product_id)
         cur.execute(sql_raw_substract_from_store, data)
         cur.connection.commit()
 
@@ -710,11 +710,11 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         product_order_quantity = resp[0]['quantity']
         abs_quantity = line.quantity - product_order_quantity
 
-        data = (abs_quantity, 'userdam', line.from_store.id, line.product_id)
+        data = (abs_quantity, line.user_receiver, line.from_store.id, line.product_id)
         cur.execute(sql_raw_substract_from_store_dtpq, data)
         cur.connection.commit()
 
-        data = (line.quantity, line.product_order_id, line.product_id)
+        data = (line.quantity, line.quantity, line.product_order_id, line.product_id)
         cur.execute(sql_raw_update_line, data)
         cur.connection.commit()
 
@@ -723,7 +723,8 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         resp = cur.fetchall()
         product_order_line_id = resp[0]['id']
 
-    return read_product_order_line_by_id(product_order_line_id, db, query)
+    return read_product_order_by_id(line.product_order_id, db, query)
+    # return read_product_order_line_by_id(product_order_line_id, db, query)
 
 
 def process_order(product_order: ProductOrder, db: Session, query: Query):

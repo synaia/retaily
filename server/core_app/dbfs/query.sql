@@ -482,7 +482,7 @@ SELECT
         AND l.product_order_id = o.id
        ) AS value_in_order
  FROM  product_order o
- ORDER BY o.id
+ ORDER BY o.id DESC
 ;
 
 --SELECT_FROM_PRODUCT_ORDER_BYID
@@ -596,7 +596,8 @@ AND l.product_id = %s
 
 --UPDATE_PRODUCT_ORDER_LINE
 UPDATE product_order_line
-  SET quantity = %s
+  SET quantity = %s,
+      quantity_observed = %s
 WHERE
 	product_order_id = %s
 AND product_id = %s

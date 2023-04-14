@@ -284,7 +284,7 @@ async def __add_product_order(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/add_product_order_line", response_model=schemas.ProductOrderLine)
+@router.post("/add_product_order_line", response_model=schemas.ProductOrder)
 async def __add_product_order_line(
                         line: schemas.ProductOrderLine,
                         db: Session = Depends(get_db),
