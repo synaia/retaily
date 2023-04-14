@@ -11,16 +11,23 @@ import { addProductOrder } from "../redux/features/product.feature.js";
 export const StoreMovementList = () => {
     const navigator = useNavigate();
     const params = useParams();
-    const order_id = 1;
     const order_type = 'internal';
 
     const orders = useSelector((state) => state.product.orders);
+    const stores = useSelector((state) => state.product.stores);
+    const [toStores, SetToStores] = useState([]);
     const loading = useSelector((state) => state.product.loading);
     const errorMessage = useSelector((state) => state.product.errorMessage);
-    const [errorMemo, SetErrorMemo] = useState(null);
     const dispatch = useDispatch();
 
     const memo = useRef();
+    const from_store = useRef();
+    const to_store = useRef();
+
+    const [errorMemo, SetErrorMemo] = useState(null);
+    const [errorFromStore, SetErrorFromStore] = useState(null);
+    const [errorToStore, SetErrorToStore] = useState(null);
+    
 
     const cleanInput = () => {
         memo.current.value = '';
@@ -31,16 +38,37 @@ export const StoreMovementList = () => {
             return;
         }
 
-        const order = {
-            "name": `MOV-${params.store_name}-${(new Date()).toISOString().substring(0, 10)}`,
-            "memo": memo.current?.value,
-            "order_type": order_type,
-            "user_requester": "userloged"
+        if (!validateInputX(from_store, "number", SetErrorFromStore)) {
+            return;
         }
 
-        dispatch(addProductOrder(order));
+        if (!validateInputX(to_store, "number", SetErrorToStore)) {
+            return;
+        }
+
+        const order_request = {
+            "name": `MOV-${from_store.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
+            "memo": memo.current?.value,
+            "order_type": order_type,
+            "user_requester": "userloged",
+            "from_store": { "id": from_store.current.value },
+            "to_store": { "id": to_store.current.value }
+        }
+
+        console.log(order_request);
+
+        dispatch(addProductOrder(order_request));
 
         cleanInput();
+    };
+
+    useEffect(() => {
+        console.log(stores)
+    }, [stores]);
+
+    const OnChangeStore = (event) => {
+        const store_id = event.target.value;
+        SetToStores(stores.filter(s => {return s.id != store_id}));
     };
 
     return (
@@ -55,6 +83,30 @@ export const StoreMovementList = () => {
                         <span className="underline-animation"></span>
                     </div>
                     <span className="error-msg">{errorMemo}</span>
+                </div>
+                <div>
+                    <span>From Store</span>
+                    <div className="select-div">
+                        <select className="select-from-store" ref={from_store} onChange={OnChangeStore}>
+                        <option disabled selected value> -- select a store -- </option>
+                            { stores.map((s, i) => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <span className="error-msg">{errorFromStore}</span>
+                </div>
+                <div>
+                    <span>To Store</span>
+                    <div className="select-div">
+                        <select className="select-from-store" ref={to_store}>
+                        <option disabled selected value> -- select a store -- </option>
+                            { toStores.map((s, i) => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <span className="error-msg">{errorToStore}</span>
                 </div>
                 <div>
                     <button className="fbutton fbutton-price-list" onClick={() => __addProductOrder()}>

@@ -535,6 +535,7 @@ SELECT
        h.to_store_id,
        h.product_order_id,
        h.quantity,
+       h.quantity_observed,
        h.status,
        h.date_create,
        p.name AS product_name,
@@ -556,6 +557,7 @@ SELECT
        h.to_store_id,
        h.product_order_id,
        h.quantity,
+       h.quantity_observed,
        h.status,
        h.date_create
  FROM  product_order_line h

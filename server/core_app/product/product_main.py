@@ -272,7 +272,7 @@ async def cancel_inventory(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/add_product_order", response_model=schemas.ProductOrder)
+@router.post("/add_product_order", response_model=list[schemas.ProductOrder])
 async def __add_product_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),

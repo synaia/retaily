@@ -544,6 +544,7 @@ def __iterate_over_order_line(hresp: tuple):
         line.to_store = to_store
         line.product_order_id = h['product_order_id']
         line.quantity = h['quantity']
+        line.quantity_observed = h['quantity_observed']
         line.status = h['status']
         line.date_create = h['date_create']
         product = Product()
@@ -675,7 +676,7 @@ def add_product_order(product_order: ProductOrder, db: Session, query: Query):
     cur.connection.commit()
     product_order_id = cur.lastrowid
 
-    return read_product_order_by_id(product_order_id, db, query)
+    return read_product_order(db, query)
 
 
 def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):

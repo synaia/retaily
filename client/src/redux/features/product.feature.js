@@ -703,6 +703,16 @@ const productsSlice = createSlice({
             state.loading = false;
             state.errorMessage = `ERROR getProductOrders() ; ${action.error.message}`
         });
+
+        builder.addCase(addProductOrder.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(addProductOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            state.orders = action.payload
+        }).addCase(addProductOrder.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR addProductOrder() ; ${action.error.message}`
+        });
     }
 });
 

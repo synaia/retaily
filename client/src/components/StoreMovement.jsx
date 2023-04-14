@@ -27,11 +27,15 @@ export const StoreMovement = () => {
 
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
+    const [rows_order, setRowsOrder] = useState([]);
 
     const search = useRef();
     const gridRef = useRef(null);
 
-    const [is_inventory_open, set_inventory_open] = useState(false);
+    const search_order = useRef();
+    const gridRef_order = useRef(null);
+
+    const [is_inventory_open, set_inventory_open] = useState(true);
 
     const [productFound, SetProductFound] = useState(0);
 
@@ -39,6 +43,8 @@ export const StoreMovement = () => {
         if (orders.length > 0) {
             const order = orders.filter( o => { return o.id == params.order_id})[0];
             setOrder(order)
+            setRowsOrder(get_rows_order(order));
+            console.log(order)
         }
     }, [orders]);
 
@@ -60,7 +66,7 @@ export const StoreMovement = () => {
         if (is_inventory_open) {
             return [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400},
+                { key: 'name', name: 'Product', resizable: true, width: 300},
                 { key: 'code', name: 'SKU', width: 100 },
                 { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
@@ -70,7 +76,7 @@ export const StoreMovement = () => {
         } else {
             return [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400},
+                { key: 'name', name: 'Product', resizable: true, width: 300},
                 { key: 'code', name: 'SKU', width: 100 },
                 { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
@@ -78,6 +84,18 @@ export const StoreMovement = () => {
               ];
         }
         
+    }); 
+
+
+    const columns_order = useMemo( () => {
+        return [
+            { key: 'id', name: 'ID', width: 10 },
+            { key: 'name', name: 'Product', resizable: true, width: 300},
+            { key: 'code', name: 'SKU', width: 100 },
+            { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                return <div className="row-bg-no-changed">{row.quantity_observed}</div>;
+            }},
+          ];
     }); 
 
 
@@ -93,6 +111,21 @@ export const StoreMovement = () => {
                 'quantity': product.inventory[0].quantity,
                 'next_quantity': product.inventory[0].next_quantity, 
                 'status': product.inventory[0].status
+            };
+            _rows_.push(row)
+        });
+        return _rows_;
+    };
+
+    const get_rows_order = (_order_) => {
+        const line  = _order_.product_order_line;
+        const _rows_ = [];
+        line.forEach(l => {
+            const row = {
+                'id': l.product.id,
+                'name': l.product.name,
+                'code': l.product.code,
+                'quantity_observed': l.quantity_observed
             };
             _rows_.push(row)
         });
@@ -120,20 +153,13 @@ export const StoreMovement = () => {
             setRows(get_rows(products_all_inv));
             SetProductFound(`${products_all_inv.length} products in total`);
         }
-
-        // const changed = products_all_inv.filter(p => p.inventory[0].status === "changed");
-        // set_inchanged(changed.length)
-        // console.log(changed.length)
-
-
     }, [products_all_inv]);
 
 
-    const filter_rows = (event) => { 
+    const filter_rows = (event, grid, rowList, searchObj, _get_rows_func) => {
         const preventDefault = () => {
             event.preventDefault();
         };
-        // console.log(ev);
         const { key } = event;
 
         if (key === "/") {
@@ -142,19 +168,14 @@ export const StoreMovement = () => {
         }
 
         if (key === "ArrowDown") {
-            gridRef.current.selectCell({ rowIdx: 0, idx: 4 }); 
+            grid.current.selectCell({ rowIdx: 0, idx: 3 }); 
             return;
         }
 
-        /** @BAWESOME trick fuck, rowIdx: 0, idx: null FIX the row undefined problem. */
-        gridRef.current.selectCell({ rowIdx: 0, idx: null }); 
-        // gridRef.current.element.blur();
-        // ev.target.focus();
-        
-        // console.log(gridRef);
+        grid.current.selectCell({ rowIdx: 0, idx: null }); 
 
-        let keyin = search.current?.value;
-        let list_filtered = products_all_inv.filter((prod) => {
+        let keyin = searchObj.current?.value;
+        let list_filtered = rowList.filter((prod) => {
             if (prod) {
                 let exp = keyin.replace(/\ /g, '.+').toUpperCase();
                 let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
@@ -165,7 +186,7 @@ export const StoreMovement = () => {
             }
         });
 
-        setRows(get_rows(list_filtered));
+        setRows(_get_rows_func(list_filtered));
         SetProductFound(`${list_filtered.length} products found`);
         
         if (13 === event.keyCode) {
@@ -191,10 +212,7 @@ export const StoreMovement = () => {
 
         console.log(changes);
         console.log(gridRef)
-        // console.log(rows)
-        // console.log('---------------------------------------')
         console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
-        // console.log(rows[changes.indexes[0]])
 
         const product_id = rows[changes.indexes[0]].id;
         const index = products_all_inv.findIndex(prod => prod.id == product_id);
@@ -211,8 +229,6 @@ export const StoreMovement = () => {
         };
 
         console.log(args);
-
-        dispatch(updateNextQty(args));
     };
 
     const highlightsted = [];
@@ -221,15 +237,9 @@ export const StoreMovement = () => {
         // console.log(args.mode);
         const { key, shiftKey } = event; 
 
-        // TODO: change cell bg is a headache.
-        // if (key === "Enter" && args.mode === 'EDIT') {
-        //     event.target.parentElement.parentElement.classList.add('danger');
-        // }
-
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
-        
     
         const preventDefault = () => {
           event.preventGridDefault();
@@ -323,7 +333,6 @@ export const StoreMovement = () => {
         const e = n.target.parentElement;
         highlightsted.push(e);
         e.classList.toggle('row-selected-bg');
-        
     };
    
     return (
@@ -375,8 +384,8 @@ export const StoreMovement = () => {
                 <div>
                     <div className="search-terminal-c">
                         <div className="search-terminal">
-                            <span className="material-icons-sharp"> searchk </span>
-                            <input ref={search} type="text" onKeyUp={filter_rows} className="search-bar"  />
+                            <span className="material-icons-sharp"> search </span>
+                            <input ref={search} type="text" onKeyUp={(event) => filter_rows(event, gridRef, products_all_inv, search, get_rows)} className="search-bar"  />
                             <span className="underline-animation-terminal"></span>
                         </div>
                         <small className="text-muted search-count"> {productFound} </small>
@@ -391,11 +400,28 @@ export const StoreMovement = () => {
                             onCellKeyDown={handleCellKeyDown}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
-                            className="data-grid-product rdg-dark"
+                            className="data-grid-movement rdg-dark"
                     />
                 </div>
                 <div>
-                    Aqui aqui
+                    <div className="search-terminal-c">
+                        <div className="search-terminal">
+                            <span className="material-icons-sharp"> search </span>
+                            <input ref={search_order} type="text" onKeyUp={(event) => filter_rows(event, gridRef_order, get_rows_order(order), search_order, get_rows_order)} className="search-bar"  />
+                            <span className="underline-animation-terminal"></span>
+                        </div>
+                        <small className="text-muted search-count"> {productFound} </small>
+                    </div>
+                    <DataGrid 
+                            ref={gridRef_order}
+                            columns={columns_order} 
+                            rows={rows_order} 
+                            rowKeyGetter={rowKeyGetter} 
+                            onCellKeyDown={handleCellKeyDown}
+                            enableVirtualization={true}
+                            onCellClick={highlightsrow}
+                            className="data-grid-movement rdg-dark"
+                    />
                 </div>
             </div>
         </React.Fragment>
