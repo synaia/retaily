@@ -124,7 +124,7 @@ export const StoreMovement = () => {
             { key: 'id', name: 'ID', width: 10 },
             { key: 'name', name: 'Product', resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+            { key: 'quantity', name: 'Quantity',  editor: textEditor, width: 100, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity_observed}</div>;
             }},
           ];
@@ -422,6 +422,7 @@ export const StoreMovement = () => {
                             ref={gridRef_order}
                             columns={columns_order} 
                             rows={rows_order} 
+                            onRowsChange={rowChange}
                             rowKeyGetter={rowKeyGetter} 
                             onCellKeyDown={handleCellKeyDown}
                             enableVirtualization={true}
