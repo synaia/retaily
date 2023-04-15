@@ -686,6 +686,7 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     sql_raw_select_line_byargs = query.SELECT_FROM_PRODUCT_ORDER_LINE_BYARGS
     sql_raw_substract_from_store = query.SUBSTRACT_FROM_STORE
     sql_raw_substract_from_store_dtpq = query.SUBSTRACT_FROM_STORE_DONTTOUCH_PREV_QUANTITY
+    sql_raw_app_inventory_remain_qty = query.APP_INVENTORY_REMAIN_QUANTITY
 
     cur = get_cursor(db)
     data = (line.product_order_id, line.product_id)
@@ -723,8 +724,20 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         resp = cur.fetchall()
         product_order_line_id = resp[0]['id']
 
-    return read_product_order_by_id(line.product_order_id, db, query)
-    # return read_product_order_line_by_id(product_order_line_id, db, query)
+    data = (line.from_store.id, line.product_id)
+    cur.execute(sql_raw_app_inventory_remain_qty, data)
+    resp = cur.fetchall()
+    remaining_quantity = resp[0]['quantity']
+    order = read_product_order_by_id(line.product_order_id, db, query)
+
+    return {
+        '_order': order,
+        'remaining': {
+            'remaining_quantity': remaining_quantity,
+            'product_id': line.product_id,
+            'store_id': line.from_store.id
+        }
+    }
 
 
 def process_order(product_order: ProductOrder, db: Session, query: Query):

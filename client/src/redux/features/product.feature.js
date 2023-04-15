@@ -520,12 +520,22 @@ const putNewProductInList = (state, action) => {
 };
 
 const refreshOnProductOrder = (state, action) => {
-    const _order = action.payload; // one only one
-    const orders = [...state.orders];
-    // TODO: GET DEEPTH WITH ...product_order_line and more....
-    const index = orders.findIndex(o => o.id == _order.id);
-    orders[index] = _order;
-    state.orders = orders;
+    const { _order, remaining }= action.payload; 
+    const cOrders = [...state.orders];
+    const oIndex = cOrders.findIndex(o => o.id == _order.id);
+    cOrders[oIndex] = _order;
+    state.orders = cOrders;
+
+    const cProducts = [...state.products_all_inv];
+    const pIndex = cProducts.findIndex(p => p.id == remaining.product_id);
+    const cInventoryList = [...cProducts[pIndex].inventory];
+    const cIndex = cInventoryList.findIndex(i => i.store.id == remaining.store_id)
+
+    cInventoryList[cIndex].quantity = remaining.remaining_quantity;
+
+    cProducts[pIndex].inventory = cInventoryList;
+    state.products_all_inv = cProducts;
+
 };
 
 const productsSlice = createSlice({

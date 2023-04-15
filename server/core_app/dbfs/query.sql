@@ -738,3 +738,12 @@ WHERE
 	product_order_id = %s
 AND product_id = %s
 ;
+
+--APP_INVENTORY_REMAIN_QUANTITY
+SELECT
+      i.quantity
+FROM app_inventory i
+WHERE
+      i.store_id = %s
+  AND i.product_id = %s
+;
