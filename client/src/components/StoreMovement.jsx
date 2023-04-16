@@ -35,16 +35,15 @@ export const StoreMovement = () => {
     const search_order = useRef();
     const gridRef_order = useRef(null);
 
-    const [is_inventory_open, set_inventory_open] = useState(true);
+    const [productFoundLeft, SetProductFoundLeft] = useState(0);
+    const [productFoundRight, SetProductFoundRight] = useState(0);
 
-    const [productFound, SetProductFound] = useState(0);
 
-    const get_rows = (_prodducts_, _order) => {
-        console.log('get_rows()')
-        const _rows_ = [];
-        const store_id = _order.from_store.id;
-        const lines = _order.product_order_line;
-        _prodducts_.forEach(product => {
+    const get_rows_from_products = (__products, __order) => {
+        const __rows = [];
+        const store_id = __order.from_store.id;
+        const lines = __order.product_order_line;
+        __products.forEach(product => {
             let index = 0;
             let quantity_to_move = 0;
             try {
@@ -67,20 +66,44 @@ export const StoreMovement = () => {
                 'quantity_to_move': quantity_to_move, 
                 'status': product.inventory[index].status
             };
-            _rows_.push(row);
+            __rows.push(row);
         });
-        return _rows_;
+        return __rows;
+    };
+
+    const get_rows_from_order = (__lines, spread = false) => {
+        const __rows = [];
+        if (spread) {
+            __lines.forEach(l => {
+                const row = {
+                    'id': l.id,
+                    'name': l.name,
+                    'code': l.code,
+                    'quantity_observed': l.quantity_observed
+                };
+                __rows.push(row)
+            });
+        } else {
+            __lines.forEach(l => {
+                const row = {
+                    'id': l.product.id,
+                    'name': l.product.name,
+                    'code': l.product.code,
+                    'quantity_observed': l.quantity_observed
+                };
+                __rows.push(row)
+            });
+        }
+        return __rows;
     };
 
     useEffect(() => {
         if (orders.length > 0) {
-            const order = orders.filter( o => { return o.id == params.order_id})[0];
-            setOrder(order)
-            setRowsOrder(get_rows_order(order));
-            console.log(order)
+            const __order = orders.filter( o => { return o.id == params.order_id})[0];
+            setOrder(__order);
+            setRowsOrder(get_rows_from_order(__order.product_order_line));
     
             let keyin = search.current?.value;
-            console.log('keyin', keyin)
             if (keyin != '') {
                 let list_filtered = products_all_inv.filter((prod) => {
                     if (prod) {
@@ -92,15 +115,14 @@ export const StoreMovement = () => {
                         return false;
                     }
                 });
-                setRows(get_rows(list_filtered, order));
-                SetProductFound(`${list_filtered.length} products found`);
+                setRows(get_rows_from_products(list_filtered, __order));
+                SetProductFoundLeft(`${list_filtered.length} products found`);
             } else {
-                setRows(get_rows(products_all_inv, order));
-                SetProductFound(`${products_all_inv.length} products in total`);
+                setRows(get_rows_from_products(products_all_inv, __order));
+                SetProductFoundLeft(`${products_all_inv.length} products in total`);
             }
 
         }
-
     }, [orders, products_all_inv]);
 
 
@@ -130,31 +152,8 @@ export const StoreMovement = () => {
           ];
     }); 
 
-
-    
-
-    const get_rows_order = (_order_) => {
-        const line  = _order_.product_order_line;
-        const _rows_ = [];
-        line.forEach(l => {
-            const row = {
-                'id': l.product.id,
-                'name': l.product.name,
-                'code': l.product.code,
-                'quantity_observed': l.quantity_observed
-            };
-            _rows_.push(row)
-        });
-        return _rows_;
-    };
-
-
-    useEffect(()=> {
-       
-    }, [products_all_inv]);
-
-
-    const filter_rows = (event, grid, rowList, searchObj, _get_rows_func, order_id) => {
+   
+    const filter_rows_from_products = (event, grid, __products, searchObj) => {
         const preventDefault = () => {
             event.preventDefault();
         };
@@ -173,7 +172,7 @@ export const StoreMovement = () => {
         grid.current.selectCell({ rowIdx: 0, idx: null }); 
 
         let keyin = searchObj.current?.value;
-        let list_filtered = rowList.filter((prod) => {
+        let list_filtered = __products.filter((prod) => {
             if (prod) {
                 let exp = keyin.replace(/\ /g, '.+').toUpperCase();
                 let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
@@ -184,8 +183,48 @@ export const StoreMovement = () => {
             }
         });
 
-        setRows(_get_rows_func(list_filtered, order));
-        SetProductFound(`${list_filtered.length} products found`);
+        setRows(get_rows_from_products(list_filtered, order));
+        SetProductFoundLeft(`${list_filtered.length} products found`);
+        
+        if (13 === event.keyCode) {
+            event.target.select();
+        }
+        
+    };
+
+
+    const filter_rows_from_order = (event, grid, __lines, __search) => {
+        const preventDefault = () => {
+            event.preventDefault();
+        };
+        const { key } = event;
+
+        if (key === "/") {
+            preventDefault();
+            return;
+        }
+
+        if (key === "ArrowDown") {
+            grid.current.selectCell({ rowIdx: 0, idx: 3 }); 
+            return;
+        }
+
+        grid.current.selectCell({ rowIdx: 0, idx: null }); 
+
+        let keyin = __search.current?.value;
+        let list_filtered = __lines.filter((prod) => {
+            if (prod) {
+                let exp = keyin.replace(/\ /g, '.+').toUpperCase();
+                let has = prod.name.toUpperCase().search(new RegExp(exp, "g")) > -1;
+                return  has ||
+                    prod.code.toUpperCase().includes(keyin.toUpperCase());
+            } else {
+                return false;
+            }
+        });
+
+        setRowsOrder(get_rows_from_order(list_filtered, true));
+        SetProductFoundRight(`${list_filtered.length} products found`);
         
         if (13 === event.keyCode) {
             event.target.select();
@@ -237,22 +276,21 @@ export const StoreMovement = () => {
 
     const highlightsted = [];
 
-    const handleCellKeyDown = (args, event) => {
-        // console.log(args.mode);
+    const handleCellKeyDown = (args, event, __search, side) => {
         const { key, shiftKey } = event; 
+
+        const preventDefault = () => {
+            event.preventGridDefault();
+            event.preventDefault();
+        };
 
         if (args.mode === 'EDIT') return;
         const { column, rowIdx, selectCell } = args;
         const { idx } = column;
-    
-        const preventDefault = () => {
-          event.preventGridDefault();
-          event.preventDefault();
-        };
 
         if (args.mode === 'SELECT' && key === "/" ) {
             preventDefault();
-            search.current.focus();
+            __search.current.focus();
             return;
         }
 
@@ -276,58 +314,9 @@ export const StoreMovement = () => {
             };
             row_highlightsrow(currentDiv);    
         }
-       
-        const loopOverNavigation = () => {
-          if ((key === 'ArrowRight' || (key === 'Tab' && !shiftKey)) && idx === columns.length - 1) {
-            selectCell({ rowIdx, idx: 0 });
-            preventDefault();
-          } else if ((key === 'ArrowLeft' || (key === 'Tab' && shiftKey)) && idx === 0) {
-            selectCell({ rowIdx, idx: columns.length - 1 });
-            preventDefault();
-          }
-        };
 
-        const changeRowNavigation = () => {
-            if (key === 'ArrowRight' && idx === columns.length - 1) {
-              if (rows.length === 0) return;
-              if (rowIdx === -1) {
-                selectCell({ rowIdx: 0, idx: 0 });
-              } else {
-                if (rowIdx === rows.length - 1) return;
-                selectCell({ rowIdx: rowIdx + 1, idx: 0 });
-              }
-              preventDefault();
-            } else if (key === 'ArrowLeft' && idx === 0) {
-              if (rowIdx === -1) return;
-              selectCell({ rowIdx: rowIdx - 1, idx: columns.length - 1 });
-              preventDefault();
-            }
-        };
-
-        const loopOverColumnNavigation = () => {
-            let newRowIdx;
-            if (rowIdx === -1) {
-              newRowIdx = shiftKey ? rows.length - 1 : 0;
-            } else {
-              newRowIdx = shiftKey ? rowIdx - 1 : rowIdx === rows.length - 1 ? -1 : rowIdx + 1;
-            }
-            selectCell({ rowIdx: newRowIdx, idx });
-            preventDefault();
-        };
-
-        if (cellNavigationMode === 'LOOP_OVER_ROW') {
-            loopOverNavigation();
-        } else if (cellNavigationMode === 'CHANGE_ROW') {
-            changeRowNavigation();
-        } else if (cellNavigationMode === 'LOOP_OVER_COLUMN' && key === 'Tab') {
-            loopOverColumnNavigation();
-        } else if (cellNavigationMode === 'NO_TAB' && key === 'Tab') {
-            // Need to allow default event to focus the next element
-            event.preventGridDefault();
-        }
     }
 
-    
     const highlightsrow = (v, n) => {
         if (highlightsted.length == 1) {
             highlightsted[0].classList.toggle('row-selected-bg');
@@ -390,11 +379,11 @@ export const StoreMovement = () => {
                         <div className="search-terminal">
                             <span className="material-icons-sharp"> search </span>
                             {orders.length > 0 && products_all_inv.length > 0 &&
-                                <input ref={search} type="text" onKeyUp={(event) => filter_rows(event, gridRef, products_all_inv, search, get_rows, order.from_store.id)} className="search-bar"  />
+                                <input ref={search} type="text" onKeyUp={(event) => filter_rows_from_products(event, gridRef, products_all_inv, search)} className="search-bar"  />
                             }
                             <span className="underline-animation-terminal"></span>
                         </div>
-                        <small className="text-muted search-count"> {productFound} </small>
+                        <small className="text-muted search-count"> {productFoundLeft} </small>
                     </div>
                     {/* {loading && <Loading Text="Loading :)" /> } */}
                     <DataGrid 
@@ -403,7 +392,7 @@ export const StoreMovement = () => {
                             rows={rows} 
                             onRowsChange={rowChange}
                             rowKeyGetter={rowKeyGetter} 
-                            onCellKeyDown={handleCellKeyDown}
+                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search, 'left')}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
                             className="data-grid-movement rdg-dark"
@@ -413,10 +402,12 @@ export const StoreMovement = () => {
                     <div className="search-terminal-c">
                         <div className="search-terminal">
                             <span className="material-icons-sharp"> search </span>
-                            <input ref={search_order} type="text" onKeyUp={(event) => filter_rows(event, gridRef_order, get_rows_order(order), search_order, get_rows_order)} className="search-bar"  />
+                            {orders.length > 0 && products_all_inv.length > 0 &&
+                                <input ref={search_order} type="text" onKeyUp={(event) => filter_rows_from_order(event, gridRef_order, get_rows_from_order(order.product_order_line), search_order)} className="search-bar"  />
+                            }
                             <span className="underline-animation-terminal"></span>
                         </div>
-                        <small className="text-muted search-count"> {productFound} </small>
+                        <small className="text-muted search-count"> {productFoundRight} </small>
                     </div>
                     <DataGrid 
                             ref={gridRef_order}
@@ -424,7 +415,7 @@ export const StoreMovement = () => {
                             rows={rows_order} 
                             onRowsChange={rowChange}
                             rowKeyGetter={rowKeyGetter} 
-                            onCellKeyDown={handleCellKeyDown}
+                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order, 'right')}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
                             className="data-grid-movement rdg-dark"
