@@ -20,7 +20,7 @@ import { loadClients } from  "../redux/features/client.feature.js";
 import { getStores } from "../redux/features/product.feature.js";
 import { getProductsAllInventory } from "../redux/features/product.feature.js";
 import { getProductOrders } from "../redux/features/product.feature.js";
-
+import package_file from "../../package.json";
 
 
 export const Init = () => {
@@ -34,6 +34,11 @@ export const Init = () => {
     dispatch(getStores());
     dispatch(getProductsAllInventory());
     dispatch(getProductOrders());
+    console.log(package_file.version)
+
+    useEffect(() => {
+        document.title = `${package_file.name} ${package_file.version}`;
+    }, []);
 
 
     useEffect(() => {
