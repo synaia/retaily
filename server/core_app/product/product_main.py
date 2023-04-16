@@ -25,6 +25,7 @@ from server.core_app.product.product_query import (
     read_inv_products,
     add_new_inventory_head,
     read_inventory_head,
+    read_inventory_head_by_store_id,
     update_next_inventory_qty,
     reorder_inventory_qty,
     read_stores_inv,
@@ -36,7 +37,7 @@ from server.core_app.product.product_query import (
     read_product_order_by_id,
     process_order,
     issue_order_line,
-    rollback_order
+    rollback_order,
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -229,6 +230,18 @@ async def get_inventory_head(
 ):
     try:
         return read_inventory_head(store_name, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/inventory_head_store_id/{store_id}", response_model=schemas.InventoryHead)
+async def get_inventory_head(
+                        store_id: str,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_inventory_head_by_store_id(store_id, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

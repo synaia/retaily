@@ -256,6 +256,21 @@ export const StoreMovement = () => {
         const to_store_id = order.to_store.id;
         const product_order_id = order.id;
 
+        const pIndex = products_all_inv.findIndex(p => p.id == product_id);
+        const cInventoryList = products_all_inv[pIndex].inventory;
+        const cIndex = cInventoryList.findIndex(i => i.store.id == from_store_id);
+        const available_quantity = cInventoryList[cIndex].prev_quantity;
+
+        if (qty < 0) {
+            alert('NON NEG QTY please');
+            return;
+        }
+
+       if (available_quantity < qty) {
+            alert('QUANTITY EXCEDED');
+            return;
+       }
+
         const args = {
             "product_id": product_id,
             "quantity": qty,
@@ -276,7 +291,7 @@ export const StoreMovement = () => {
 
     const highlightsted = [];
 
-    const handleCellKeyDown = (args, event, __search, side) => {
+    const handleCellKeyDown = (args, event, __search) => {
         const { key, shiftKey } = event; 
 
         const preventDefault = () => {
@@ -392,7 +407,7 @@ export const StoreMovement = () => {
                             rows={rows} 
                             onRowsChange={rowChange}
                             rowKeyGetter={rowKeyGetter} 
-                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search, 'left')}
+                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search)}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
                             className="data-grid-movement rdg-dark"
@@ -415,7 +430,7 @@ export const StoreMovement = () => {
                             rows={rows_order} 
                             onRowsChange={rowChange}
                             rowKeyGetter={rowKeyGetter} 
-                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order, 'right')}
+                            onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order)}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
                             className="data-grid-movement rdg-dark"

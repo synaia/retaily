@@ -25,6 +25,7 @@ const initialState = {
     stores: [],
     inventory_head_list: [],
     inventory_head: {},
+    inventory_head_by_store: {},
     resume_inv: {},
     orders: [],
     sale: {
@@ -104,6 +105,22 @@ export const getInventoryHead = createAsyncThunk('products/getInventoryHead', as
     });
     return response.data;
 });
+
+
+export const getInventoryHeadByStoreId = createAsyncThunk('products/inventory_head_store_id', async (store_id) => {
+    console.log('inventory_head_store_id ...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/inventory_head_store_id/${store_id}`, {
+        params: {
+            'store_id': store_id
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE
+        }
+    });
+    return response.data;
+});
+
 
 
 export const updateNextQty = createAsyncThunk('product/updateNextQty', async (args, ) => {
@@ -693,6 +710,16 @@ const productsSlice = createSlice({
         }).addCase(getInventoryHead.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR getInventoryHead() ; ${action.error.message}`
+        });
+
+        builder.addCase(getInventoryHeadByStoreId.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getInventoryHeadByStoreId.fulfilled, (state, action) => {
+            state.loading = false;
+            state.inventory_head_by_store = action.payload;
+        }).addCase(getInventoryHeadByStoreId.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getInventoryHeadByStoreId() ; ${action.error.message}`
         });
 
         builder.addCase(updateNextQty.pending, (state, action) => {

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 
 import { F_, validateInputX } from "../util/Utils";
-import { addProductOrder } from "../redux/features/product.feature.js";
+import { addProductOrder, getInventoryHeadByStoreId } from "../redux/features/product.feature.js";
 
 
 export const StoreMovementList = () => {
@@ -15,6 +15,7 @@ export const StoreMovementList = () => {
 
     const orders = useSelector((state) => state.product.orders);
     const stores = useSelector((state) => state.product.stores);
+    const inventory_head_by_store = useSelector((state) => state.product.inventory_head_by_store);
     const [toStores, SetToStores] = useState([]);
     const loading = useSelector((state) => state.product.loading);
     const errorMessage = useSelector((state) => state.product.errorMessage);
@@ -46,6 +47,10 @@ export const StoreMovementList = () => {
             return;
         }
 
+        if (inventory_head_by_store.meta.code === "success") {
+            SetErrorFromStore('This Store has a Open Inventory, first conclude and then back here.');
+        }
+
         const order_request = {
             "name": `MOV-${from_store.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
             "memo": memo.current?.value,
@@ -69,6 +74,7 @@ export const StoreMovementList = () => {
     const OnChangeStore = (event) => {
         const store_id = event.target.value;
         SetToStores(stores.filter(s => {return s.id != store_id}));
+        dispatch(getInventoryHeadByStoreId(store_id));
     };
 
     return (

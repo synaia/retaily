@@ -276,7 +276,7 @@ FROM app_store s
  ORDER BY s.id
 ;
 
---SELECT_INV_HEAD
+--SELECT_INV_HEAD_BYSTOREID
 SELECT
      i.id,
      i.name,
@@ -598,6 +598,13 @@ AND l.product_id = %s
 UPDATE product_order_line
   SET quantity = %s,
       quantity_observed = %s
+WHERE
+	product_order_id = %s
+AND product_id = %s
+;
+
+--DELETE_PRODUCT_ORDER_LINE
+DELETE FROM product_order_line
 WHERE
 	product_order_id = %s
 AND product_id = %s

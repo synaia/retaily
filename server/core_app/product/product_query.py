@@ -350,9 +350,28 @@ def read_stores(db: Session, query: Query):
     return stores
 
 
+def read_inventory_head_by_store_id(store_id: int, db: Session, query: Query):
+    sql_raw_inv_head = query.SELECT_INV_HEAD_BYSTOREID
+    cur = get_cursor(db)
+    cur.execute(sql_raw_inv_head, (store_id,))
+    r = cur.fetchall()
+    head = InventoryHead()
+    if len(r) > 0:
+        head.id = r[0]['id']
+        head.name = r[0]['name']
+        head.date_create = r[0]['date_create']
+        head.date_close = r[0]['date_close']
+        head.status = r[0]['status']
+        head.memo = r[0]['memo']
+        head.build_meta(1, SUCCESS, SUCCESS)
+    else:
+        head.build_meta(0, FAIL, f'Not app_inventory_head defined for id: {store_id}')
+
+    return head
+
+
 def read_stores_inv(db: Session, query: Query):
     sql_raw = query.SELECT_STORES
-    sql_raw_inv_head = query.SELECT_INV_HEAD
     sql_raw_inv_valuation = query.SELECT_INV_VALUATION
     sql_raw_inv_valuation_changed = query.SELECT_INV_VALUATION_CHANGED
 
@@ -363,20 +382,10 @@ def read_stores_inv(db: Session, query: Query):
     resp = cur.fetchall()
     for rp in resp:
         store = Store()
-        head = InventoryHead()
         store.id = rp['id']
         store.name = rp['name']
+        head = read_inventory_head_by_store_id(store.id, db, query)
         head.store = store
-        cur.execute(sql_raw_inv_head, (store.id,))
-        r = cur.fetchall()
-        if len(r) > 0:
-            head.id = r[0]['id']
-            head.name = r[0]['name']
-            head.date_create = r[0]['date_create']
-            head.date_close = r[0]['date_close']
-            head.status = r[0]['status']
-            head.memo = r[0]['memo']
-
         inventory_head_list.append(head)
 
         cur.execute(sql_raw_inv_valuation, (store.name,))
@@ -683,6 +692,7 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     sql_raw_add_product_order_line = query.INSERT_PRODUCT_ORDER_LINE
     sql_raw_validate_line = query.VALIDATE_PRODUCT_ORDER_LINE_EXIST
     sql_raw_update_line = query.UPDATE_PRODUCT_ORDER_LINE
+    sql_raw_delete_line = query.DELETE_PRODUCT_ORDER_LINE
     sql_raw_select_line_byargs = query.SELECT_FROM_PRODUCT_ORDER_LINE_BYARGS
     sql_raw_substract_from_store = query.SUBSTRACT_FROM_STORE
     sql_raw_substract_from_store_dtpq = query.SUBSTRACT_FROM_STORE_DONTTOUCH_PREV_QUANTITY
@@ -695,15 +705,16 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     line_count: int = 0 if resp[0]['line_count'] is None else resp[0]['line_count']
     if line_count == 0: # add quantity
         # substract quantity from store
-        data = (line.quantity, line.user_receiver, line.from_store.id, line.product_id)
-        cur.execute(sql_raw_substract_from_store, data)
-        cur.connection.commit()
+        if line.quantity != 0:
+            data = (line.quantity, line.user_receiver, line.from_store.id, line.product_id)
+            cur.execute(sql_raw_substract_from_store, data)
+            cur.connection.commit()
 
-        # reserve quantity
-        data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity, line.quantity)
-        cur.execute(sql_raw_add_product_order_line, data)
-        cur.connection.commit()
-        product_order_line_id = cur.lastrowid
+            # reserve quantity
+            data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity, line.quantity)
+            cur.execute(sql_raw_add_product_order_line, data)
+            cur.connection.commit()
+
     else:              # update quantity
         data = (line.product_order_id, line.product_id)
         cur.execute(sql_raw_select_line_byargs, data)
@@ -715,14 +726,14 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         cur.execute(sql_raw_substract_from_store_dtpq, data)
         cur.connection.commit()
 
-        data = (line.quantity, line.quantity, line.product_order_id, line.product_id)
-        cur.execute(sql_raw_update_line, data)
-        cur.connection.commit()
-
-        data = (line.product_order_id, line.product_id)
-        cur.execute(sql_raw_select_line_byargs, data)
-        resp = cur.fetchall()
-        product_order_line_id = resp[0]['id']
+        if line.quantity == 0:
+            data = (line.product_order_id, line.product_id)
+            cur.execute(sql_raw_delete_line, data)
+            cur.connection.commit()
+        else:
+            data = (line.quantity, line.quantity, line.product_order_id, line.product_id)
+            cur.execute(sql_raw_update_line, data)
+            cur.connection.commit()
 
     data = (line.from_store.id, line.product_id)
     cur.execute(sql_raw_app_inventory_remain_qty, data)
