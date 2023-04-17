@@ -1306,6 +1306,12 @@ main .recent-orders a {
   color: var(--color-dark);
 }
 
+.row-bg-issue {
+  text-align: center;
+  background-color: var(--color-danger);
+  color: var(--color-dark);
+}
+
 .row-bg-no-changed {
   text-align: center;
 }

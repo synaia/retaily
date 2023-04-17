@@ -720,6 +720,7 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         cur.execute(sql_raw_select_line_byargs, data)
         resp = cur.fetchall()
         product_order_quantity = resp[0]['quantity']
+        product_order_status = resp[0]['status']
         abs_quantity = line.quantity - product_order_quantity
 
         data = (abs_quantity, line.user_receiver, line.from_store.id, line.product_id)
@@ -731,7 +732,11 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
             cur.execute(sql_raw_delete_line, data)
             cur.connection.commit()
         else:
-            data = (line.quantity, line.quantity, line.product_order_id, line.product_id)
+            if product_order_status == 'issue':
+                status: str = 'issue' if line.quantity != product_order_quantity else 'pending'
+            else:
+                status: str = product_order_status
+            data = (line.quantity, line.quantity, status, line.product_order_id, line.product_id)
             cur.execute(sql_raw_update_line, data)
             cur.connection.commit()
 
@@ -804,8 +809,9 @@ def rollback_order(product_order: ProductOrder, db: Session, query: Query):
 def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     sql_raw_update_line_issue = query.UPDATE_PRODUCT_ORDER_LINE_ISSUE_COUNT
     cur = get_cursor(db)
-    data = (line.quantity_observed, line.user_receiver, line.receiver_memo, line.product_order_id, line.product_id)
+    status: str = 'issue' if line.quantity != line.quantity_observed else 'pending'
+    data = (line.quantity_observed, line.user_receiver, line.receiver_memo, status, line.product_order_id, line.product_id)
     cur.execute(sql_raw_update_line_issue, data)
     cur.connection.commit()
 
-    return 0
+    return read_product_order_by_id(line.product_order_id, db, query)

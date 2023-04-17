@@ -568,7 +568,8 @@ SELECT
 --SELECT_FROM_PRODUCT_ORDER_LINE_BYARGS
 SELECT
        h.id,
-       h.quantity
+       h.quantity,
+       h.status
  FROM  product_order_line h
  WHERE
      h.product_order_id = %s
@@ -596,8 +597,10 @@ AND l.product_id = %s
 
 --UPDATE_PRODUCT_ORDER_LINE
 UPDATE product_order_line
-  SET quantity = %s,
-      quantity_observed = %s
+  SET
+      quantity = %s,
+      quantity_observed = %s,
+      status = %s
 WHERE
 	product_order_id = %s
 AND product_id = %s
@@ -739,7 +742,7 @@ UPDATE product_order_line
       quantity_observed = %s,
       user_receiver = %s,
       receiver_memo = %s,
-      status = 'issue',
+      status = %s,
       receiver_last_update = NOW()
 WHERE
 	product_order_id = %s

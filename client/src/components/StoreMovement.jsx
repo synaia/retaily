@@ -46,15 +46,21 @@ export const StoreMovement = () => {
         __products.forEach(product => {
             let index = 0;
             let quantity_to_move = 0;
+            let quantity_base = 0;
+            let linestatus = '';
             try {
                 index = product.inventory.findIndex(inv => inv.store.id == store_id);
                 const line = lines.filter( ln => ln.product.id == product.id)[0]
                 if (line != undefined) {
                     quantity_to_move = line.quantity_observed;
+                    quantity_base = line.quantity;
+                    linestatus = line.status;
                 }
             } catch (error) {
                 index = 0;
                 quantity_to_move = 0;
+                quantity_base = 0;
+                linestatus = '';
                 console.log('order not defined yet ... ', error);
             }
             const row = {
@@ -62,9 +68,11 @@ export const StoreMovement = () => {
                 'name': product.name,
                 'cost': product.cost,
                 'code': product.code,
-                'quantity': product.inventory[index].quantity,
+                'available_quantity': product.inventory[index].quantity,
+                'quantity': quantity_base,
                 'quantity_to_move': quantity_to_move, 
-                'status': product.inventory[index].status
+                'status': product.inventory[index].status,
+                'linestatus': linestatus
             };
             __rows.push(row);
         });
@@ -79,7 +87,8 @@ export const StoreMovement = () => {
                     'id': l.id,
                     'name': l.name,
                     'code': l.code,
-                    'quantity_observed': l.quantity_observed
+                    'quantity_observed': l.quantity_observed,
+                    'linestatus': l.status
                 };
                 __rows.push(row)
             });
@@ -89,7 +98,8 @@ export const StoreMovement = () => {
                     'id': l.product.id,
                     'name': l.product.name,
                     'code': l.product.code,
-                    'quantity_observed': l.quantity_observed
+                    'quantity_observed': l.quantity_observed,
+                    'linestatus': l.status
                 };
                 __rows.push(row)
             });
@@ -131,11 +141,15 @@ export const StoreMovement = () => {
             { key: 'id', name: 'ID', width: 10 },
             { key: 'name', name: 'Product', resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
+            { key: 'available_quantity', name: 'Avaiable Qty', width: 100, formatter: ({ row }) => {
+                return <div className="row-bg-no-changed">{row.available_quantity}</div>;
+            }},
             { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity}</div>;
             }},
             { key: 'quantity_to_move', name: 'Move Quantity', editor: textEditor, width: 100, formatter: ({ row }) => {
-                return <div className="row-bg-no-changed">{row.quantity_to_move}</div>;
+                const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
+                return <div className={row_bg_issue}>{row.quantity_to_move}</div>;
             }}
           ];
     }); 
@@ -147,7 +161,8 @@ export const StoreMovement = () => {
             { key: 'name', name: 'Product', resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
             { key: 'quantity', name: 'Quantity',  editor: textEditor, width: 100, formatter: ({ row }) => {
-                return <div className="row-bg-no-changed">{row.quantity_observed}</div>;
+                const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
+                return <div className={row_bg_issue}>{row.quantity_observed}</div>;
             }},
           ];
     }); 
@@ -245,12 +260,16 @@ export const StoreMovement = () => {
         }
     };
 
-    const rowChange = (rows, changes) => {
+    const rowChange = (rows, changes, side = 'left') => {
         // console.log(changes);
         // console.log(gridRef)
         // console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
 
         const product_id = rows[changes.indexes[0]].id;
+        let __quantity = rows[changes.indexes[0]].quantity;
+        if (side === "right") {
+            __quantity = rows[changes.indexes[0]].quantity_observed;
+        }
         const qty = rows[changes.indexes[0]][changes.column.key];
         const from_store_id = order.from_store.id;
         const to_store_id = order.to_store.id;
@@ -273,6 +292,7 @@ export const StoreMovement = () => {
 
         const args = {
             "product_id": product_id,
+            "quantity_observed": __quantity,
             "quantity": qty,
             "user_receiver": "USERHERE",
             "from_store": {
@@ -428,7 +448,7 @@ export const StoreMovement = () => {
                             ref={gridRef_order}
                             columns={columns_order} 
                             rows={rows_order} 
-                            onRowsChange={rowChange}
+                            onRowsChange={(rows, changes) => rowChange(rows, changes, 'right')}
                             rowKeyGetter={rowKeyGetter} 
                             onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order)}
                             enableVirtualization={true}

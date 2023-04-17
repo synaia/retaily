@@ -318,6 +318,16 @@ export const addProductOrderLine = createAsyncThunk('product/add_product_order_l
 });
 
 
+export const issueProductOrderLine = createAsyncThunk('product/issue_order_line', async (line, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/issue_order_line`, line,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 export const getProductOrders = createAsyncThunk('product/product_order', async () => {
     let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
         headers: {
@@ -555,6 +565,16 @@ const refreshOnProductOrder = (state, action) => {
 
 };
 
+
+const refreshIssueOnProductOrder = (state, action) => {
+    const _order = action.payload; 
+    const cOrders = [...state.orders];
+    const oIndex = cOrders.findIndex(o => o.id == _order.id);
+    cOrders[oIndex] = _order;
+    state.orders = cOrders;
+};
+
+
 const productsSlice = createSlice({
     name: 'products',
     initialState: initialState,
@@ -779,6 +799,16 @@ const productsSlice = createSlice({
         }).addCase(addProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR addProductOrderLine() ; ${action.error.message}`
+        });
+
+        builder.addCase(issueProductOrderLine.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(issueProductOrderLine.fulfilled, (state, action) => {
+            state.loading = false;
+            refreshIssueOnProductOrder(state, action);
+        }).addCase(issueProductOrderLine.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`
         });
         
     }
