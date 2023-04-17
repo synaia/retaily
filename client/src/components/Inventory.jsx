@@ -129,7 +129,11 @@ export const Inventory = () => {
                     </button>
                     <button className="fbutton fbutton-price-list" onClick={() => navigator(`storemovlist/`, {replace: false})} >
                         <p className="material-icons-sharp"> layers </p>
-                        <h3>MOV INVENTORY MANAGEMENT</h3>
+                        <h3>REQUEST: MOV INVENTORY MANAGEMENT</h3>
+                    </button>
+                    <button className="fbutton fbutton-price-list" onClick={() => navigator(`storemovlistresp/`, {replace: false})} >
+                        <p className="material-icons-sharp"> layers </p>
+                        <h3>RESPONSE: MOV INVENTORY MANAGEMENT</h3>
                     </button>
                 </div>
 

@@ -49,6 +49,7 @@ export const StoreMovementList = () => {
 
         if (inventory_head_by_store.meta.code === "success") {
             SetErrorFromStore('This Store has a Open Inventory, first conclude and then back here.');
+            return;
         }
 
         const order_request = {

@@ -20,7 +20,10 @@ import { NewProduct } from "./NewProduct";
 import { TakePhoto } from "./TakePhoto";
 import { Store } from "./Store";
 import { StoreMovement } from "./StoreMovement";
+import { StoreMovementResponse } from "./StoreMovementResponse";
 import { StoreMovementList } from "./StoreMovementList";
+import { StoreMovementListResponse } from "./StoreMovementListResponse";
+
 
 
 export const App = () => {
@@ -46,7 +49,9 @@ export const App = () => {
                   <Route path="/admin/inventory/takephoto" element={<TakePhoto />} />
                   <Route path="/admin/inventory/store/:store_name" element={<AdminBoard Content={<Store/>} Title="Store Fix Quantity" />} />
                   <Route path="/admin/inventory/storemov/:order_id" element={<AdminBoard Content={<StoreMovement/>} Title="Store Movements" />} />
+                  <Route path="/admin/inventory/storemovresp/:order_id" element={<AdminBoard Content={<StoreMovementResponse />} Title="Response: Store Movements" />} />
                   <Route path="/admin/inventory/storemovlist/" element={<AdminBoard Content={<StoreMovementList/>} Title="Store Movements List" />} />
+                  <Route path="/admin/inventory/storemovlistresp/" element={<AdminBoard Content={<StoreMovementListResponse />} Title="Responses: Store Movements List" />} />
                 </Routes>
               </Provider>
             </HashRouter>
