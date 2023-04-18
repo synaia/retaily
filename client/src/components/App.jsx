@@ -23,6 +23,7 @@ import { StoreMovement } from "./StoreMovement";
 import { StoreMovementResponse } from "./StoreMovementResponse";
 import { StoreMovementList } from "./StoreMovementList";
 import { StoreMovementListResponse } from "./StoreMovementListResponse";
+import { StoreList } from "./StoreList";
 
 
 
@@ -47,11 +48,12 @@ export const App = () => {
                   <Route path="/admin/inventory/pricelist" element={<AdminBoard Content={<PriceList/>} Title="Price List" />} />
                   <Route path="/admin/inventory/newproduct" element={<AdminBoard Content={<NewProduct/>} Title="New Product" />} />
                   <Route path="/admin/inventory/takephoto" element={<TakePhoto />} />
+                  <Route path="/admin/inventory/store" element={<AdminBoard Content={<StoreList/>} Title="Store List" />} />
                   <Route path="/admin/inventory/store/:store_name" element={<AdminBoard Content={<Store/>} Title="Store Fix Quantity" />} />
-                  <Route path="/admin/inventory/storemov/:order_id" element={<AdminBoard Content={<StoreMovement/>} Title="Store Movements" />} />
+                  <Route path="/admin/inventory/storemov" element={<AdminBoard Content={<StoreMovementList/>} Title="Request: Store Movements List" />} />
+                  <Route path="/admin/inventory/storemov/:order_id" element={<AdminBoard Content={<StoreMovement/>} Title="Request: Store Movements" />} />
+                  <Route path="/admin/inventory/storemovresp" element={<AdminBoard Content={<StoreMovementListResponse />} Title="Responses: Store Movements List" />} />
                   <Route path="/admin/inventory/storemovresp/:order_id" element={<AdminBoard Content={<StoreMovementResponse />} Title="Response: Store Movements" />} />
-                  <Route path="/admin/inventory/storemovlist/" element={<AdminBoard Content={<StoreMovementList/>} Title="Store Movements List" />} />
-                  <Route path="/admin/inventory/storemovlistresp/" element={<AdminBoard Content={<StoreMovementListResponse />} Title="Responses: Store Movements List" />} />
                 </Routes>
               </Provider>
             </HashRouter>

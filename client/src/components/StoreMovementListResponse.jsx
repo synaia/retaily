@@ -52,7 +52,7 @@ export const StoreMovementListResponse = () => {
                                 <small className="text-muted"> Name </small>
                             </div>
                             <div className="info">
-                                <h3>{order.value_in_order}</h3>
+                                <h3>{F_(order.value_in_order)}</h3>
                                 <small className="text-muted"> Value In Movement</small>
                             </div>
                             <div className="info">

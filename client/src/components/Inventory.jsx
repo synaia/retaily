@@ -52,9 +52,32 @@ export const Inventory = () => {
 
     return (
         <React.Fragment>
+            <div className="inventory-bar">
+                <button className="fbutton-inventory fbutton-green" onClick={() => navigator(`store/`, {replace: false})} 
+                        data-invoice-status="all">
+                    <span className="material-icons-sharp"> layers </span>
+                        <span>Store List</span>
+                </button>
+                <button className="fbutton-inventory fbutton-orange" onClick={() => navigator(`storemov/`, {replace: false})}  
+                        data-invoice-status="open">
+                        <span className="material-icons-sharp"> layers </span>
+                        <span>Request: Inventory Mov.</span>
+                </button>
+                <button className="fbutton-inventory fbutton-purple" onClick={() => navigator(`storemovresp/`, {replace: false})} 
+                        data-invoice-status="close">
+                        <span className="material-icons-sharp"> layers </span>
+                        <span>Response: Inventory Mov.</span>
+                </button>
+                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`culo/`, {replace: false})} 
+                        data-invoice-status="close">
+                        <span className="material-icons-sharp"> layers </span>
+                        <span>Purchases Orders</span>
+                </button>
+            </div>
+
             <div className="insights">
                 {/* <!-- SALES --> */}
-                <div className="sales" onClick={() => navigator('products', {replace: true})}>
+                <div className="sales" onClick={() => navigator('products', {replace: false})}>
                     <span className="material-icons-sharp"> analytics </span>
                     <div className="middle">
                         <div className="left">
@@ -73,7 +96,7 @@ export const Inventory = () => {
                     <small className="text-muted"> Last 24 hours </small>
                 </div>
 
-                <div className="expenses"  onClick={() => navigator('pricelist', {replace: true})}>
+                <div className="expenses"  onClick={() => navigator('pricelist', {replace: false})}>
                     <span className="material-icons-sharp"> bar_chart </span>
                         <div className="middle">
                             <div className="left">
@@ -93,7 +116,7 @@ export const Inventory = () => {
                 </div>
 
                 {/* <!-- INCOME --> */}
-                <div className="income" onClick={() => navigator('newproduct', {replace: true})}>
+                <div className="income" onClick={() => navigator('newproduct', {replace: false})}>
                     <span className="material-icons-sharp"> stacked_line_chart </span>
                     <div className="middle">
                         <div className="left">
@@ -111,100 +134,6 @@ export const Inventory = () => {
                     </div>
                     <small className="text-muted"> Last 24 hours </small>
                 </div>
-
-                <div className="wide-box">
-                    <h2>Stores</h2>
-                    <div>
-                        <p>STORE NAME</p>
-                        <div className="price-list-b">
-                            <p className="material-icons-sharp price-list-i"> edit_note </p>
-                            <input ref={store_name} type="text" className="price-list-t" />
-                            <p className="underline-animation"></p>
-                        </div>
-                            <p className="error-msg">{errorStoreName}</p>
-                        </div>
-                    <button className="fbutton fbutton-price-list" onClick={() => __addStore()}>
-                        <p className="material-icons-sharp"> add_business </p>
-                        <h3>CREATE STORE</h3>
-                    </button>
-                    <button className="fbutton fbutton-price-list" onClick={() => navigator(`storemovlist/`, {replace: false})} >
-                        <p className="material-icons-sharp"> layers </p>
-                        <h3>REQUEST: MOV INVENTORY MANAGEMENT</h3>
-                    </button>
-                    <button className="fbutton fbutton-price-list" onClick={() => navigator(`storemovlistresp/`, {replace: false})} >
-                        <p className="material-icons-sharp"> layers </p>
-                        <h3>RESPONSE: MOV INVENTORY MANAGEMENT</h3>
-                    </button>
-                </div>
-
-
-                { inventory_head_list.map((head, i) => (
-                    <div className="inventory-resume" key={i} >
-                        <div className="icon">
-                        {head.name != undefined &&
-                                <span className="material-icons-sharp avatar-icon-heat"> {getStatusIcon(head.date_create)} </span>
-                        }
-                        {head.name != undefined &&
-                                <span className="material-icons-sharp inv-in-progress"> storefront </span>
-                        }
-
-                        {head.name == undefined &&
-                                <span className="material-icons-sharp inv-success"> storefront </span>
-                        }
-                        </div>
-                        <div className="inventory-resume-r">
-                            <div className="inventory-resume-c">
-                                <div className="info">
-                                    <h3>{head.store.name}</h3>
-                                    <small className="text-muted"> Store </small>
-                                </div>
-                                <div className="info">
-                                    <h3>{F_(resume_inv[head.store.name].inv_valuation)}</h3>
-                                    <small className="text-muted"> Value Inventory </small>
-                                </div>
-                            </div>
-                            {head.name != undefined &&
-                                <div className="inventory-resume-c">
-                                    <div className="info">
-                                        <h3>In Progress</h3>
-                                        <small className="text-muted"> Status </small>
-                                    </div>
-                                    <div className="info">
-                                        <h3>{resume_inv[head.store.name].changed_count}</h3>
-                                        <small className="text-muted"> Products Changed </small>
-                                    </div>
-                                </div>
-                            }
-                            {head.name != undefined &&
-                                <div className="inventory-resume-c">
-                                    <div className="info">
-                                        <h3 className="name-inv">{head.name}</h3>
-                                        <small className="text-muted"> Name </small>
-                                    </div>
-                                    <div className="info">
-                                        <h3>{F_(resume_inv[head.store.name].inv_valuation_changed)}</h3>
-                                        <small className="text-muted"> Value Changed </small>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        <div className="inventory-resume-spand">
-                            <button className="inv-button" onClick={() => navigator(`store/${head.store.name}`, {replace: false})}>
-                                <p className="material-icons-sharp inv-button-fi"> auto_fix_normal </p>
-                                <h3 className="inv-button-f">FIX INV</h3>
-                            </button>
-                            <button className="inv-button" onClick={() => navigator(`storemov/${head.store.name}`, {replace: false})}>
-                                <p className="material-icons-sharp inv-button-fi"> layers </p>
-                                <h3 className="inv-button-f">MOV INV</h3>
-                            </button>
-                            <button className="inv-button" >
-                                <p className="material-icons-sharp inv-button-fi"> near_me </p>
-                                <h3 className="inv-button-f">ORDERS</h3>
-                            </button>
-                        </div>
-                    </div>
-                    ))
-                }
         </div>
     </React.Fragment>
     )

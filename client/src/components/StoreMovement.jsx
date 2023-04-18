@@ -381,11 +381,11 @@ export const StoreMovement = () => {
     if (order != undefined) {
         if (order.status == "opened" || order.status == "inprogress" ) {
             rollback_button =  <div>
-                    <button className="fbutton fbutton-price-list" onClick={() => __rollbackOrder()}>
-                        <span className="material-icons-sharp"> cancel </span>
-                        <span>CANCEL & ROLLBACK THE ORDER</span>
-                    </button>
-                </div>;
+                                <button className="fbutton fbutton-price-list" onClick={() => __rollbackOrder()}>
+                                    <span className="material-icons-sharp"> cancel </span>
+                                    <span>CANCEL & ROLLBACK THE ORDER</span>
+                                </button>
+                            </div>;
         }
     }
    
@@ -417,7 +417,7 @@ export const StoreMovement = () => {
                         <small className="text-muted"> Name </small>
                     </div>
                     <div className="info">
-                        <h3>{order.value_in_order}</h3>
+                        <h3>{F_(order.value_in_order)}</h3>
                         <small className="text-muted"> Value In Movement</small>
                     </div>
                     <div className="info">

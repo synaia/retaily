@@ -6,21 +6,35 @@ import '../../assets/style-admin.css';
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
 
 export const AdminBoard = ({Content, Title, Search}) => {
   const dispatch = useDispatch();
+  const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
 
-
   useEffect(() => {
-    const highlights = (sidebar, item) => {
-      console.log('highlights');
-      sidebar.forEach(item => item.classList.remove('active'));
-      item.classList.add('active');
+    const highlightsted = [];
+    const p = window.location.hash.split('/');
+    let href = (p.length > 2) ? `${p[1]}/${p[2]}`: `${p[1]}`;
+    const first = document.querySelector(`[href*="${href}"`);
+    first.classList.toggle('active');
+    highlightsted.push(first);
+
+    const highlightsrow_selected_menu = (event) => {
+      const element = event.currentTarget;
+      console.log(element)
+      if (highlightsted.length == 1) {
+          highlightsted[0].classList.toggle('active');
+          highlightsted.pop();
+      }
+      highlightsted.push(element);
+      element.classList.toggle('active');
     };
+
     const sidebar = Array.from(document.querySelectorAll('.sidebar a'));
-    sidebar.forEach(item => item.addEventListener('click', () => highlights(sidebar, item)));
+    sidebar.forEach(item => item.addEventListener('click', (event) => highlightsrow_selected_menu(event)));
 
   }, []);
 
@@ -36,13 +50,30 @@ export const AdminBoard = ({Content, Title, Search}) => {
     // Change Theme
     const themeToggler = document.querySelector(".theme-toggler");
     themeToggler.addEventListener("click", () => {
-        document.querySelector('.data-grid-product').classList.toggle('rdg-dark');
+        const datagrid = document.querySelector('.data-grid-product');
+        if (datagrid != undefined) {
+          datagrid.classList.toggle('rdg-dark');
+        }
         document.body.classList.toggle("dark-theme-variables");
         themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
         themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
     });
   });
 
+  const Breadcrumbs = () => {
+    let full_path = [];
+      let ref = '';
+    document.location.hash.split('/').forEach(path => {
+      console.log(path)
+      ref += '/' + path;
+      if (path !== "#") {
+        full_path.push(<a className="bread" href={ref}>> {path.toUpperCase()}  </a> );
+      }
+    });
+    return full_path;
+  };
+
+  const fullpath = Breadcrumbs();
    
     return (
           <div className="container">
@@ -61,7 +92,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 <div className="sidebar-btn" onClick={() => hideSideBar()}>
                   <span className="material-icons-sharp"> {menu_open} </span>
                 </div>
-                <a href="/#/admin/" className="active">
+                <a href="/#/admin/">
                   <span className="material-icons-sharp"> dashboard </span>
                   <h3>Dashboard</h3>
                 </a>
@@ -114,6 +145,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
             <div className="header-content">
                 <div>
                     <h1>{Title}</h1>
+                    <small className="text-muted">{[...fullpath]}</small>
                 </div>
                   <div>
                       <div className="right">

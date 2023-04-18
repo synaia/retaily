@@ -254,6 +254,19 @@ export const StoreMovementResponse = () => {
         }
         dispatch(processOrder(args));
     };
+
+    let receive_button = '';
+    if (order != undefined) {
+        if (order.status == "opened" || order.status == "inprogress" ) {
+            receive_button =  <div>
+                                <button className="fbutton fbutton-price-list" onClick={() => __processOrder()}>
+                                    <span className="material-icons-sharp"> verified </span>
+                                    <span>RECEIVE THE ORDER</span>
+                                </button>
+                            </div>;
+        }
+    }
+    
    
     return (
         <React.Fragment>
@@ -282,7 +295,7 @@ export const StoreMovementResponse = () => {
                         <small className="text-muted"> Name </small>
                     </div>
                     <div className="info">
-                        <h3>{order.value_in_order}</h3>
+                        <h3>{F_(order.value_in_order)}</h3>
                         <small className="text-muted"> Value In Movement</small>
                     </div>
                     <div className="info">
@@ -298,14 +311,7 @@ export const StoreMovementResponse = () => {
                         <small className="text-muted">User Opener / Close</small>
                     </div>
                 </div>
-                {order.status != "closed" &&
-                    <div>
-                        <button className="fbutton fbutton-price-list" onClick={() => __processOrder()}>
-                            <span className="material-icons-sharp"> verified </span>
-                            <span>RECEIVE THE ORDER</span>
-                        </button>
-                    </div>
-                }
+                {receive_button}
             </div>
             }
             <div className="search-terminal-c">
