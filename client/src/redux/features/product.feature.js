@@ -306,6 +306,27 @@ export const addProductOrder = createAsyncThunk('product/add_product_order', asy
     return response.data;
 });
 
+export const processOrder = createAsyncThunk('product/process_order', async (order, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/process_order`, order,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+
+export const rollbackOrder = createAsyncThunk('product/rollback_order', async (order, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/rollback_order`, order,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 
 export const addProductOrderLine = createAsyncThunk('product/add_product_order_line', async (line, ) => {
     let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order_line`, line,  {
@@ -546,7 +567,7 @@ const putNewProductInList = (state, action) => {
     state.all_products = products;
 };
 
-const refreshOnProductOrder = (state, action) => {
+const refreshOnProductOrderList = (state, action) => {
     const { _order, remaining }= action.payload; 
     const cOrders = [...state.orders];
     const oIndex = cOrders.findIndex(o => o.id == _order.id);
@@ -566,7 +587,7 @@ const refreshOnProductOrder = (state, action) => {
 };
 
 
-const refreshIssueOnProductOrder = (state, action) => {
+const refreshOnProductOrder = (state, action) => {
     const _order = action.payload; 
     const cOrders = [...state.orders];
     const oIndex = cOrders.findIndex(o => o.id == _order.id);
@@ -791,11 +812,31 @@ const productsSlice = createSlice({
             state.errorMessage = `ERROR addProductOrder() ; ${action.error.message}`
         });
 
+        builder.addCase(processOrder.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(processOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            refreshOnProductOrder(state, action);
+        }).addCase(processOrder.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR processOrder() ; ${action.error.message}`
+        });
+
+        builder.addCase(rollbackOrder.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(rollbackOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            refreshOnProductOrder(state, action);
+        }).addCase(rollbackOrder.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR rollbackOrder() ; ${action.error.message}`
+        });
+
         builder.addCase(addProductOrderLine.pending, (state, action) => {
             state.loading = true;
         }).addCase(addProductOrderLine.fulfilled, (state, action) => {
             state.loading = false;
-            refreshOnProductOrder(state, action);
+            refreshOnProductOrderList(state, action);
         }).addCase(addProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR addProductOrderLine() ; ${action.error.message}`
@@ -805,7 +846,7 @@ const productsSlice = createSlice({
             state.loading = true;
         }).addCase(issueProductOrderLine.fulfilled, (state, action) => {
             state.loading = false;
-            refreshIssueOnProductOrder(state, action);
+            refreshOnProductOrder(state, action);
         }).addCase(issueProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`

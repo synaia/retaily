@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { addProductOrderLine } from "../redux/features/product.feature.js";
+import { addProductOrderLine, rollbackOrder } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
 
@@ -261,6 +261,10 @@ export const StoreMovement = () => {
     };
 
     const rowChange = (rows, changes, side = 'left') => {
+        if (order.status == "closed" || order.status == "cancelled" ) {
+            console.log('Order status Not editable bye.')
+            return;
+        }
         // console.log(changes);
         // console.log(gridRef)
         // console.log(`Update: [${changes.column.key}]\n New Value: [${rows[changes.indexes[0]][changes.column.key]}]\n Where ID: [${rows[changes.indexes[0]].id}]`);
@@ -362,7 +366,30 @@ export const StoreMovement = () => {
         highlightsted.push(e);
         e.classList.toggle('row-selected-bg');
     };
+
+    const __rollbackOrder = () => {
+        const args = {
+            'id': order.id,
+            'user_receiver': 'USERLOGUED',
+            'memo': 'comment here ...'
+        }
+        dispatch(rollbackOrder(args));
+    };
    
+
+    let rollback_button = '';
+    if (order != undefined) {
+        if (order.status == "opened" || order.status == "inprogress" ) {
+            rollback_button =  <div>
+                    <button className="fbutton fbutton-price-list" onClick={() => __rollbackOrder()}>
+                        <span className="material-icons-sharp"> cancel </span>
+                        <span>CANCEL & ROLLBACK THE ORDER</span>
+                    </button>
+                </div>;
+        }
+    }
+   
+
     return (
         <React.Fragment>
            {order != undefined &&
@@ -406,6 +433,7 @@ export const StoreMovement = () => {
                         <small className="text-muted">User Opener / Close</small>
                     </div>
                 </div>
+                {rollback_button}
             </div>
             }
             <div className="movement-split-screen">
