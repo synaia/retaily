@@ -68,7 +68,7 @@ export const Inventory = () => {
                         <span className="material-icons-sharp"> layers </span>
                         <span>Response: Inventory Mov.</span>
                 </button>
-                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`culo/`, {replace: false})} 
+                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`purchase/`, {replace: false})} 
                         data-invoice-status="close">
                         <span className="material-icons-sharp"> layers </span>
                         <span>Purchases Orders</span>

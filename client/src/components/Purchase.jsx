@@ -15,7 +15,7 @@ import { F_, validateInputX } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 
-export const StoreMovement = () => {
+export const Purchase = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const navigator = useNavigate()

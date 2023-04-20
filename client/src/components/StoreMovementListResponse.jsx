@@ -10,7 +10,7 @@ import { F_ } from "../util/Utils";
 export const StoreMovementListResponse = () => {
     const navigator = useNavigate();
     const params = useParams();
-    const order_type = 'internal';
+    const order_type = 'movement';
 
     const orders = useSelector((state) => state.product.orders);
     const stores = useSelector((state) => state.product.stores);

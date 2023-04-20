@@ -125,7 +125,7 @@ class ProductOrderLine(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey('product.id'))
-    from_store_id = Column(Integer, ForeignKey('app_store.id'))
+    from_origin_id = Column(Integer, ForeignKey('app_store.id'))
     to_store_id = Column(Integer, ForeignKey('app_store.id'))
     product_order_id = Column(Integer, ForeignKey('product_order.id'))
     quantity = Column(Integer)

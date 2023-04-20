@@ -8,13 +8,14 @@ import { F_, validateInputX } from "../util/Utils";
 import { addProductOrder, getInventoryHeadByStoreId } from "../redux/features/product.feature.js";
 
 
-export const StoreMovementList = () => {
+export const PurchaseList = () => {
     const navigator = useNavigate();
     const params = useParams();
-    const order_type = 'movement';
+    const order_type = 'purchase';
 
     const orders = useSelector((state) => state.product.orders);
     const stores = useSelector((state) => state.product.stores);
+    const providers = useSelector((state) => state.provider.providers);
     const inventory_head_by_store = useSelector((state) => state.product.inventory_head_by_store);
     const [toStores, SetToStores] = useState([]);
     const loading = useSelector((state) => state.product.loading);
@@ -22,11 +23,11 @@ export const StoreMovementList = () => {
     const dispatch = useDispatch();
 
     const memo = useRef();
-    const from_store = useRef();
+    const from_origin = useRef();
     const to_store = useRef();
 
     const [errorMemo, SetErrorMemo] = useState(null);
-    const [errorFromStore, SetErrorFromStore] = useState(null);
+    const [errorFromOrigin, SetErrorFromOrigin] = useState(null);
     const [errorToStore, SetErrorToStore] = useState(null);
     
 
@@ -39,7 +40,7 @@ export const StoreMovementList = () => {
             return;
         }
 
-        if (!validateInputX(from_store, "number", SetErrorFromStore)) {
+        if (!validateInputX(from_origin, "number", SetErrorFromOrigin)) {
             return;
         }
 
@@ -48,16 +49,16 @@ export const StoreMovementList = () => {
         }
 
         if (inventory_head_by_store.meta.code === "success") {
-            SetErrorFromStore('This Store has a Open Inventory, first conclude and then back here.');
+            SetErrorFromOrigin('This Store has a Open Inventory, first conclude and then back here.');
             return;
         }
 
         const order_request = {
-            "name": `MOV-${from_store.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
+            "name": `MOV-${from_origin.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
             "memo": memo.current?.value,
             "order_type": order_type,
             "user_requester": "userloged",
-            "from_store": { "id": from_store.current.value },
+            "from_store": { "id": from_origin.current.value },
             "to_store": { "id": to_store.current.value }
         }
 
@@ -72,11 +73,10 @@ export const StoreMovementList = () => {
         console.log(stores)
     }, [stores]);
 
-    const OnChangeStore = (event) => {
-        const store_id = event.target.value;
-        SetToStores(stores.filter(s => {return s.id != store_id}));
-        dispatch(getInventoryHeadByStoreId(store_id));
+    const OnChangeOrigin = () => {
+        SetToStores(stores);
     };
+
 
     return (
         <React.Fragment>
@@ -92,16 +92,16 @@ export const StoreMovementList = () => {
                     <span className="error-msg">{errorMemo}</span>
                 </div>
                 <div>
-                    <span>From Store</span>
+                    <span>From Provider</span>
                     <div className="select-div">
-                        <select className="select-from-store" ref={from_store} onChange={OnChangeStore}>
-                        <option disabled selected value> -- select a store -- </option>
-                            { stores.map((s, i) => (
-                                <option key={s.id} value={s.id}>{s.name}</option>
+                        <select className="select-from-store" ref={from_origin} onChange={OnChangeOrigin}>
+                        <option disabled selected value> -- select a provider -- </option>
+                            { providers.map((provider, i) => (
+                                <option key={provider.id} value={provider.id}>{provider.name}</option>
                             ))}
                         </select>
                     </div>
-                    <span className="error-msg">{errorFromStore}</span>
+                    <span className="error-msg">{errorFromOrigin}</span>
                 </div>
                 <div>
                     <span>To Store</span>
@@ -118,13 +118,13 @@ export const StoreMovementList = () => {
                 <div>
                     <button className="fbutton fbutton-price-list" onClick={() => __addProductOrder()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
-                        <span>OPEN NEW MOVEMENT</span>
+                        <span>OPEN NEW PURCHASE</span>
                     </button>
                 </div>
             </div>
             <div className="movement-top">
             { orders.map( (order, i) => (
-                    <div className="movement" key={i} onClick={() =>  navigator(`/admin/inventory/storemov/${order.id}`, {replace: false})}>
+                    <div className="movement" key={i} onClick={() =>  navigator(`/admin/inventory/purchase/${order.id}`, {replace: false})}>
                         <div className={`movement-${order.status}`}></div>
                         <div className="movement-c">
                             <div className="info">

@@ -454,10 +454,10 @@ SELECT
        o.user_receiver,
        o.date_opened,
        o.date_closed,
-       o.from_store_id,
+       o.from_origin_id,
        o.to_store_id,
        (
-         SELECT s.name FROM app_store s WHERE s.id = o.from_store_id
+         SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id
        ) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
@@ -482,6 +482,7 @@ SELECT
         AND l.product_order_id = o.id
        ) AS value_in_order
  FROM  product_order o
+   WHERE order_type = 'movement'
  ORDER BY o.id DESC
 ;
 
@@ -496,10 +497,10 @@ SELECT
        o.user_receiver,
        o.date_opened,
        o.date_closed,
-       o.from_store_id,
+       o.from_origin_id,
        o.to_store_id,
        (
-         SELECT s.name FROM app_store s WHERE s.id = o.from_store_id
+         SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id
        ) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
@@ -525,13 +526,14 @@ SELECT
        ) AS value_in_order
  FROM  product_order o
   WHERE o.id = %s
+   AND order_type = 'movement'
 ;
 
 --SELECT_FROM_PRODUCT_ORDER_LINE
 SELECT
        h.id,
        h.product_id,
-       h.from_store_id,
+       h.from_origin_id,
        h.to_store_id,
        h.product_order_id,
        h.quantity,
@@ -553,7 +555,7 @@ SELECT
 SELECT
        h.id,
        h.product_id,
-       h.from_store_id,
+       h.from_origin_id,
        h.to_store_id,
        h.product_order_id,
        h.quantity,
@@ -577,12 +579,12 @@ SELECT
 ;
 
 --INSERT_PRODUCT_ORDER
-INSERT INTO product_order (name, memo, order_type, user_requester, from_store_id, to_store_id)
+INSERT INTO product_order (name, memo, order_type, user_requester, from_origin_id, to_store_id)
   VALUES (%s, %s, %s, %s, %s, %s)
 ;
 
 --INSERT_PRODUCT_ORDER_LINE
-INSERT INTO product_order_line (product_id, from_store_id, to_store_id, product_order_id, quantity, quantity_observed)
+INSERT INTO product_order_line (product_id, from_origin_id, to_store_id, product_order_id, quantity, quantity_observed)
    VALUES (%s, %s, %s, %s, %s, %s)
 ;
 
@@ -663,7 +665,7 @@ UPDATE app_inventory i,
   (
     SELECT
             l.id,
-            l.from_store_id,
+            l.from_origin_id,
             l.product_id,
             l.quantity_observed,
             l.quantity
@@ -677,7 +679,7 @@ UPDATE app_inventory i,
        i.last_update = NOW(),
 	   i.quantity = i.quantity + (line.quantity - line.quantity_observed)
  WHERE
-       i.store_id = line.from_store_id
+       i.store_id = line.from_origin_id
    AND i.product_id = line.product_id
 ;
 
@@ -686,7 +688,7 @@ UPDATE app_inventory i,
   (
     SELECT
             l.id,
-            l.from_store_id,
+            l.from_origin_id,
             l.product_id,
             l.quantity
 	FROM product_order_line l
@@ -698,7 +700,7 @@ UPDATE app_inventory i,
        i.last_update = NOW(),
 	   i.quantity = i.quantity + line.quantity
  WHERE
-       i.store_id = line.from_store_id
+       i.store_id = line.from_origin_id
    AND i.product_id = line.product_id
 ;
 
@@ -756,4 +758,11 @@ FROM app_inventory i
 WHERE
       i.store_id = %s
   AND i.product_id = %s
+;
+
+--SELECT_PROVIDERS
+SELECT g.id,
+       g.name
+  FROM provider g
+ORDER BY g.id
 ;

@@ -549,7 +549,7 @@ def __iterate_over_order_line(hresp: tuple):
         line.id = h['id']
         line.product_id = h['product_id']
         from_store = Store()
-        from_store.id = h['from_store_id']
+        from_store.id = h['from_origin_id']
         line.from_store = from_store
         to_store = Store()
         to_store.id = h['to_store_id']
@@ -594,7 +594,7 @@ def read_product_order(db: Session, query: Query):
         order.date_closed = r['date_closed']
         order.value_in_order = r['value_in_order']
         from_store = Store()
-        from_store.id = r['from_store_id']
+        from_store.id = r['from_origin_id']
         from_store.name = r['from_store_name']
         order.from_store = from_store
         to_store = Store()
@@ -634,7 +634,7 @@ def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
         order.date_closed = r['date_closed']
         order.value_in_order = r['value_in_order']
         from_store = Store()
-        from_store.id = r['from_store_id']
+        from_store.id = r['from_origin_id']
         from_store.name = r['from_store_name']
         order.from_store = from_store
         to_store = Store()
@@ -661,7 +661,7 @@ def read_product_order_line_by_id(product_order_line_id: int, db: Session, query
         line.id = h['id']
         line.product_id = h['product_id']
         from_store = Store()
-        from_store.id = h['from_store_id']
+        from_store.id = h['from_origin_id']
         line.from_store = from_store
         to_store = Store()
         to_store.id = h['to_store_id']

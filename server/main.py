@@ -8,6 +8,8 @@ import server.core_app.product.product_main as product_main
 import server.core_app.user.user_main as user_main
 import server.core_app.client.client_main as client_main
 import server.core_app.sale.sale_main as sale_main
+import server.core_app.provider.provider_main as provider_main
+
 import uvicorn
 import time
 
@@ -43,6 +45,7 @@ app.include_router(product_main.router)
 app.include_router(user_main.router)
 app.include_router(client_main.router)
 app.include_router(sale_main.router)
+app.include_router(provider_main.router)
 
 app.add_middleware(
     CORSMiddleware,

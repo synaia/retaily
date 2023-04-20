@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
 
 import { changeTheme } from "../redux/features/user.feature.js";
+import package_file from "../../package.json";
 
 
 export const AdminBoard = ({Content, Title, Search}) => {
@@ -39,8 +40,12 @@ export const AdminBoard = ({Content, Title, Search}) => {
 
     const sidebar = Array.from(document.querySelectorAll('.sidebar a'));
     sidebar.forEach(item => item.addEventListener('click', (event) => highlightsrow_selected_menu(event)));
-
   }, []);
+
+  useEffect(() => {
+    // document.title = `${Title} ${package_file.name} ${package_file.version}`;
+    document.title = Title;
+  });
 
   const hideSideBar = () => {
     document.querySelectorAll('.sidebar a').forEach(h => { h.classList.toggle('aside-width'); })

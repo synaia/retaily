@@ -165,7 +165,7 @@ export const StoreMovementResponse = () => {
         const product_id = rows[changes.indexes[0]].id;
         const __quantity = rows[changes.indexes[0]].quantity;
         const qty = rows[changes.indexes[0]][changes.column.key];
-        const from_store_id = order.from_store.id; // order is set???
+        const from_origin_id = order.from_store.id; // order is set???
         const to_store_id = order.to_store.id;
         const product_order_id = order.id;
 
