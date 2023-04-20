@@ -5,14 +5,18 @@ import { Insights} from './Insights';
 import '../../assets/style-admin.css';
 
 import { useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
+
+import { changeTheme } from "../redux/features/user.feature.js";
+
 
 export const AdminBoard = ({Content, Title, Search}) => {
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
+  
 
   useEffect(() => {
     const highlightsted = [];
@@ -50,15 +54,12 @@ export const AdminBoard = ({Content, Title, Search}) => {
     // Change Theme
     const themeToggler = document.querySelector(".theme-toggler");
     themeToggler.addEventListener("click", () => {
-        const datagrid = document.querySelector('.data-grid-product');
-        if (datagrid != undefined) {
-          datagrid.classList.toggle('rdg-dark');
-        }
-        document.body.classList.toggle("dark-theme-variables");
-        themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
-        themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
+      dispatch(changeTheme());
+      themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
+      themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
     });
-  });
+  }, []);
+
 
   const Breadcrumbs = () => {
     let full_path = [];

@@ -224,7 +224,10 @@ def read_all_inv_products(db: Session, query: Query):
             invlist.append(inventory)
 
             if inventory.status == 'changed':
-                changed_count = count_resume[store.name]['changed_count'] + 1
+                try:
+                    changed_count = count_resume[store.name]['changed_count'] + 1
+                except Exception as ex:
+                    changed_count = 1
             else:
                 try:
                     changed_count = count_resume[store.name]['changed_count']

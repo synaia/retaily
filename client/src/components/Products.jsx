@@ -11,6 +11,7 @@ import 'react-data-grid/lib/styles.css';
 export const Products = () => {
     const products = useSelector((state) => state.product.all_products);
     const pricing_labels = useSelector((state) => state.product.pricing_labels);
+    const theme = useSelector((state) => state.user.theme);
     const dispatch = useDispatch();
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
@@ -313,7 +314,7 @@ export const Products = () => {
                 onCellKeyDown={handleCellKeyDown}
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                className="data-grid-product rdg-dark"
+                className={`data-grid-product ${theme.grid_theme}`}
             />
         </React.Fragment>
     )

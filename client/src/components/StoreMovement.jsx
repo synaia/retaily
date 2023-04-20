@@ -24,6 +24,7 @@ export const StoreMovement = () => {
     const [order, setOrder] = useState();
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
+    const theme = useSelector((state) => state.user.theme);
 
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
@@ -458,7 +459,7 @@ export const StoreMovement = () => {
                             onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search)}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
-                            className="data-grid-movement rdg-dark"
+                            className={`data-grid-movement ${theme.grid_theme}`}
                     />
                 </div>
                 <div>
@@ -481,7 +482,7 @@ export const StoreMovement = () => {
                             onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order)}
                             enableVirtualization={true}
                             onCellClick={highlightsrow}
-                            className="data-grid-movement rdg-dark"
+                            className={`data-grid-movement ${theme.grid_theme}`}
                     />
                 </div>
             </div>

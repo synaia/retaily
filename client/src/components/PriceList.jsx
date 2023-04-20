@@ -12,6 +12,7 @@ import 'react-data-grid/lib/styles.css';
 export const PriceList = () => {
     const pricing = useSelector((state) => state.product.pricing);
     const loading = useSelector((state) => state.product.loading);
+    const theme = useSelector((state) => state.user.theme);
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const [errorLabel, SetErrorLabel] = useState(null);
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
@@ -185,7 +186,7 @@ export const PriceList = () => {
                 rowKeyGetter={rowKeyGetter} 
                 enableVirtualization={true}
                 onCellClick={highlightsrow}
-                className={"data-grid-pricelist rdg-dark"}
+                className={`data-grid-pricelist ${theme.grid_theme}`}
             />
         </React.Fragment>
     )

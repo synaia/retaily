@@ -8,8 +8,6 @@
 
 
 import React from "react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
@@ -20,7 +18,7 @@ import { loadClients } from  "../redux/features/client.feature.js";
 import { getStores } from "../redux/features/product.feature.js";
 import { getProductsAllInventory } from "../redux/features/product.feature.js";
 import { getProductOrders } from "../redux/features/product.feature.js";
-import package_file from "../../package.json";
+
 
 
 export const Init = () => {
@@ -34,46 +32,6 @@ export const Init = () => {
     dispatch(getStores());
     dispatch(getProductsAllInventory());
     dispatch(getProductOrders());
-    console.log(package_file.version)
-
-    useEffect(() => {
-        document.title = `${package_file.name} ${package_file.version}`;
-    }, []);
-
-
-    useEffect(() => {
-        // // Change Theme
-        // const themeToggler = document.querySelector(".theme-toggler");
-        // themeToggler.addEventListener("click", () => {
-        //     document.body.classList.toggle("dark-theme-variables");
-        //     themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
-        //     themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
-        // });
-
-        // document.addEventListener('keyup', (e) => {
-        //     // console.log(e.shiftKey);
-        //     // console.log('KEY: ', e.key);
-        //     if (e.key == "/") {
-        //         document.querySelector('.search-bar').focus();
-        //     }
-
-        //     if (e.shiftKey && e.key == "F") {
-        //         navigator('/client', {replace: true});
-        //     }
-
-        //     if (e.shiftKey && e.key == "P") {
-        //         navigator('/payment', {replace: true});
-        //     }
-
-        //     if (e.key == "Escape") {
-        //         const lc = window.location.href.substring(window.location.href);
-        //         if (lc.substring(lc.length-1, lc.length) != "/") {
-        //             navigator('/', {replace: true});
-        //         }
-        //     }
-        // });
-    })
-
 
     return (
         <React.Fragment></React.Fragment>

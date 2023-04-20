@@ -19,6 +19,7 @@ export const StoreMovementResponse = () => {
     const [order, setOrder] = useState();
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
+    const theme = useSelector((state) => state.user.theme);
 
     const [rows_order, setRowsOrder] = useState([]);
 
@@ -333,7 +334,7 @@ export const StoreMovementResponse = () => {
                     onCellKeyDown={(args, event) => handleCellKeyDown(args, event, search_order)}
                     enableVirtualization={true}
                     onCellClick={highlightsrow}
-                    className="data-grid-movement rdg-dark"
+                    className={`data-grid-movement ${theme.grid_theme}`}
             />
         </React.Fragment>
     )

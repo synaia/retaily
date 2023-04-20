@@ -28,6 +28,7 @@ export const Store = () => {
     const inventory_head = useSelector((state) => state.product.inventory_head);
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
+    const theme = useSelector((state) => state.user.theme);
 
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
     const [rows, setRows] = useState([]);
@@ -555,7 +556,7 @@ export const Store = () => {
                     onCellKeyDown={handleCellKeyDown}
                     enableVirtualization={true}
                     onCellClick={highlightsrow}
-                    className="data-grid-product rdg-dark"
+                    className={`data-grid-product ${theme.grid_theme}`}
             />
         </React.Fragment>
     )
