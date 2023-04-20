@@ -13,10 +13,9 @@ export const PurchaseList = () => {
     const params = useParams();
     const order_type = 'purchase';
 
-    const orders = useSelector((state) => state.product.orders);
+    const orders = useSelector((state) => state.product.purchase_orders);
     const stores = useSelector((state) => state.product.stores);
     const providers = useSelector((state) => state.provider.providers);
-    const inventory_head_by_store = useSelector((state) => state.product.inventory_head_by_store);
     const [toStores, SetToStores] = useState([]);
     const loading = useSelector((state) => state.product.loading);
     const errorMessage = useSelector((state) => state.product.errorMessage);
@@ -48,13 +47,8 @@ export const PurchaseList = () => {
             return;
         }
 
-        if (inventory_head_by_store.meta.code === "success") {
-            SetErrorFromOrigin('This Store has a Open Inventory, first conclude and then back here.');
-            return;
-        }
-
         const order_request = {
-            "name": `MOV-${from_origin.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
+            "name": `PO-${from_origin.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
             "memo": memo.current?.value,
             "order_type": order_type,
             "user_requester": "userloged",
@@ -129,7 +123,7 @@ export const PurchaseList = () => {
                         <div className="movement-c">
                             <div className="info">
                                 <h3>{order.from_store.name}</h3>
-                                <small className="text-muted"> From Store </small>
+                                <small className="text-muted"> From Provider </small>
                             </div>
                             <div className="info">
                                 <h3>{order.to_store.name}</h3>

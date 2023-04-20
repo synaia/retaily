@@ -94,6 +94,7 @@ class ProductOrderLine(BaseModelExt):
     from_store: Store | None = None
     to_store: Store | None = None
     product_order_id: int | None = None  # Optional?
+    order_type: str | None = None
     quantity: int | None = None
     quantity_observed: int | None = None
     user_receiver: str | None = None

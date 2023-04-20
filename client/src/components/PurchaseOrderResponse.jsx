@@ -12,7 +12,7 @@ import { F_ } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 
-export const StoreMovementResponse = () => {
+export const PurchaseOrderResponse = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const orders = useSelector((state) => state.product.orders);

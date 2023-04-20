@@ -17,7 +17,8 @@ import { getPricing } from  "../redux/features/product.feature.js";
 import { loadClients } from  "../redux/features/client.feature.js";
 import { getStores } from "../redux/features/product.feature.js";
 import { getProductsAllInventory } from "../redux/features/product.feature.js";
-import { getProductOrders } from "../redux/features/product.feature.js";
+import { getMovProductOrders } from "../redux/features/product.feature.js";
+import { getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { loadProviders } from "../redux/features/provider.feature.js";
 
 
@@ -32,7 +33,8 @@ export const Init = () => {
     dispatch(getPricing());
     dispatch(getStores());
     dispatch(getProductsAllInventory());
-    dispatch(getProductOrders());
+    dispatch(getMovProductOrders());
+    dispatch(getPurchaseProductOrders());
     dispatch(loadProviders());
 
     return (

@@ -570,11 +570,12 @@ def __iterate_over_order_line(hresp: tuple):
     return product_order_line
 
 
-def read_product_order(db: Session, query: Query):
+def read_product_order(order_type: str, db: Session, query: Query):
     sql_raw = query.SELECT_FROM_PRODUCT_ORDER
     sql_raw_product_order_line = query.SELECT_FROM_PRODUCT_ORDER_LINE
     cur = get_cursor(db)
-    cur.execute(sql_raw)
+    data = (order_type,)
+    cur.execute(sql_raw, data)
     resp = cur.fetchall()
 
     orders = []
@@ -611,11 +612,11 @@ def read_product_order(db: Session, query: Query):
     return orders
 
 
-def read_product_order_by_id(product_order_id: int, db: Session, query: Query):
+def read_product_order_by_id(line: ProductOrderLine, db: Session, query: Query):
     sql_raw = query.SELECT_FROM_PRODUCT_ORDER_BYID
     sql_raw_product_order_line = query.SELECT_FROM_PRODUCT_ORDER_LINE
     cur = get_cursor(db)
-    data = (product_order_id,)
+    data = (line.product_order_id, line.order_type)
     cur.execute(sql_raw, data)
     resp = cur.fetchall()
 
@@ -746,8 +747,8 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     data = (line.from_store.id, line.product_id)
     cur.execute(sql_raw_app_inventory_remain_qty, data)
     resp = cur.fetchall()
-    remaining_quantity = resp[0]['quantity']
-    order = read_product_order_by_id(line.product_order_id, db, query)
+    remaining_quantity = 0 if len(resp) == 0 else resp[0]['quantity']
+    order = read_product_order_by_id(line, db, query)
 
     return {
         '_order': order,
@@ -784,7 +785,10 @@ def process_order(product_order: ProductOrder, db: Session, query: Query):
     cur.execute(sql_raw_product_order_process, data)
     cur.connection.commit()
 
-    return read_product_order_by_id(product_order.id, db, query)
+    line = ProductOrderLine()
+    line.product_order_id = product_order.id
+    line.order_type = product_order.order_type
+    return read_product_order_by_id(line, db, query)
 
 
 def rollback_order(product_order: ProductOrder, db: Session, query: Query):
@@ -806,7 +810,10 @@ def rollback_order(product_order: ProductOrder, db: Session, query: Query):
     cur.execute(sql_raw_cancel_order, data)
     cur.connection.commit()
 
-    return read_product_order_by_id(product_order.id, db, query)
+    line = ProductOrderLine()
+    line.product_order_id = product_order.id
+    line.order_type = product_order.order_type
+    return read_product_order_by_id(line, db, query)
 
 
 def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
@@ -817,4 +824,4 @@ def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     cur.execute(sql_raw_update_line_issue, data)
     cur.connection.commit()
 
-    return read_product_order_by_id(line.product_order_id, db, query)
+    return read_product_order_by_id(line, db, query)

@@ -28,9 +28,12 @@ import { StoreMovementListResponse } from "./StoreMovementListResponse";
 import { StoreList } from "./StoreList";
 import { PurchaseList } from "./PurchaseList";
 import { Purchase } from "./Purchase";
+import { PurchaseOrderListResponse } from "./PurchaseOrderListResponse";
+import { PurchaseOrderResponse } from "./PurchaseOrderResponse";
 
 import package_file from "../../package.json";
 import { Theme } from "./Theme";
+
 
 
 
@@ -71,6 +74,8 @@ export const App = () => {
                   <Route path="/admin/inventory/storemovresp/:order_id" element={<AdminBoard Content={<StoreMovementResponse />} Title="Response: Store Movements" />} />
                   <Route path="/admin/inventory/purchase" element={<AdminBoard Content={<PurchaseList />} Title="Request: Purchase List" />} />
                   <Route path="/admin/inventory/purchase/:order_id" element={<AdminBoard Content={<Purchase />} Title="Request: Purchase" />} />
+                  <Route path="/admin/inventory/purchaseresp" element={<AdminBoard Content={<PurchaseOrderListResponse />} Title="Receive: Purchase Order List" />} />
+                  <Route path="/admin/inventory/purchaseresp/:order_id" element={<AdminBoard Content={<PurchaseOrderResponse />} Title="Receive: Purchase Order" />} />
                 </Routes>
               </Provider>
             </HashRouter>

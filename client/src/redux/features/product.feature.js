@@ -28,6 +28,7 @@ const initialState = {
     inventory_head_by_store: {},
     resume_inv: {},
     orders: [],
+    purchase_orders: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -349,8 +350,11 @@ export const issueProductOrderLine = createAsyncThunk('product/issue_order_line'
     return response.data;
 });
 
-export const getProductOrders = createAsyncThunk('product/product_order', async () => {
+export const getMovProductOrders = createAsyncThunk('product/product_order', async () => {
     let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
+        params: {
+            'order_type': 'movement'
+        },
         headers: {
             'Authorization': `bearer ${TOKEN}`,
             'Content-Type': 'application/json',
@@ -358,6 +362,20 @@ export const getProductOrders = createAsyncThunk('product/product_order', async 
     });
     return response.data;
 });
+
+export const getPurchaseProductOrders = createAsyncThunk('product/purchase_product_order', async () => {
+    let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
+        params: {
+            'order_type': 'purchase'
+        },
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 
 
 const updateSaleDetail = (productPickedList) => {
@@ -569,30 +587,49 @@ const putNewProductInList = (state, action) => {
 
 const refreshOnProductOrderList = (state, action) => {
     const { _order, remaining }= action.payload; 
-    const cOrders = [...state.orders];
+    let cOrders = [...state.orders];
+    if (_order.order_type === "movement") {
+        cOrders = [...state.orders];
+    } else {
+        cOrders = [...state.purchase_orders];
+    }
     const oIndex = cOrders.findIndex(o => o.id == _order.id);
     cOrders[oIndex] = _order;
-    state.orders = cOrders;
+    if (_order.order_type === "movement") {
+        state.orders = cOrders;
+    } else {
+        state.purchase_orders = cOrders;
+    }
 
-    const cProducts = [...state.products_all_inv];
-    const pIndex = cProducts.findIndex(p => p.id == remaining.product_id);
-    const cInventoryList = [...cProducts[pIndex].inventory];
-    const cIndex = cInventoryList.findIndex(i => i.store.id == remaining.store_id)
+    if (_order.order_type === "movement") {
+        const cProducts = [...state.products_all_inv];
+        const pIndex = cProducts.findIndex(p => p.id == remaining.product_id);
+        const cInventoryList = [...cProducts[pIndex].inventory];
+        const cIndex = cInventoryList.findIndex(i => i.store.id == remaining.store_id)
 
-    cInventoryList[cIndex].quantity = remaining.remaining_quantity;
+        cInventoryList[cIndex].quantity = remaining.remaining_quantity;
 
-    cProducts[pIndex].inventory = cInventoryList;
-    state.products_all_inv = cProducts;
-
+        cProducts[pIndex].inventory = cInventoryList;
+        state.products_all_inv = cProducts;
+    }
 };
 
 
 const refreshOnProductOrder = (state, action) => {
     const _order = action.payload; 
-    const cOrders = [...state.orders];
+    let cOrders = [...state.orders];
+    if (_order.order_type === "movement") {
+        cOrders = [...state.orders];
+    } else {
+        cOrders = [...state.purchase_orders];
+    }
     const oIndex = cOrders.findIndex(o => o.id == _order.id);
     cOrders[oIndex] = _order;
-    state.orders = cOrders;
+    if (_order.order_type === "movement") {
+        state.orders = cOrders;
+    } else {
+        state.purchase_orders = cOrders;
+    }
 };
 
 
@@ -792,14 +829,24 @@ const productsSlice = createSlice({
             state.errorMessage = `ERROR addStore() ; ${action.error.message}`
         });
 
-        builder.addCase(getProductOrders.pending, (state, action) => {
+        builder.addCase(getMovProductOrders.pending, (state, action) => {
             state.loading = true;
-        }).addCase(getProductOrders.fulfilled, (state, action) => {
+        }).addCase(getMovProductOrders.fulfilled, (state, action) => {
             state.loading = false;
             state.orders = action.payload
-        }).addCase(getProductOrders.rejected, (state, action) => {
+        }).addCase(getMovProductOrders.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR getProductOrders() ; ${action.error.message}`
+        });
+
+        builder.addCase(getPurchaseProductOrders.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getPurchaseProductOrders.fulfilled, (state, action) => {
+            state.loading = false;
+            state.purchase_orders = action.payload
+        }).addCase(getPurchaseProductOrders.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getPurchaseProductOrders() ; ${action.error.message}`
         });
 
         builder.addCase(addProductOrder.pending, (state, action) => {

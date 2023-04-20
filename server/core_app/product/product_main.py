@@ -323,23 +323,28 @@ async def __issue_order_line(
 
 @router.get("/product_order", response_model=list[schemas.ProductOrder])
 async def __read_product_order(
+                        order_type: str,
                         db: Session = Depends(get_db),
                         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return read_product_order(db, query)
+        return read_product_order(order_type, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.get("/product_order/{product_order_id}", response_model=schemas.ProductOrder)
+@router.get("/product_order/{product_order_id}/{order_type}", response_model=schemas.ProductOrder)
 async def __read_product_order_by_id(
                         product_order_id: int,
+                        order_type: str,
                         db: Session = Depends(get_db),
                         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return read_product_order_by_id(product_order_id, db, query)
+        line = schemas.ProductOrderLine()
+        line.product_order_id = product_order_id
+        line.order_type = order_type
+        return read_product_order_by_id(line, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

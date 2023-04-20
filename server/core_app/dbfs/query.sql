@@ -456,9 +456,12 @@ SELECT
        o.date_closed,
        o.from_origin_id,
        o.to_store_id,
-       (
-         SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id
-       ) AS from_store_name,
+       (CASE
+          WHEN o.order_type = 'purchase' THEN
+               (SELECT v.name FROM provider v WHERE v.id = o.from_origin_id)
+          ELSE
+               (SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id)
+       END) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
        ) AS to_store_name,
@@ -482,7 +485,7 @@ SELECT
         AND l.product_order_id = o.id
        ) AS value_in_order
  FROM  product_order o
-   WHERE order_type = 'movement'
+   WHERE order_type = %s
  ORDER BY o.id DESC
 ;
 
@@ -499,9 +502,12 @@ SELECT
        o.date_closed,
        o.from_origin_id,
        o.to_store_id,
-       (
-         SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id
-       ) AS from_store_name,
+       (CASE
+          WHEN o.order_type = 'purchase' THEN
+               (SELECT v.name FROM provider v WHERE v.id = o.from_origin_id)
+          ELSE
+               (SELECT s.name FROM app_store s WHERE s.id = o.from_origin_id)
+       END) AS from_store_name,
        (
          SELECT s.name FROM app_store s WHERE s.id = o.to_store_id
        ) AS to_store_name,
@@ -526,7 +532,7 @@ SELECT
        ) AS value_in_order
  FROM  product_order o
   WHERE o.id = %s
-   AND order_type = 'movement'
+   AND order_type = %s
 ;
 
 --SELECT_FROM_PRODUCT_ORDER_LINE

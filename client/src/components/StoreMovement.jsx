@@ -22,6 +22,7 @@ export const StoreMovement = () => {
     const products_all_inv = useSelector((state) => state.product.products_all_inv);
     const orders = useSelector((state) => state.product.orders);
     const [order, setOrder] = useState();
+    const order_type = 'movement';
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
     const theme = useSelector((state) => state.user.theme);
@@ -306,7 +307,8 @@ export const StoreMovement = () => {
             "to_store": {
               "id": to_store_id
             },
-            "product_order_id": product_order_id
+            "product_order_id": product_order_id,
+            "order_type": order_type
           }
 
         console.log(args);
@@ -372,6 +374,7 @@ export const StoreMovement = () => {
         const args = {
             'id': order.id,
             'user_receiver': 'USERLOGUED',
+            "order_type": order_type,
             'memo': 'comment here ...'
         }
         dispatch(rollbackOrder(args));

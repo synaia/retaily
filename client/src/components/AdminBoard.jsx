@@ -29,7 +29,6 @@ export const AdminBoard = ({Content, Title, Search}) => {
 
     const highlightsrow_selected_menu = (event) => {
       const element = event.currentTarget;
-      console.log(element)
       if (highlightsted.length == 1) {
           highlightsted[0].classList.toggle('active');
           highlightsted.pop();
@@ -70,7 +69,6 @@ export const AdminBoard = ({Content, Title, Search}) => {
     let full_path = [];
       let ref = '';
     document.location.hash.split('/').forEach(path => {
-      console.log(path)
       ref += '/' + path;
       if (path !== "#") {
         full_path.push(<a className="bread" href={ref}>> {path.toUpperCase()}  </a> );

@@ -73,6 +73,11 @@ export const Inventory = () => {
                         <span className="material-icons-sharp"> layers </span>
                         <span>Purchases Orders</span>
                 </button>
+                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`purchaseresp/`, {replace: false})} 
+                        data-invoice-status="close">
+                        <span className="material-icons-sharp"> layers </span>
+                        <span>Receive: Purchases Orders</span>
+                </button>
             </div>
 
             <div className="insights">

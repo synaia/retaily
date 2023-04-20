@@ -20,7 +20,8 @@ export const Purchase = () => {
     const dispatch = useDispatch();
     const navigator = useNavigate()
     const products_all_inv = useSelector((state) => state.product.products_all_inv);
-    const orders = useSelector((state) => state.product.orders);
+    const orders = useSelector((state) => state.product.purchase_orders);
+    const order_type = 'purchase';
     const [order, setOrder] = useState();
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
@@ -45,12 +46,10 @@ export const Purchase = () => {
         const store_id = __order.from_store.id;
         const lines = __order.product_order_line;
         __products.forEach(product => {
-            let index = 0;
             let quantity_to_move = 0;
             let quantity_base = 0;
             let linestatus = '';
             try {
-                index = product.inventory.findIndex(inv => inv.store.id == store_id);
                 const line = lines.filter( ln => ln.product.id == product.id)[0]
                 if (line != undefined) {
                     quantity_to_move = line.quantity_observed;
@@ -58,7 +57,6 @@ export const Purchase = () => {
                     linestatus = line.status;
                 }
             } catch (error) {
-                index = 0;
                 quantity_to_move = 0;
                 quantity_base = 0;
                 linestatus = '';
@@ -69,10 +67,8 @@ export const Purchase = () => {
                 'name': product.name,
                 'cost': product.cost,
                 'code': product.code,
-                'available_quantity': product.inventory[index].quantity,
                 'quantity': quantity_base,
                 'quantity_to_move': quantity_to_move, 
-                'status': product.inventory[index].status,
                 'linestatus': linestatus
             };
             __rows.push(row);
@@ -142,9 +138,6 @@ export const Purchase = () => {
             { key: 'id', name: 'ID', width: 10 },
             { key: 'name', name: 'Product', resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'available_quantity', name: 'Avaiable Qty', width: 100, formatter: ({ row }) => {
-                return <div className="row-bg-no-changed">{row.available_quantity}</div>;
-            }},
             { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity}</div>;
             }},
@@ -280,20 +273,11 @@ export const Purchase = () => {
         const to_store_id = order.to_store.id;
         const product_order_id = order.id;
 
-        const pIndex = products_all_inv.findIndex(p => p.id == product_id);
-        const cInventoryList = products_all_inv[pIndex].inventory;
-        const cIndex = cInventoryList.findIndex(i => i.store.id == from_origin_id);
-        const available_quantity = cInventoryList[cIndex].prev_quantity;
 
         if (qty < 0) {
             alert('NON NEG QTY please');
             return;
         }
-
-       if (available_quantity < qty) {
-            alert('QUANTITY EXCEDED');
-            return;
-       }
 
         const args = {
             "product_id": product_id,
@@ -306,7 +290,8 @@ export const Purchase = () => {
             "to_store": {
               "id": to_store_id
             },
-            "product_order_id": product_order_id
+            "product_order_id": product_order_id,
+            "order_type": order_type
           }
 
         console.log(args);
@@ -372,6 +357,7 @@ export const Purchase = () => {
         const args = {
             'id': order.id,
             'user_receiver': 'USERLOGUED',
+            "order_type": order_type,
             'memo': 'comment here ...'
         }
         dispatch(rollbackOrder(args));
@@ -399,7 +385,7 @@ export const Purchase = () => {
                 <div className="movement-c">
                     <div className="info">
                         <h3>{order.from_store.name}</h3>
-                        <small className="text-muted"> From Store </small>
+                        <small className="text-muted"> From Provider </small>
                     </div>
                     <div className="info">
                         <h3>{order.to_store.name}</h3>
