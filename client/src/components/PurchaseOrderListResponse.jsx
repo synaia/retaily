@@ -28,12 +28,12 @@ export const PurchaseOrderListResponse = () => {
             {!loading && errorMessage && <div className="danger">{errorMessage} </div>}
             <div className="movement-top">
             { orders.map( (order, i) => (
-                    <div className="movement" key={i} onClick={() =>  navigator(`/admin/inventory/storemovresp/${order.id}`, {replace: false})}>
+                    <div className="movement" key={i} onClick={() =>  navigator(`/admin/inventory/purchaseresp/${order.id}`, {replace: false})}>
                         <div className={`movement-${order.status}`}></div>
                         <div className="movement-c">
                             <div className="info">
                                 <h3>{order.from_store.name}</h3>
-                                <small className="text-muted"> From Store </small>
+                                <small className="text-muted"> From Provider </small>
                             </div>
                             <div className="info">
                                 <h3>{order.to_store.name}</h3>

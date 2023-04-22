@@ -20,6 +20,7 @@ import { Inventory } from './Inventory';
 import { PriceList } from "./PriceList";
 import { NewProduct } from "./NewProduct";
 import { TakePhoto } from "./TakePhoto";
+import { BarcodeScanner } from "./BarcodeScanner";
 import { Store } from "./Store";
 import { StoreMovement } from "./StoreMovement";
 import { StoreMovementResponse } from "./StoreMovementResponse";
@@ -66,6 +67,7 @@ export const App = () => {
                   <Route path="/admin/inventory/pricelist" element={<AdminBoard Content={<PriceList/>} Title="Price List" />} />
                   <Route path="/admin/inventory/newproduct" element={<AdminBoard Content={<NewProduct/>} Title="New Product" />} />
                   <Route path="/admin/inventory/takephoto" element={<TakePhoto />} />
+                  <Route path="/admin/inventory/barcodescann" element={<BarcodeScanner />} />
                   <Route path="/admin/inventory/store" element={<AdminBoard Content={<StoreList/>} Title="Store List" />} />
                   <Route path="/admin/inventory/store/:store_name" element={<AdminBoard Content={<Store/>} Title="Store Fix Quantity" />} />
                   <Route path="/admin/inventory/storemov" element={<AdminBoard Content={<StoreMovementList/>} Title="Request: Store Movements List" />} />

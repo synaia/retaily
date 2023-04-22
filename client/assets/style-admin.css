@@ -1514,3 +1514,9 @@ select::-ms-expand {
   cursor:pointer;
   transition:.25s all ease;
 }
+
+.qr-reader {
+  width: auto;
+  height: auto;
+  transition: all 1s ease;
+}

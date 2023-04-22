@@ -15,9 +15,9 @@ import 'react-data-grid/lib/styles.css';
 export const PurchaseOrderResponse = () => {
     const params = useParams();
     const dispatch = useDispatch();
-    const orders = useSelector((state) => state.product.orders);
+    const orders = useSelector((state) => state.product.purchase_orders);
     const [order, setOrder] = useState();
-    const order_type = 'movement';
+    const order_type = 'purchase';
     const errorMessage = useSelector((state) => state.product.errorMessage);
     const loading = useSelector((state) => state.product.loading);
     const theme = useSelector((state) => state.user.theme);
@@ -78,13 +78,14 @@ export const PurchaseOrderResponse = () => {
                         return false;
                     }
                 });
-                setRowsOrder(get_rows_from_order(list_filtered, true));
+                setRowsOrder(get_rows_from_order(list_filtered, false));
                 SetProductFoundRight(`${list_filtered.length} products found`);
             } else {
                 setRowsOrder(get_rows_from_order( __order.product_order_line));
                 SetProductFoundRight(`${__order.product_order_line.length} products in total`);
             }
-
+            search_order.current.select();
+            search_order.current.focus();
         }
     }, [orders]);
 
@@ -117,8 +118,9 @@ export const PurchaseOrderResponse = () => {
             return;
         }
 
-        if (key === "ArrowDown") {
-            grid.current.selectCell({ rowIdx: 0, idx: 3 }); 
+        if (key === 'ArrowDown' || key === 'Enter') {
+            grid.current.selectCell({ rowIdx: 0, idx: 4 }); 
+            preventDefault();
             return;
         }
 
@@ -200,15 +202,22 @@ export const PurchaseOrderResponse = () => {
 
     const handleCellKeyDown = (args, event, __search) => {
         const { key, shiftKey } = event; 
+        const { column, rowIdx, selectCell } = args;
+        const { idx } = column;
 
         const preventDefault = () => {
             event.preventGridDefault();
             event.preventDefault();
         };
 
+        // if (args.mode === 'EDIT' && key === 'Enter') {
+        //     preventDefault();
+        //     __search.current.focus();
+        //     return;
+        // }
+
         if (args.mode === 'EDIT') return;
-        const { column, rowIdx, selectCell } = args;
-        const { idx } = column;
+
 
         if (args.mode === 'SELECT' && key === "/" ) {
             preventDefault();
@@ -237,6 +246,24 @@ export const PurchaseOrderResponse = () => {
             row_highlightsrow(currentDiv);    
         }
 
+        const fixedIdx = 4;
+        const arrowKeys = ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'];
+        const loopOverColumnNavigation = () => {
+            if (arrowKeys.includes(key)) {
+                let newRowIdx;
+                if (fixedIdx !== idx) {
+                    newRowIdx = rowIdx;
+                } else if (rowIdx === -1 && (key === 'ArrowDown' || key === 'ArrowRight')) {
+                    newRowIdx = 0;
+                } else {
+                    newRowIdx = (key === 'ArrowUp' || key === 'ArrowLeft') ? rowIdx - 1 : rowIdx === rows_order.length - 1 ? rowIdx : rowIdx + 1;
+                }
+                selectCell({ rowIdx: newRowIdx, 'idx': fixedIdx });
+                preventDefault();
+            }
+        };
+
+        loopOverColumnNavigation();
     }
 
     const highlightsrow = (v, n) => {
@@ -279,7 +306,7 @@ export const PurchaseOrderResponse = () => {
                 <div className="movement-c">
                     <div className="info">
                         <h3>{order.from_store.name}</h3>
-                        <small className="text-muted"> From Store </small>
+                        <small className="text-muted"> From Provider </small>
                     </div>
                     <div className="info">
                         <h3>{order.to_store.name}</h3>
