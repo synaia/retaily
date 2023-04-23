@@ -124,6 +124,8 @@ class ProductOrder(BaseModelExt):
     from_store: Store | None = None
     to_store: Store | None = None
     bulk_order_id: int | None = None
+    bulk_order_name: str | None = None
+    bulk_order_memo: str | None = None
     product_order_line: list[ProductOrderLine] = []
 
     class Config:

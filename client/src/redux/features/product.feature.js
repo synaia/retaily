@@ -848,20 +848,36 @@ const productsSlice = createSlice({
             state.purchase_orders = __purchase_orders;
 
             const __bulk_orders = [...state.bulk_orders];
+
+            const flatOrder = (__order) => {
+                const o = {...__order};
+                delete o.product_order_line;
+                delete o.bulk_order_id;
+                delete o.bulk_order_name;
+                return o;
+            }
            
-            __purchase_orders.forEach(__orders => {
-                if (__bulk_orders[__orders.bulk_order_id] != undefined) {
-                    __bulk_orders[__orders.bulk_order_id] = {
-                        'product_orders': __bulk_orders[__orders.bulk_order_id].product_orders.concat(__orders.product_order_line)
+            __purchase_orders.forEach(__order => {
+                if (__order.bulk_order_id == 0) {
+                    return;
+                } else if (__bulk_orders[__order.bulk_order_id] != undefined) {
+                    __bulk_orders[__order.bulk_order_id] = {
+                        'bulk_order_name': __order.bulk_order_name,
+                        'bulk_order_memo': __order.bulk_order_memo,
+                        'orders': __bulk_orders[__order.bulk_order_id].orders.concat(flatOrder(__order)),
+                        'lines': __bulk_orders[__order.bulk_order_id].lines.concat(__order.product_order_line)
                     }
-                } else {
-                    __bulk_orders[__orders.bulk_order_id] = {
-                        'product_orders': __orders.product_order_line
+                }  else {
+                    __bulk_orders[__order.bulk_order_id] = {
+                        'bulk_order_name': __order.bulk_order_name,
+                        'bulk_order_memo': __order.bulk_order_memo,
+                        'orders': [flatOrder(__order)],
+                        'lines': __order.product_order_line
                     };
                 }
             })
 
-            console.log(__bulk_orders);
+            state.bulk_orders = __bulk_orders;
 
         }).addCase(getPurchaseProductOrders.rejected, (state, action) => {
             state.loading = false;

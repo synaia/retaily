@@ -583,6 +583,8 @@ def read_product_order(order_type: str, db: Session, query: Query):
     for r in resp:
         order = ProductOrder()
         order.bulk_order_id = r['bulk_order_id'] if r['bulk_order_id'] is not None else 0
+        order.bulk_order_name = r['bulk_order_name'] if r['bulk_order_name'] is not None else ''
+        order.bulk_order_memo = r['bulk_order_memo'] if r['bulk_order_memo'] is not None else ''
         order.id = r['id']
         order.name = r['name']
         order.memo = r['memo']
