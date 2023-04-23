@@ -445,6 +445,14 @@ INSERT INTO app_inventory (quantity, product_id, store_id)
 
 --SELECT_FROM_PRODUCT_ORDER
 SELECT
+       (SELECT
+			  b.id
+		FROM
+			 bulk_order b, bulk_order_line bl
+		WHERE
+			 bl.bulk_order_id  = b.id
+		 AND bl.product_order_id = o.id
+       ) AS bulk_order_id,
        o.id,
        o.name,
        o.memo,

@@ -123,6 +123,7 @@ class ProductOrder(BaseModelExt):
     date_closed: datetime | None = None
     from_store: Store | None = None
     to_store: Store | None = None
+    bulk_order_id: int | None = None
     product_order_line: list[ProductOrderLine] = []
 
     class Config:

@@ -582,6 +582,7 @@ def read_product_order(order_type: str, db: Session, query: Query):
 
     for r in resp:
         order = ProductOrder()
+        order.bulk_order_id = r['bulk_order_id'] if r['bulk_order_id'] is not None else 0
         order.id = r['id']
         order.name = r['name']
         order.memo = r['memo']
@@ -689,7 +690,7 @@ def add_product_order(product_order: ProductOrder, db: Session, query: Query):
     cur.connection.commit()
     product_order_id = cur.lastrowid
 
-    return read_product_order(db, query)
+    return read_product_order(product_order.order_type, db, query)
 
 
 def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):

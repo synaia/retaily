@@ -373,6 +373,18 @@ async def __rollback_order(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
+@router.get("/bulk_order/{id}", response_model=list[schemas.ProductOrder])
+async def __read_product_order(
+                        id: int,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_product_order(order_type, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
 
 
 @router.post("/uploadfilelocal/{client_uuid}",)

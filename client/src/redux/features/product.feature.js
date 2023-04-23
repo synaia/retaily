@@ -29,6 +29,7 @@ const initialState = {
     resume_inv: {},
     orders: [],
     purchase_orders: [],
+    bulk_orders: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -843,7 +844,25 @@ const productsSlice = createSlice({
             state.loading = true;
         }).addCase(getPurchaseProductOrders.fulfilled, (state, action) => {
             state.loading = false;
-            state.purchase_orders = action.payload
+            const __purchase_orders = action.payload;
+            state.purchase_orders = __purchase_orders;
+
+            const __bulk_orders = [...state.bulk_orders];
+           
+            __purchase_orders.forEach(__orders => {
+                if (__bulk_orders[__orders.bulk_order_id] != undefined) {
+                    __bulk_orders[__orders.bulk_order_id] = {
+                        'product_orders': __bulk_orders[__orders.bulk_order_id].product_orders.concat(__orders.product_order_line)
+                    }
+                } else {
+                    __bulk_orders[__orders.bulk_order_id] = {
+                        'product_orders': __orders.product_order_line
+                    };
+                }
+            })
+
+            console.log(__bulk_orders);
+
         }).addCase(getPurchaseProductOrders.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR getPurchaseProductOrders() ; ${action.error.message}`
