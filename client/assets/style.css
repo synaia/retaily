@@ -476,6 +476,7 @@ main .search-terminal input[type="text"]  {
   text-transform: uppercase;
   width: calc(90vh);
 }
+
 .small_input_price {
   background: transparent;
   color: var(--color-dark);

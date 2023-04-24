@@ -862,6 +862,7 @@ const productsSlice = createSlice({
                     return;
                 } else if (__bulk_orders[__order.bulk_order_id] != undefined) {
                     __bulk_orders[__order.bulk_order_id] = {
+                        'bulk_order_id': __order.bulk_order_id,
                         'bulk_order_name': __order.bulk_order_name,
                         'bulk_order_memo': __order.bulk_order_memo,
                         'orders': __bulk_orders[__order.bulk_order_id].orders.concat(flatOrder(__order)),
@@ -869,6 +870,7 @@ const productsSlice = createSlice({
                     }
                 }  else {
                     __bulk_orders[__order.bulk_order_id] = {
+                        'bulk_order_id': __order.bulk_order_id,
                         'bulk_order_name': __order.bulk_order_name,
                         'bulk_order_memo': __order.bulk_order_memo,
                         'orders': [flatOrder(__order)],

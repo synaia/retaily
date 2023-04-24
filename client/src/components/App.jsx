@@ -11,6 +11,7 @@ import { Payment } from "./Payment";
 import {Init } from "./Init";
 
 import { AdminBoard } from "./AdminBoard";
+import { AdminBoardBulk } from "./AdminBoardBulk";
 import { Insights } from "./Insights";
 import { Users } from "./Users";
 import { Sales } from './Sales';
@@ -31,12 +32,10 @@ import { PurchaseList } from "./PurchaseList";
 import { Purchase } from "./Purchase";
 import { PurchaseOrderListResponse } from "./PurchaseOrderListResponse";
 import { PurchaseOrderResponse } from "./PurchaseOrderResponse";
+import { OrderBulkResponse } from "./OrderBulkResponse";
 
 import package_file from "../../package.json";
 import { Theme } from "./Theme";
-
-
-
 
 
 export const App = () => {
@@ -78,6 +77,7 @@ export const App = () => {
                   <Route path="/admin/inventory/purchase/:order_id" element={<AdminBoard Content={<Purchase />} Title="Request: Purchase" />} />
                   <Route path="/admin/inventory/purchaseresp" element={<AdminBoard Content={<PurchaseOrderListResponse />} Title="Receive: Purchase Order List" />} />
                   <Route path="/admin/inventory/purchaseresp/:order_id" element={<AdminBoard Content={<PurchaseOrderResponse />} Title="Receive: Purchase Order" />} />
+                  <Route path="/admin/inventory/bulk/:bulk_id" element={<AdminBoardBulk Content={<OrderBulkResponse />} Title="Bulk Order Process" />} />
                 </Routes>
               </Provider>
             </HashRouter>

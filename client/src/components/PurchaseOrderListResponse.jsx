@@ -27,12 +27,12 @@ export const PurchaseOrderListResponse = () => {
     return (
         <React.Fragment>
             {!loading && errorMessage && <div className="danger">{errorMessage} </div>}
-            <div className="movement-top">
-            <ul class="tree">
+            <div className="movement-top" >
+            <ul className="tree">
             { bulk_orders.map( (bulklist, y) => (
-                <React.Fragment>
-                <li key={y}>
-                    <div className="sticky treehead">
+                <React.Fragment key={y} >
+                <li >
+                    <div className="sticky treehead" onClick={() =>  navigator(`/admin/inventory/bulk/${bulklist.bulk_order_id}`, {replace: false})}>
                         {/* <span className="material-icons-sharp"> tour </span> */}
                         <span className="material-icons-sharp"> flash_on </span>
                         <div className="info">
@@ -42,7 +42,7 @@ export const PurchaseOrderListResponse = () => {
                     </div>
                     <ul>
                     { bulklist.orders.map( (order, i) => (
-                        <li className="li-child">
+                        <li key={i} className="li-child">
                             <div className="movement" key={i} onClick={() =>  navigator(`/admin/inventory/purchaseresp/${order.id}`, {replace: false})}>
                                 <div className={`movement-${order.status}`}></div>
                                 <div className="movement-c">

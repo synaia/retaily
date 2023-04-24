@@ -1054,6 +1054,13 @@ main .recent-orders a {
   font-size: 0.9rem;
 }
 
+.data-grid-bulk {
+  height: calc(100vh - 170px);
+  /* width: calc(100vw - 250px); */
+  color: var(--color-dark-variant);
+  font-size: 0.9rem;
+}
+
 .c1rb4brs7-0-0-beta-27:checked + .c1bvvwcc7-0-0-beta-27 {
   background-color: var(--color-primary);
   outline: 5px solid var(--rdg-background-color) !important;
@@ -1374,6 +1381,11 @@ main .recent-orders a {
   transition: all 300ms ease !important;
 }
 
+.container-left-width-bulk {
+  grid-template-columns: auto !important;
+  transition: all 300ms ease !important;
+}
+
 .sidebar-btn {
   display: flex;
   gap: 2rem;
@@ -1617,4 +1629,83 @@ ul.tree:before {
   top: 0px;
   width: 100%;
   z-index: 1;
+}
+
+.bulk-screen {
+  display: grid;
+  grid-template-columns: auto 0.33fr;
+  gap: 2rem;
+}
+
+.search-terminal-bulk {
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: 0rem;
+  padding: 3rem 0rem 3rem 0rem;
+}
+
+
+main .search-terminal-blk {
+  /* display: inline-block; */
+  /* background: var(--color-white); */
+  /* border-radius: var(--border-radius-1); */
+  display: flex;
+  gap: 0px;
+  align-items: center;
+
+  
+  margin-top: 0.2rem;
+  padding: 0.5rem 1.6rem;
+
+  position: relative;
+  overflow: hidden;
+
+  color: var(--color-dark-variant);
+  box-shadow: var(--box-shadow);
+  /* padding: 15px; */
+  margin-bottom: 25px;
+  align-items: center;
+
+  /* display: flex;
+  justify-content: left; */
+  /* gap: 2rem; */
+}
+
+.underline-animation-terminal-blk {
+  transition: all 0.5s;
+  display: inline-block;
+  bottom: 0;
+  left: -100%;
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+.search-bar:focus + .underline-animation-terminal-blk {
+  left: 0;
+}
+
+main .search-terminal-bulk input[type="text"], .qty-scanned-product  {
+  background: var(--color-background);
+  color: var(--color-dark);
+  font-size: 7rem;
+  text-transform: uppercase;
+  /* width: calc(80vh); */
+  height: calc(13vh);
+  padding-left: 2rem;
+}
+
+main .search-terminal-bulk span {
+  font-size: 6rem;
+}
+
+.product-scanned {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.qty-scanned-product {
+  width: calc(50vh);
 }
