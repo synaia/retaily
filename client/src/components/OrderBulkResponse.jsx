@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { issueProductOrderLine, processOrder } from "../redux/features/product.feature.js";
+import { issueProductOrderLine, processOrder, getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_ } from "../util/Utils.js";
 
@@ -29,43 +29,54 @@ export const OrderBulkResponse = () => {
 
     const [productFoundRight, SetProductFoundRight] = useState(0);
 
-    const [scanned_barcode, set_scanned_barcode] = useState("");
     const [product_filtered, set_product_filtered] = useState();
     const qty_scanned_product = useRef();
     const scannbarcode_ref = useRef("");
 
 
 
-    const handleBarcode = (__scanned_barcode, ref, __bulk_orders) => {
-        if (ref !== undefined && ref.current !== undefined) {
-            const activeElement = document.activeElement;
-            // if (activeElement.type !== undefined) {
-            //     if (activeElement.type === 'text') {
-            //         activeElement.value = '';
-            //     }
-            // }
-            // console.log(activeElement);
-            set_scanned_barcode(__scanned_barcode);
-            loopupProduct(__scanned_barcode, __bulk_orders);
-            ref.current.value = __scanned_barcode;
-            // ref.current.focus();
-        }
-    }
-
-    const onKewyDownEvent = (event, ref) => {
+    const onKewyDownEvent = (event) => {
         const { key } = event
-
+        const activeElement = document.activeElement
+        const milliSeconds = 10
+       
         if(!window.hasOwnProperty('scan')) {
             window.scan = []
         }
 
         if(window.scan.length > 0 ) {
-            if ((event.timeStamp - window.scan.slice(-1)[0].timeStamp) > 10) {
+            if ((event.timeStamp - window.scan.slice(-1)[0].timeStamp) > milliSeconds) {
                 window.scan = []
-                event.preventDefault()
+
+                console.log('slow ... ', key)
+
+                if (key === "Enter" && activeElement.type !== undefined) {
+                    if (scannbarcode_ref != undefined && scannbarcode_ref.current != null) {
+                        if (activeElement.type === 'text' && scannbarcode_ref.current.value.length > 5) {
+                            console.log('a buscar .... ', scannbarcode_ref.current.value)
+                            lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref)
+                        } else if (activeElement.type === 'number' && scannbarcode_ref.current.value.length > 5) {
+                            const __product_filtered = lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref, false)
+                            console.log('Proceed to changes...')
+                            bulkyChange(__product_filtered)
+                        } else {
+                            console.log('Not expecting behavior.')
+                        }
+                    }
+                }
+                
             } else {
+                console.log('fast ... ', key)
+                if (activeElement.type !== undefined) {
+                    if (activeElement.type === 'text') {
+                        activeElement.value = '';
+                        event.preventDefault()
+                    }
+                }
                 
             }  
+        } else {
+            console.log('window.scan.length < 0 ', key)
         }
 
         if(key === "Enter" && window.scan.length > 0) {
@@ -74,7 +85,7 @@ export const OrderBulkResponse = () => {
             }, "")
             window.scan = []
             console.log('scannedString => ', scannedString)
-            handleBarcode(scannedString, ref, bulk_orders)
+            lookupProduct(scannedString, bulk_orders, scannbarcode_ref)
 
             // return document.dispatchEvent(new CustomEvent('scanComplete', {detail: scannedString}))
         }
@@ -84,29 +95,49 @@ export const OrderBulkResponse = () => {
             let data = JSON.parse(JSON.stringify(event, ['key', 'timeStamp']))
             data.timeStampDiff = window.scan.length > 0 ? data.timeStamp - window.scan.slice(-1)[0].timeStamp : 0;
     
-            window.scan.push(data)
+            window.scan.push(data)           
         }
     }
 
     useEffect(() => {
-        document.addEventListener('keydown', (event) =>  onKewyDownEvent(event, scannbarcode_ref));
+        if (bulk_orders.length > 0 ) {
+            console.log('useEffect -> addEventListener')
+            document.addEventListener('keydown', onKewyDownEvent);
+        }
+        return () => {
+            console.log('useEffect -> removeEventListener')
+            document.removeEventListener('keydown', onKewyDownEvent);
+        }
     }, [bulk_orders]);
 
-   const loopupProduct = (barcode, __bulk_orders) => {
-    if (__bulk_orders.length > 0) {
-        const __bulk = __bulk_orders.filter( bulk => { return bulk.bulk_order_id == params.bulk_id})[0];
-        const __lines = __bulk.lines;
-        let __product_filtered = __lines.filter((prod) => {
-            if (prod) {
-                return prod.product.code.toUpperCase().includes(barcode.toUpperCase());
-            } else {
-                return false;
+    const lookupProduct = (barcode, __bulk_orders, ref, fillinputs = true) => {
+        if (ref !== undefined && ref.current !== null) {
+            if (__bulk_orders.length > 0) {
+                const __bulk = __bulk_orders.filter( bulk => { return bulk.bulk_order_id == params.bulk_id})[0];
+                const __lines = __bulk.lines;
+                let __product_filtered = __lines.filter((prod) => {
+                    if (prod) {
+                        return prod.product.code.toUpperCase().includes(barcode.toUpperCase());
+                    } else {
+                        return false;
+                    }
+                });
+                // console.log(__product_filtered[0]);
+                qty_scanned_product.current.focus();
+                if (__product_filtered[0] !== undefined) {
+                    set_product_filtered(__product_filtered[0]);
+                    if (fillinputs) {
+                        qty_scanned_product.current.value = __product_filtered[0].quantity_observed;
+                        ref.current.value = barcode;
+                    }
+                    return __product_filtered[0] 
+                } else {
+                    qty_scanned_product.current.value = 0;
+                }
             }
-        });
-        console.log(__product_filtered[0]);
-        set_product_filtered(__product_filtered[0]);
-        // qty_scanned_product.current.focus();
-    }
+            ref.current.value = barcode;
+        }
+        return undefined
    }
 
 
@@ -237,6 +268,49 @@ export const OrderBulkResponse = () => {
             return 0;
         }
     };
+
+    const bulkyChange = (__product) => {
+
+        console.log(__product)
+        const qty_new = qty_scanned_product.current.value
+
+        if(__product.quantity == qty_new) {
+            //TODO: call OK method.
+            // here.... 
+            console.log('TODO: call OK method');
+
+            // USE adecuate method.
+            const args = {
+                "product_id": __product.product.id,
+                "quantity": __product.quantity,
+                "quantity_observed": qty_new,
+                "user_receiver": "USERSCANN",
+                "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
+                "product_order_id": __product.product_order_id,
+                "order_type": order_type
+              }
+    
+            console.log(args);
+    
+            dispatch(issueProductOrderLine(args))
+
+        } else {
+            const args = {
+                "product_id": __product.product.id,
+                "quantity": __product.quantity,
+                "quantity_observed": qty_new,
+                "user_receiver": "USERSCANN",
+                "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
+                "product_order_id": __product.product_order_id,
+                "order_type": order_type
+              }
+    
+            console.log(args);
+    
+            dispatch(issueProductOrderLine(args))
+        }
+
+    }
 
     const rowChange = (rows, changes) => {
         if (bulk.status == "closed") {
@@ -370,7 +444,7 @@ export const OrderBulkResponse = () => {
                 <div>
                     <div className="search-terminal-bulk">
                         <div className="search-terminal-blk">
-                        <span className="material-symbols-sharp">barcode_scanner</span>
+                            <span className="material-symbols-sharp">barcode_scanner</span>
                             <input ref={scannbarcode_ref} type="text" className="search-bar-scann-bulk"  />
                             <span className="underline-animation-terminal-blk"></span>
                         </div>
@@ -387,12 +461,11 @@ export const OrderBulkResponse = () => {
                             </div>
                         </div>
                     }
-                    {/* <div>
+                    <div>
                         <input type="number" className="qty-scanned-product"
-                            value={product_filtered !== undefined ? product_filtered.quantity_observed : ''}
-                            ref={qty_scanned_product}
-                            />
-                    </div> */}
+                                ref={qty_scanned_product}
+                        />
+                    </div>
                 </div>
                 <div>
                     <div className="search-terminal-c">
