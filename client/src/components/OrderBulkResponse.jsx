@@ -7,7 +7,7 @@ import { textEditor } from 'react-data-grid';
 
 import { issueProductOrderLine, processOrder, getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
-import { F_ } from "../util/Utils.js";
+import { F_, beep } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
@@ -99,14 +99,47 @@ export const OrderBulkResponse = () => {
         }
     }
 
+     const hasFocusWindowNotify = () => {
+        const vibrate = 'vibrate-3'
+        const flicker = 'flicker-2'
+        const clzList = document.querySelector('.icon-barcode').classList
+        const hasVibrate = Array.from(clzList).filter(c => c.includes(vibrate))
+        const hasFlicker = Array.from(clzList).filter(c => c.includes(vibrate))
+
+        if (!document.hasFocus()) {
+            // lost the focus
+            if (hasVibrate.length == 0) {
+                // clzList.remove(flicker)
+                clzList.add(vibrate)
+                const myAudioContext = new AudioContext();
+                // beep(myAudioContext, 300, 700, 80 )
+            }
+        } else {
+            // back to focus
+            if (hasVibrate.length > 0) {
+                clzList.remove(vibrate)
+                // clzList.add(flicker)
+            }
+        }
+     }
+
     useEffect(() => {
+        let interval;
+
         if (bulk_orders.length > 0 ) {
             console.log('useEffect -> addEventListener')
             document.addEventListener('keydown', onKewyDownEvent);
+            
+            if (!interval) {
+                interval = setInterval(hasFocusWindowNotify, 1000);
+            }
         }
         return () => {
             console.log('useEffect -> removeEventListener')
             document.removeEventListener('keydown', onKewyDownEvent);
+            
+            clearInterval(interval);
+            interval = null;
         }
     }, [bulk_orders]);
 
@@ -444,7 +477,7 @@ export const OrderBulkResponse = () => {
                 <div>
                     <div className="search-terminal-bulk">
                         <div className="search-terminal-blk">
-                            <span className="material-symbols-sharp">barcode_scanner</span>
+                            <span className="material-symbols-sharp icon-barcode">barcode_scanner</span>
                             <input ref={scannbarcode_ref} type="text" className="search-bar-scann-bulk"  />
                             <span className="underline-animation-terminal-blk"></span>
                         </div>
