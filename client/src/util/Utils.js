@@ -80,6 +80,10 @@ export const validateInputX = (element, type, SetFunc) => {
 };
 
 
+export const beauty = (whats) => {
+    return JSON.parse(JSON.stringify(whats))
+}
+
 
 
 /**
@@ -91,7 +95,8 @@ export const validateInputX = (element, type, SetFunc) => {
  * 
  * @returns {Promise} - A promise that resolves when the beep sound is finished.
  */
-export const  beep = (myAudioContext, duration, frequency, volume) => {
+export const  beep = (duration, frequency, volume) => {
+    const myAudioContext = new AudioContext();
     return new Promise((resolve, reject) => {
         // Set default duration if not provided
         duration = duration || 200;

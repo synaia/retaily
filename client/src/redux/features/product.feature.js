@@ -9,6 +9,8 @@ import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { TOKEN, STORE, BACKEND_HOST } from "../../util/constants";
 import { storeInfo } from "../../common/store-info";
+import { beauty } from "../../util/Utils.js";
+
 
 const initialState = {
     loading: false,
@@ -617,22 +619,102 @@ const refreshOnProductOrderList = (state, action) => {
 
 
 const refreshOnProductOrder = (state, action) => {
-    const _order = action.payload; 
+    const { order, line } = action.payload; 
+    console.log('line => ', line);
+    console.log('_order => ', order);
+    console.log('--------------------------')
+    console.log('purchase => ', JSON.parse(JSON.stringify([...state.purchase_orders])))
     let cOrders = [...state.orders];
-    if (_order.order_type === "movement") {
+    if (order.order_type === "movement") {
         cOrders = [...state.orders];
     } else {
         cOrders = [...state.purchase_orders];
     }
-    const oIndex = cOrders.findIndex(o => o.id == _order.id);
-    cOrders[oIndex] = _order;
-    if (_order.order_type === "movement") {
+    const oIndex = cOrders.findIndex(o => o.id == order.id);
+    cOrders[oIndex] = order;
+    if (order.order_type === "movement") {
         state.orders = cOrders;
     } else {
         state.purchase_orders = cOrders;
     }
 };
 
+const refreshBulkyList = (state, action) => {
+    const { order, line } = action.payload; 
+
+    const __bulk_orders = [...state.bulk_orders];
+    const m1 = beauty(__bulk_orders);
+    const idxorder = __bulk_orders.findIndex(bulk => {
+        if (bulk === undefined) return
+
+        return bulk.bulk_order_id  == order.bulk_order_id
+    });
+    const __orderlines = [...__bulk_orders[idxorder].lines];
+    const m2 = beauty(__orderlines);
+    const idxline = __orderlines.findIndex(ln => ln.product.id == line.product_id);
+    __orderlines[idxline].quantity_observed = line.quantity_observed;
+
+    const status = order.product_order_line.find(p => p.product.id == line.product_id).status;
+    __orderlines[idxline].status = status;
+
+
+    __bulk_orders[idxorder].lines = __orderlines;
+    const m3 = beauty(__orderlines);
+    const m4 = beauty(__bulk_orders);
+    state.bulk_orders = __bulk_orders;
+
+    // const purchases = [...state.purchase_orders];
+    // const index  = purchases.findIndex(pur => pur.id == order.id);
+    // const lines = [...purchases[index].product_order_line];
+    // const pindex = lines.findIndex(ln => ln.product.id == line.product_id);
+    // lines[pindex].quantity_observed = line.quantity_observed; // the product...
+
+    // console.log('the product => ', lines[pindex]);
+
+    // purchases[index].product_order_line = lines;
+    // state.purchase_orders = purchases;
+
+    // fromPurchaseToBulk(state.purchase_orders, state);
+}
+
+const fromPurchaseToBulk = (__purchase_orders, state) => {
+    let __bulk_orders = [...state.bulk_orders];
+
+    const flatOrder = (__order) => {
+        const o = {...__order};
+        delete o.product_order_line;
+        delete o.bulk_order_id;
+        delete o.bulk_order_name;
+        return o;
+    }
+    
+    __purchase_orders.forEach(__order => {
+        if (__order.bulk_order_id == 0) {
+            return;
+        } else if (__bulk_orders[__order.bulk_order_id] != undefined) {
+            __bulk_orders[__order.bulk_order_id] = {
+                'bulk_order_id': __order.bulk_order_id,
+                'bulk_order_name': __order.bulk_order_name,
+                'bulk_order_memo': __order.bulk_order_memo,
+                'orders': __bulk_orders[__order.bulk_order_id].orders.concat(flatOrder(__order)),
+                'lines': __bulk_orders[__order.bulk_order_id].lines.concat(__order.product_order_line)
+            }
+        }  else {
+            __bulk_orders[__order.bulk_order_id] = {
+                'bulk_order_id': __order.bulk_order_id,
+                'bulk_order_name': __order.bulk_order_name,
+                'bulk_order_memo': __order.bulk_order_memo,
+                'orders': [flatOrder(__order)],
+                'lines': __order.product_order_line
+            };
+        }
+    })
+
+    __bulk_orders = __bulk_orders.filter( elem => elem != null );
+
+    const temp = beauty(__bulk_orders);
+    state.bulk_orders = __bulk_orders;
+}
 
 const productsSlice = createSlice({
     name: 'products',
@@ -847,39 +929,7 @@ const productsSlice = createSlice({
             const __purchase_orders = action.payload;
             state.purchase_orders = __purchase_orders;
 
-            const __bulk_orders = [...state.bulk_orders];
-
-            const flatOrder = (__order) => {
-                const o = {...__order};
-                delete o.product_order_line;
-                delete o.bulk_order_id;
-                delete o.bulk_order_name;
-                return o;
-            }
-           
-            __purchase_orders.forEach(__order => {
-                if (__order.bulk_order_id == 0) {
-                    return;
-                } else if (__bulk_orders[__order.bulk_order_id] != undefined) {
-                    __bulk_orders[__order.bulk_order_id] = {
-                        'bulk_order_id': __order.bulk_order_id,
-                        'bulk_order_name': __order.bulk_order_name,
-                        'bulk_order_memo': __order.bulk_order_memo,
-                        'orders': __bulk_orders[__order.bulk_order_id].orders.concat(flatOrder(__order)),
-                        'lines': __bulk_orders[__order.bulk_order_id].lines.concat(__order.product_order_line)
-                    }
-                }  else {
-                    __bulk_orders[__order.bulk_order_id] = {
-                        'bulk_order_id': __order.bulk_order_id,
-                        'bulk_order_name': __order.bulk_order_name,
-                        'bulk_order_memo': __order.bulk_order_memo,
-                        'orders': [flatOrder(__order)],
-                        'lines': __order.product_order_line
-                    };
-                }
-            })
-
-            state.bulk_orders = __bulk_orders;
+            fromPurchaseToBulk(__purchase_orders, state);
 
         }).addCase(getPurchaseProductOrders.rejected, (state, action) => {
             state.loading = false;
@@ -931,6 +981,7 @@ const productsSlice = createSlice({
         }).addCase(issueProductOrderLine.fulfilled, (state, action) => {
             state.loading = false;
             refreshOnProductOrder(state, action);
+            refreshBulkyList(state, action);
         }).addCase(issueProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`

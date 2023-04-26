@@ -626,6 +626,9 @@ def read_product_order_by_id(line: ProductOrderLine, db: Session, query: Query):
     for r in resp:   # Get ONE record because product_order_id
         order = ProductOrder()
         order.id = r['id']
+        order.bulk_order_id = r['bulk_order_id'] if r['bulk_order_id'] is not None else 0
+        order.bulk_order_name = r['bulk_order_name'] if r['bulk_order_name'] is not None else ''
+        order.bulk_order_memo = r['bulk_order_memo'] if r['bulk_order_memo'] is not None else ''
         order.name = r['name']
         order.memo = r['memo']
         order.order_type = r['order_type']
@@ -822,9 +825,14 @@ def rollback_order(product_order: ProductOrder, db: Session, query: Query):
 def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     sql_raw_update_line_issue = query.UPDATE_PRODUCT_ORDER_LINE_ISSUE_COUNT
     cur = get_cursor(db)
-    status: str = 'issue' if line.quantity != line.quantity_observed else 'pending'
+    status: str = 'accepted' if line.quantity == line.quantity_observed else 'issue'
     data = (line.quantity_observed, line.user_receiver, line.receiver_memo, status, line.product_order_id, line.product_id)
     cur.execute(sql_raw_update_line_issue, data)
     cur.connection.commit()
 
-    return read_product_order_by_id(line, db, query)
+    response = {
+        'order': read_product_order_by_id(line, db, query),
+        'line': line
+    }
+
+    return response

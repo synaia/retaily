@@ -54,11 +54,16 @@ export const OrderBulkResponse = () => {
                     if (scannbarcode_ref != undefined && scannbarcode_ref.current != null) {
                         if (activeElement.type === 'text' && scannbarcode_ref.current.value.length > 5) {
                             console.log('a buscar .... ', scannbarcode_ref.current.value)
-                            lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref)
+                            const __product_filtered = lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref)
+                            set_product_filtered(__product_filtered);
                         } else if (activeElement.type === 'number' && scannbarcode_ref.current.value.length > 5) {
                             const __product_filtered = lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref, false)
-                            console.log('Proceed to changes...')
-                            bulkyChange(__product_filtered)
+                            console.log('Proceed to changes...');
+                            const qty_new = qty_scanned_product.current.value;
+                            const t = {...__product_filtered};
+                            t.quantity_observed = qty_new;
+                            set_product_filtered(t);
+                            bulkyChange(t)
                         } else {
                             console.log('Not expecting behavior.')
                         }
@@ -85,7 +90,8 @@ export const OrderBulkResponse = () => {
             }, "")
             window.scan = []
             console.log('scannedString => ', scannedString)
-            lookupProduct(scannedString, bulk_orders, scannbarcode_ref)
+            const __product_filtered = lookupProduct(scannedString, bulk_orders, scannbarcode_ref)
+            set_product_filtered(__product_filtered);
 
             // return document.dispatchEvent(new CustomEvent('scanComplete', {detail: scannedString}))
         }
@@ -110,10 +116,16 @@ export const OrderBulkResponse = () => {
             // lost the focus
             if (hasVibrate.length == 0) {
                 // clzList.remove(flicker)
-                clzList.add(vibrate)
-                const myAudioContext = new AudioContext();
-                // beep(myAudioContext, 300, 700, 80 )
+                clzList.add(vibrate)   
             }
+            // my sound!
+            // beep(100, 50, 10 ).then( () => {
+            //     beep(100, 100, 10).then( () => {
+            //         beep(100, 50, 10).then( () => {
+            //             beep(100, 100, 10)
+            //         })
+            //     })
+            // })
         } else {
             // back to focus
             if (hasVibrate.length > 0) {
@@ -134,6 +146,12 @@ export const OrderBulkResponse = () => {
                 interval = setInterval(hasFocusWindowNotify, 1000);
             }
         }
+
+        // const __product_filtered = lookupProduct(scannbarcode_ref.current.value, bulk_orders, scannbarcode_ref)
+        // set_product_filtered(__product_filtered);
+
+
+
         return () => {
             console.log('useEffect -> removeEventListener')
             document.removeEventListener('keydown', onKewyDownEvent);
@@ -141,12 +159,17 @@ export const OrderBulkResponse = () => {
             clearInterval(interval);
             interval = null;
         }
+
     }, [bulk_orders]);
 
     const lookupProduct = (barcode, __bulk_orders, ref, fillinputs = true) => {
         if (ref !== undefined && ref.current !== null) {
             if (__bulk_orders.length > 0) {
-                const __bulk = __bulk_orders.filter( bulk => { return bulk.bulk_order_id == params.bulk_id})[0];
+                const __bulk = __bulk_orders.filter( bulk => {
+                    if (bulk === undefined) return
+
+                    return bulk.bulk_order_id == params.bulk_id
+                })[0];
                 const __lines = __bulk.lines;
                 let __product_filtered = __lines.filter((prod) => {
                     if (prod) {
@@ -155,10 +178,9 @@ export const OrderBulkResponse = () => {
                         return false;
                     }
                 });
-                // console.log(__product_filtered[0]);
+                console.log('__product_filtered = >', __product_filtered[0]);
                 qty_scanned_product.current.focus();
                 if (__product_filtered[0] !== undefined) {
-                    set_product_filtered(__product_filtered[0]);
                     if (fillinputs) {
                         qty_scanned_product.current.value = __product_filtered[0].quantity_observed;
                         ref.current.value = barcode;
@@ -206,7 +228,11 @@ export const OrderBulkResponse = () => {
 
     useEffect(() => {
         if (bulk_orders.length > 0) {
-            const __bulk = bulk_orders.filter( bulk => { return bulk.bulk_order_id == params.bulk_id})[0];
+            const __bulk = bulk_orders.filter( bulk => {
+                if (bulk === undefined) return
+
+                return bulk.bulk_order_id == params.bulk_id
+            })[0];
             const __lines = __bulk.lines;
             setBulk(__bulk);
     
@@ -228,22 +254,31 @@ export const OrderBulkResponse = () => {
                 setRowsOrder(get_rows_from_order( __lines));
                 SetProductFoundRight(`${__lines.length} products in total`);
             }
-            search_order.current.select();
+            // search_order.current.select();
             // search_order.current.focus();
         }
     }, [bulk_orders]);
 
+    const rowbgClz = (row) => {
+        let row_bg_clz = "row-bg-no-changed";
+        if (row.status === "issue") {
+            row_bg_clz = (row.quantity_observed < row.quantity) ? "row-bg-issue"  : "row-bg-issue-up";
+        } else if (row.status === "accepted") {
+            row_bg_clz = "row-bg-accepted";
+        }
+        return row_bg_clz;
+    }
 
     const columns_order = useMemo( () => {
         return [
             { key: 'name', name: 'Product', resizable: true, width: 200},
             { key: 'code', name: 'SKU', width: 100 },
             { key: 'quantity', name: 'Qty',  width: 100, formatter: ({ row }) => {
-                const row_bg_issue = (row.status === "issue") ? 'row-bg-issue' : 'row-bg-no-changed'
-                return <div className={row_bg_issue}>{row.quantity}</div>;
+                
+                return <div className={rowbgClz(row)}>{row.quantity}</div>;
             }},
-            { key: 'quantity_observed', name: 'Qty. Received',  editor: textEditor, width: 100, formatter: ({ row }) => {
-                return <div className="row-bg-no-changed">{row.quantity_observed}</div>;
+            { key: 'quantity_observed', name: 'Qty. Received', width: 100, formatter: ({ row }) => {
+                return <div className={rowbgClz(row)}>{row.quantity_observed}</div>;
             }},
           ];
     }); 
@@ -303,45 +338,20 @@ export const OrderBulkResponse = () => {
     };
 
     const bulkyChange = (__product) => {
+        __product.status = (__product.quantity == __product.quantity_observed) ? 'accepted' : 'issue';
+        const args = {
+            "product_id": __product.product.id,
+            "quantity": __product.quantity,
+            "quantity_observed": __product.quantity_observed,
+            "user_receiver": "USERSCANN",
+            "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
+            "product_order_id": __product.product_order_id,
+            "order_type": order_type
+          }
 
-        console.log(__product)
-        const qty_new = qty_scanned_product.current.value
+        console.log(args);
 
-        if(__product.quantity == qty_new) {
-            //TODO: call OK method.
-            // here.... 
-            console.log('TODO: call OK method');
-
-            // USE adecuate method.
-            const args = {
-                "product_id": __product.product.id,
-                "quantity": __product.quantity,
-                "quantity_observed": qty_new,
-                "user_receiver": "USERSCANN",
-                "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
-                "product_order_id": __product.product_order_id,
-                "order_type": order_type
-              }
-    
-            console.log(args);
-    
-            dispatch(issueProductOrderLine(args))
-
-        } else {
-            const args = {
-                "product_id": __product.product.id,
-                "quantity": __product.quantity,
-                "quantity_observed": qty_new,
-                "user_receiver": "USERSCANN",
-                "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
-                "product_order_id": __product.product_order_id,
-                "order_type": order_type
-              }
-    
-            console.log(args);
-    
-            dispatch(issueProductOrderLine(args))
-        }
+        dispatch(issueProductOrderLine(args))
 
     }
 
@@ -406,7 +416,7 @@ export const OrderBulkResponse = () => {
 
         if (args.mode === 'SELECT' && key === "/" ) {
             preventDefault();
-            __search.current.focus();
+            // __search.current.focus();
             return;
         }
 
@@ -448,7 +458,7 @@ export const OrderBulkResponse = () => {
             }
         };
 
-        loopOverColumnNavigation();
+        // loopOverColumnNavigation();
     }
 
     const highlightsrow = (v, n) => {
@@ -492,15 +502,35 @@ export const OrderBulkResponse = () => {
                                 <h3>{product_filtered.quantity}</h3>
                                 <small className="text-muted"> Qty. </small>
                             </div>
+                            <div className="info">
+                                <h3>{product_filtered.quantity_observed}</h3>
+                                <small className="text-muted"> Qty. O_0 Observed </small>
+                            </div>
                         </div>
                     }
                     <div>
                         <input type="number" className="qty-scanned-product"
                                 ref={qty_scanned_product}
                         />
+                        {product_filtered != undefined &&
+                        <>
+                           {product_filtered.status == "issue" && product_filtered.quantity > product_filtered.quantity_observed &&
+                            <span className="material-symbols-sharp qty-icon-south">south</span>
+                           }
+                           {product_filtered.status == "issue"  && product_filtered.quantity < product_filtered.quantity_observed &&
+                            <span className="material-symbols-sharp qty-icon-north">north</span>
+                           }
+                           {product_filtered.status == "accepted" && product_filtered.quantity == product_filtered.quantity_observed &&
+                            <span className="material-symbols-sharp qty-icon-check">check</span>
+                           }
+                        </>
+                        }
+
+                        {loading && <Loading Text="Wating ... " />}
                     </div>
                 </div>
                 <div>
+                    <h2>TODO: Put resume here</h2>
                     <div className="search-terminal-c">
                         <div className="search-terminal">
                             <span className="material-icons-sharp"> search </span>

@@ -7,7 +7,7 @@ export const Loading = ({Text, Intro}) => {
 
     return (
         <div className={clazz}>
-            <h2>{Text}</h2>
+            <h2 className="mytext">{Text}</h2>
         </div>
     )
 }

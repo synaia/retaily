@@ -28,6 +28,8 @@
   --box-shadow: 0 2rem 3rem var(--color-light);
 
   --color-scheme: light;
+
+  --color-solid-black: #363949;
 }
 
 /* DARK THEME VARIABLES */
@@ -1342,7 +1344,19 @@ main .recent-orders a {
 .row-bg-issue {
   text-align: center;
   background-color: var(--color-danger);
-  color: var(--color-dark);
+  color: var(--color-solid-black);
+}
+
+.row-bg-accepted {
+  text-align: center;
+  background-color: var(--color-success);
+  color: var(--color-solid-black);
+}
+
+.row-bg-issue-up {
+  text-align: center;
+  background-color: var(--color-warning);
+  color: var(--color-solid-black);
 }
 
 .row-bg-no-changed {
@@ -1709,6 +1723,25 @@ main .search-terminal-bulk span {
 .qty-scanned-product {
   width: calc(50vh);
 }
+
+.qty-icon-south, .qty-icon-north, .qty-icon-check {
+  font-size: 7rem;
+  padding: 0.5rem;
+}
+
+.qty-icon-south {
+  color: var(--color-danger);
+}
+
+.qty-icon-north {
+  color: var(--color-warning);
+}
+
+.qty-icon-check {
+  color: var(--color-success);
+}
+
+
 
 .vibrate-3 {
   color: var(--color-danger);

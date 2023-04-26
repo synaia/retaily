@@ -309,7 +309,7 @@ async def __add_product_order_line(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/issue_order_line",  response_model=schemas.ProductOrder)
+@router.post("/issue_order_line")
 async def __issue_order_line(
                         line: schemas.ProductOrderLine,
                         db: Session = Depends(get_db),

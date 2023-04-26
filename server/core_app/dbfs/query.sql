@@ -515,6 +515,30 @@ SELECT
 
 --SELECT_FROM_PRODUCT_ORDER_BYID
 SELECT
+        (SELECT
+			  b.id
+		FROM
+			 bulk_order b, bulk_order_line bl
+		WHERE
+			 bl.bulk_order_id  = b.id
+		 AND bl.product_order_id = o.id
+       ) AS bulk_order_id,
+       (SELECT
+			  b.name
+		FROM
+			 bulk_order b, bulk_order_line bl
+		WHERE
+			 bl.bulk_order_id  = b.id
+		 AND bl.product_order_id = o.id
+       ) AS bulk_order_name,
+       (SELECT
+			  b.memo
+		FROM
+			 bulk_order b, bulk_order_line bl
+		WHERE
+			 bl.bulk_order_id  = b.id
+		 AND bl.product_order_id = o.id
+       ) AS bulk_order_memo,
        o.id,
        o.name,
        o.memo,
