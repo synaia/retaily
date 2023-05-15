@@ -33,6 +33,10 @@ export const OrderBulkResponse = () => {
     const qty_scanned_product = useRef();
     const scannbarcode_ref = useRef("");
 
+    const [issueCount, setIssueCount] = useState();
+    const [productCount, setProductCount] = useState();
+    const [valueCostOberved, setValueCostObserved] = useState();
+    const [valueCost, setValueCost] = useState();
 
 
     const onKewyDownEvent = (event) => {
@@ -119,13 +123,13 @@ export const OrderBulkResponse = () => {
                 clzList.add(vibrate)   
             }
             // my sound!
-            // beep(100, 50, 10 ).then( () => {
-            //     beep(100, 100, 10).then( () => {
-            //         beep(100, 50, 10).then( () => {
-            //             beep(100, 100, 10)
-            //         })
-            //     })
-            // })
+            beep(100, 50, 10 ).then( () => {
+                beep(100, 100, 10).then( () => {
+                    beep(100, 50, 10).then( () => {
+                        beep(100, 100, 10)
+                    })
+                })
+            })
         } else {
             // back to focus
             if (hasVibrate.length > 0) {
@@ -256,6 +260,12 @@ export const OrderBulkResponse = () => {
             }
             // search_order.current.select();
             // search_order.current.focus();
+
+            setIssueCount(__lines.filter(l => l.status == 'issue').length)
+            setProductCount(__lines.length)
+            setValueCostObserved(__lines.reduce((x, l) => {return x + (l.product.cost * l.quantity_observed)}, 0))
+            setValueCost(__lines.reduce((x, l) => {return x + (l.product.cost * l.quantity)}, 0))
+            console.log(__bulk)
         }
     }, [bulk_orders]);
 
@@ -504,11 +514,11 @@ export const OrderBulkResponse = () => {
                             </div>
                             <div className="info">
                                 <h3>{product_filtered.quantity_observed}</h3>
-                                <small className="text-muted"> Qty. O_0 Observed </small>
+                                <small className="text-muted"> Qty. Observed </small>
                             </div>
                         </div>
                     }
-                    <div>
+                    <div className="qty-div">
                         <input type="number" className="qty-scanned-product"
                                 ref={qty_scanned_product}
                         />
@@ -525,12 +535,61 @@ export const OrderBulkResponse = () => {
                            }
                         </>
                         }
-
-                        {loading && <Loading Text="Wating ... " />}
                     </div>
                 </div>
                 <div>
-                    <h2>TODO: Put resume here</h2>
+
+                    {bulk !=null &&
+                    <div className="resume-bulk">
+                        <div className="info">
+                            <p>{bulk.bulk_order_name}</p>
+                        </div>
+                        <div className="info">
+                            {bulk.orders.map((o, i) => (
+                                <span key={i}>{o.from_store.name} | </span>
+                            ))}
+                        </div>
+                    </div>
+                    }
+                    {issueCount != null &&
+                    <div className="resume-bulk">
+                        <div className="info">
+                            <h3>{productCount} / {issueCount}</h3>
+                            <small className="text-muted"> Products / Issue </small>
+                        </div>
+                        <div className="info">
+                            <h3>{F_(valueCost)}</h3>
+                            <small className="text-muted"> Valuable Cost </small>
+                        </div>
+                        <div className="info">
+                            <div className="info-qty-ob">
+                                <h3>{F_(valueCostOberved)}</h3>
+                                {(valueCost > valueCostOberved) &&
+                                  <span className="material-symbols-sharp qty-icon-south mini-icon">south</span>
+                                }
+                                {(valueCost < valueCostOberved) &&
+                                  <span className="material-symbols-sharp qty-icon-north mini-icon">north</span>
+                                }
+                                 {(valueCost == valueCostOberved) &&
+                                  <span className="material-symbols-sharp qty-icon-check mini-icon">check</span>
+                                }
+                            </div>
+                            <small className="text-muted"> Valuable Cost Oberved </small>
+                        </div>
+                        {(valueCost > valueCostOberved) &&
+                        <div className="info danger">
+                            <h3>{F_(valueCost - valueCostOberved)}</h3>
+                            <small className="text-muted"> Diference </small>
+                        </div>
+                        }
+                        {(valueCost < valueCostOberved) &&
+                        <div className="info warning">
+                            <h3>{F_(valueCostOberved - valueCost)}</h3>
+                            <small className="text-muted"> Diference </small>
+                        </div>
+                        }
+                    </div>
+                    }
                     <div className="search-terminal-c">
                         <div className="search-terminal">
                             <span className="material-icons-sharp"> search </span>

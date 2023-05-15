@@ -38,7 +38,7 @@ export const TakePhoto = () => {
       
         const options = {
             method: 'POST',
-            url: `https://10.0.0.6:8500/products/uploadfile/${client_uuid}`,
+            url: `https://10.0.0.62:8500/products/uploadfile/${client_uuid}`,
             headers: {
                 'Content-Type': 'multipart/form-data;',
             },

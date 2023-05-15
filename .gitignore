@@ -2,3 +2,13 @@
 /server/.idea/
 /.idea/
 /server/uploaded/
+/server/certs/10.0.0.6.crt
+/server/certs/10.0.0.6.csr
+/server/certs/10.0.0.6.ext
+/server/certs/10.0.0.6.key
+/server/certs/key.pem
+/server/certs/public.crt
+/server/certs/public.srl
+/client/snowpack.crt
+/client/snowpack.key
+/mysql_database/dbase.sql

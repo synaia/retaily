@@ -13,7 +13,7 @@ params = {
 response = requests.post('https://127.0.0.1:8500/users/token', params=params, headers=headers, verify=False)
 
 body = """// Generate With Python :)
-export const BACKEND_HOST = 'https://localhost:8500';
+export const BACKEND_HOST = 'https://10.0.0.6:8500';
 
 // constants for test pupuses
 export const TOKEN = 'TOKEN_KEY';
