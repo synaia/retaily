@@ -322,8 +322,8 @@ export const PurchaseOrderResponse = () => {
                         <small className="text-muted"> Memo</small>
                     </div>
                     <div className="info">
-                        <h3 className="name-inv">{order.name}</h3>
-                        <small className="text-muted"> Name </small>
+                        <h3 className="name-inv">{order.bulk_order_name} /{order.name}</h3>
+                        <small className="text-muted"> Bulk / Name  </small>
                     </div>
                     <div className="info">
                         <h3>{F_(order.value_in_order)}</h3>

@@ -6,10 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { addProductOrderLine, rollbackOrder } from "../redux/features/product.feature.js";
+import { addProductOrderLine, rollbackOrder, assignOrderToBulk } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
-
 
 
 import 'react-data-grid/lib/styles.css';
@@ -21,6 +20,7 @@ export const Purchase = () => {
     const navigator = useNavigate()
     const products_all_inv = useSelector((state) => state.product.products_all_inv);
     const orders = useSelector((state) => state.product.purchase_orders);
+    const bulk_orders = useSelector((state) => state.product.bulk_orders);
     const order_type = 'purchase';
     const [order, setOrder] = useState();
     const errorMessage = useSelector((state) => state.product.errorMessage);
@@ -362,6 +362,19 @@ export const Purchase = () => {
         }
         dispatch(rollbackOrder(args));
     };
+
+    const __assignOrderToBulk = (event) => {
+        const selected_order_id = event.target.value;
+        const args = {
+            'bulk_order_id': selected_order_id,
+            'product_order_id': params.order_id
+        }
+        dispatch(assignOrderToBulk(args));
+    };
+
+    useEffect(() => {
+        console.log(bulk_orders)
+    }, [bulk_orders]);
    
 
     let rollback_button = '';
@@ -400,8 +413,8 @@ export const Purchase = () => {
                         <small className="text-muted"> Memo</small>
                     </div>
                     <div className="info">
-                        <h3 className="name-inv">{order.name}</h3>
-                        <small className="text-muted"> Name </small>
+                        <h3 className="name-inv">{order.bulk_order_name} /{order.name}</h3>
+                        <small className="text-muted"> Bulk / Name  </small>
                     </div>
                     <div className="info">
                         <h3>{F_(order.value_in_order)}</h3>
@@ -412,13 +425,15 @@ export const Purchase = () => {
                         <small className="text-muted"> Products In Order / Issues</small>
                     </div>
                     <div className="info">
-                        <h3>{order.date_opened} / {order.date_closed}</h3>
-                        <small className="text-muted"> Date Open / Close</small>
+                        <h3>{order.date_opened} / {order.date_closed} / {order.user_requester} / {order.user_receiver}</h3>
+                        <small className="text-muted"> Date Open / Close / User Opener / Close</small>
                     </div>
-                    <div className="info">
-                        <h3>{order.user_requester} / {order.user_receiver}</h3>
-                        <small className="text-muted">User Opener / Close</small>
-                    </div>
+                    <select onChange={__assignOrderToBulk}>
+                        <option disabled selected value> -- select a bulk batch -- </option>
+                    {bulk_orders.map((o, i) => (
+                        <option key={i} value={o.bulk_order_id} onChange={() => __assignOrderToBulk}>{o.bulk_order_name}</option>
+                    ))}
+                    </select>
                 </div>
                 {rollback_button}
             </div>

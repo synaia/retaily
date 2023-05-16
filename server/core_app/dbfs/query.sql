@@ -820,3 +820,24 @@ SELECT g.id,
   FROM provider g
 ORDER BY g.id
 ;
+
+--CHECK_FOR_ORDER_IN_BULK
+SELECT
+       bl.id
+  FROM bulk_order_line bl
+WHERE bl.product_order_id = %s
+;
+
+--UPDATE_BULK_ORDER_LINE
+UPDATE
+      bulk_order_line bl
+  SET
+      bl.bulk_order_id = %s
+WHERE
+      bl.product_order_id = %s
+;
+
+--INSERT_BULK_ORDER_LINE
+INSERT INTO bulk_order_line (bulk_order_id, product_order_id)
+  VALUES (%s, %s)
+;

@@ -8,6 +8,7 @@ from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
 from server.core_app.product.product_schemas import ProductOrder, ProductOrderLine
+from server.core_app.product.product_schemas import BulkOrderLine
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
@@ -836,3 +837,23 @@ def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     }
 
     return response
+
+
+def assign_order_to_bulk(line: BulkOrderLine, db: Session, query: Query):
+    sql_raw_check = query.CHECK_FOR_ORDER_IN_BULK
+    sql_raw_update_bol = query.UPDATE_BULK_ORDER_LINE
+    sql_raw_insert_bol = query.INSERT_BULK_ORDER_LINE
+    cur = get_cursor(db)
+
+    data = (line.product_order_id,)
+    cur.execute(sql_raw_check, data)
+    resp = cur.fetchall()
+
+    if len(resp) > 0:   # update
+       data = (line.bulk_order_id, line.product_order_id)
+       cur.execute(sql_raw_update_bol, data)
+       cur.connection.commit()
+    else:              # insert
+        data = (line.bulk_order_id, line.product_order_id)
+        cur.execute(sql_raw_insert_bol, data)
+        cur.connection.commit()

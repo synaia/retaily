@@ -38,6 +38,7 @@ from server.core_app.product.product_query import (
     process_order,
     issue_order_line,
     rollback_order,
+    assign_order_to_bulk,
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -374,8 +375,8 @@ async def __rollback_order(
 
 
 @router.get("/bulk_order/{id}", response_model=list[schemas.ProductOrder])
-async def __read_product_order(
-                        id: int,
+async def __read_bulk_order(
+                        order_type: str,
                         db: Session = Depends(get_db),
                         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
@@ -385,6 +386,16 @@ async def __read_product_order(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
+@router.post("/assign_order_to_bulk",)
+async def __assign_order_to_bulk(
+                        line: schemas.BulkOrderLine,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return assign_order_to_bulk(line, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
 @router.post("/uploadfilelocal/{client_uuid}",)

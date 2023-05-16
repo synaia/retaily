@@ -130,3 +130,12 @@ class ProductOrder(BaseModelExt):
 
     class Config:
         orm_mode = True
+
+
+class BulkOrderLine(BaseModelExt):
+    id: int | None = None
+    bulk_order_id: int | None = None
+    product_order_id: int | None = None
+
+    class Config:
+        orm_mode = True

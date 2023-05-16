@@ -380,6 +380,16 @@ export const getPurchaseProductOrders = createAsyncThunk('product/purchase_produ
 });
 
 
+export const assignOrderToBulk = createAsyncThunk('product/assign_order_to_bulk', async (line, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/assign_order_to_bulk`, line,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
 
 const updateSaleDetail = (productPickedList) => {
     const gran_total = productPickedList.reduce((x, p) => {
