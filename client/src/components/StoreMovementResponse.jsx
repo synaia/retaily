@@ -253,7 +253,8 @@ export const StoreMovementResponse = () => {
     const __processOrder = () => {
         const args = {
             'id': order.id,
-            'user_receiver': 'USERLOGUED'
+            'user_receiver': 'USERLOGUED',
+            "order_type": order_type
         }
         dispatch(processOrder(args));
     };

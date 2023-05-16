@@ -23,6 +23,16 @@ export const PurchaseOrderListResponse = () => {
         console.log(stores)
     }, [stores]);
 
+    const isBulkClosed = (bulky) => {
+        let flag = true
+        bulky.orders.forEach(bo => {
+            if (bo.status != "closed") {
+                flag = false
+                return;
+            }
+        })
+        return flag
+    }
 
     return (
         <React.Fragment>
@@ -32,11 +42,20 @@ export const PurchaseOrderListResponse = () => {
             { bulk_orders.map( (bulklist, y) => (
                 <React.Fragment key={y} >
                 <li >
-                    <div className="sticky treehead" onClick={() =>  navigator(`/admin/inventory/bulk/${bulklist.bulk_order_id}`, {replace: false})}>
+                    <div className="sticky treehead" onClick={() =>  {
+                        if (!isBulkClosed(bulklist)) {
+                            return navigator(`/admin/inventory/bulk/${bulklist.bulk_order_id}`, {replace: false})
+                        } else {
+                            return
+                        }
+                     }}>
                         {/* <span className="material-icons-sharp"> tour </span> */}
                         <span className="material-icons-sharp"> flash_on </span>
                         <div className="info">
-                            <h3>{bulklist.bulk_order_name}</h3>
+                            <h3>{bulklist.bulk_order_name} {isBulkClosed(bulklist) && 
+                                 <span className="material-icons-sharp "> lock </span>
+                                }
+                            </h3>
                             <small className="text-muted"> {bulklist.bulk_order_memo}</small>
                         </div>
                     </div>
