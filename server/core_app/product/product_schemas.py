@@ -132,6 +132,17 @@ class ProductOrder(BaseModelExt):
         orm_mode = True
 
 
+class BulkOrder(BaseModelExt):
+    id: int | None = None
+    name: str | None = None
+    memo: str | None = None
+    user_create: str | None = None
+    date_create: datetime | None = None
+
+    class Config:
+        orm_mode = True
+
+
 class BulkOrderLine(BaseModelExt):
     id: int | None = None
     bulk_order_id: int | None = None

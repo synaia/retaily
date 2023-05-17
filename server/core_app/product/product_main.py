@@ -39,6 +39,8 @@ from server.core_app.product.product_query import (
     issue_order_line,
     rollback_order,
     assign_order_to_bulk,
+    read_bulk_order,
+    add_bulk_order
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -394,6 +396,29 @@ async def __assign_order_to_bulk(
 ):
     try:
         return assign_order_to_bulk(line, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/read_bulk_order", response_model=list[schemas.BulkOrder])
+async def __read_bulk_order(
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_bulk_order(db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/add_bulk_order", response_model=list[schemas.BulkOrder])
+async def __add_bulk_order(
+                        bo: schemas.BulkOrder,
+                        db: Session = Depends(get_db),
+                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return add_bulk_order(bo, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

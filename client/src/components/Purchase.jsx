@@ -20,7 +20,7 @@ export const Purchase = () => {
     const navigator = useNavigate()
     const products_all_inv = useSelector((state) => state.product.products_all_inv);
     const orders = useSelector((state) => state.product.purchase_orders);
-    const bulk_orders = useSelector((state) => state.product.bulk_orders);
+    const bulk_labels = useSelector((state) => state.product.bulk_labels);
     const order_type = 'purchase';
     const [order, setOrder] = useState();
     const errorMessage = useSelector((state) => state.product.errorMessage);
@@ -373,8 +373,8 @@ export const Purchase = () => {
     };
 
     useEffect(() => {
-        console.log(bulk_orders)
-    }, [bulk_orders]);
+        console.log(bulk_labels)
+    }, [bulk_labels]);
    
 
     let rollback_button = '';
@@ -430,8 +430,8 @@ export const Purchase = () => {
                     </div>
                     <select onChange={__assignOrderToBulk}>
                         <option disabled selected value> -- select a bulk batch -- </option>
-                    {bulk_orders.map((o, i) => (
-                        <option key={i} value={o.bulk_order_id} onChange={() => __assignOrderToBulk}>{o.bulk_order_name}</option>
+                    {bulk_labels.map((o, i) => (
+                        <option key={i} value={o.id} onChange={() => __assignOrderToBulk}>{o.name}</option>
                     ))}
                     </select>
                 </div>

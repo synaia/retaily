@@ -20,6 +20,7 @@ import { getProductsAllInventory } from "../redux/features/product.feature.js";
 import { getMovProductOrders } from "../redux/features/product.feature.js";
 import { getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { loadProviders } from "../redux/features/provider.feature.js";
+import { getBulkOrder } from  "../redux/features/product.feature.js";
 
 
 
@@ -36,6 +37,7 @@ export const Init = () => {
     dispatch(getMovProductOrders());
     dispatch(getPurchaseProductOrders());
     dispatch(loadProviders());
+    dispatch(getBulkOrder());
 
     return (
         <React.Fragment></React.Fragment>

@@ -8,7 +8,7 @@ from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
 from server.core_app.product.product_schemas import ProductOrder, ProductOrderLine
-from server.core_app.product.product_schemas import BulkOrderLine
+from server.core_app.product.product_schemas import BulkOrderLine, BulkOrder
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
@@ -857,3 +857,33 @@ def assign_order_to_bulk(line: BulkOrderLine, db: Session, query: Query):
         data = (line.bulk_order_id, line.product_order_id)
         cur.execute(sql_raw_insert_bol, data)
         cur.connection.commit()
+
+
+def read_bulk_order(db: Session, query: Query):
+    sql_raw = query.SELECT_BULK_ORDER
+    bulks = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+
+    for rp in resp:
+        bo = BulkOrder()
+        bo.id = rp['id']
+        bo.name = rp['name']
+        bo.memo = rp['memo']
+        bo.date_create = rp['date_create']
+        bo.user_create = rp['user_create']
+        bulks.append(bo)
+
+    return bulks
+
+
+def add_bulk_order(bulk: BulkOrder, db: Session, query: Query):
+    sql_raw_insert_bo = query.INSERT_BULK_ORDER
+    cur = get_cursor(db)
+
+    data = (bulk.name, bulk.memo, bulk.user_create)
+    cur.execute(sql_raw_insert_bo, data)
+    cur.connection.commit()
+
+    return read_bulk_order(db, query)

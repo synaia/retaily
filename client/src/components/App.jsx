@@ -33,16 +33,17 @@ import { Purchase } from "./Purchase";
 import { PurchaseOrderListResponse } from "./PurchaseOrderListResponse";
 import { PurchaseOrderResponse } from "./PurchaseOrderResponse";
 import { OrderBulkResponse } from "./OrderBulkResponse";
+import { BulkLabelList } from "./BulkLabelList";
 
 import package_file from "../../package.json";
 import { Theme } from "./Theme";
+
 
 
 export const App = () => {
   // useEffect(() => {
   //     document.title = `${package_file.name} ${package_file.version}`;
   // }, []);
-
 
 
     return (
@@ -78,6 +79,7 @@ export const App = () => {
                   <Route path="/admin/inventory/purchaseresp" element={<AdminBoard Content={<PurchaseOrderListResponse />} Title="Receive: Purchase Order List" />} />
                   <Route path="/admin/inventory/purchaseresp/:order_id" element={<AdminBoard Content={<PurchaseOrderResponse />} Title="Receive: Purchase Order" />} />
                   <Route path="/admin/inventory/bulk/:bulk_id" element={<AdminBoardBulk Content={<OrderBulkResponse />} Title="Bulk Order Process" />} />
+                  <Route path="/admin/inventory/bulklist" element={<AdminBoard Content={<BulkLabelList />} Title="New Bulk" />} />
                 </Routes>
               </Provider>
             </HashRouter>

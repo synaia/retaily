@@ -841,3 +841,20 @@ WHERE
 INSERT INTO bulk_order_line (bulk_order_id, product_order_id)
   VALUES (%s, %s)
 ;
+
+--INSERT_BULK_ORDER
+INSERT INTO bulk_order (name, memo, user_create)
+  VALUES (%s, %s, %s)
+;
+
+
+--SELECT_BULK_ORDER
+SELECT
+      bl.id,
+      bl.name,
+      bl.memo,
+      bl.date_create,
+      bl.user_create
+  FROM bulk_order bl
+ORDER BY bl.id DESC
+;

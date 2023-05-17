@@ -32,6 +32,7 @@ const initialState = {
     orders: [],
     purchase_orders: [],
     bulk_orders: [],
+    bulk_labels: [],
     sale: {
         'client': null, 
         'products': [], 
@@ -382,6 +383,26 @@ export const getPurchaseProductOrders = createAsyncThunk('product/purchase_produ
 
 export const assignOrderToBulk = createAsyncThunk('product/assign_order_to_bulk', async (line, ) => {
     let response = await Axios.post(`${BACKEND_HOST}/products/assign_order_to_bulk`, line,  {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+export const getBulkOrder = createAsyncThunk('product/read_bulk_order', async () => {
+    let response = await Axios.get(`${BACKEND_HOST}/products/read_bulk_order`,   {
+        headers: {
+            'Authorization': `bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        }
+    });
+    return response.data;
+});
+
+export const addBulkOrder = createAsyncThunk('product/add_bulk_order', async (line, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_bulk_order`, line,  {
         headers: {
             'Authorization': `bearer ${TOKEN}`,
             'Content-Type': 'application/json',
@@ -995,6 +1016,26 @@ const productsSlice = createSlice({
         }).addCase(issueProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`
+        });
+
+        builder.addCase(getBulkOrder.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getBulkOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            state.bulk_labels = action.payload;
+        }).addCase(getBulkOrder.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getBulkOrder() ; ${action.error.message}`
+        });
+
+        builder.addCase(addBulkOrder.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(addBulkOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            state.bulk_labels = action.payload;
+        }).addCase(addBulkOrder.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getBulkOrder() ; ${action.error.message}`
         });
         
     }

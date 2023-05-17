@@ -58,6 +58,11 @@ export const Inventory = () => {
                     <span className="material-icons-sharp"> layers </span>
                         <span>Store List</span>
                 </button>
+                <button className="fbutton-inventory fbutton-green" onClick={() => navigator(`bulklist/`, {replace: false})} 
+                        data-invoice-status="all">
+                    <span className="material-icons-sharp"> layers </span>
+                        <span>Bulk New</span>
+                </button>
                 <button className="fbutton-inventory fbutton-orange" onClick={() => navigator(`storemov/`, {replace: false})}  
                         data-invoice-status="open">
                         <span className="material-icons-sharp"> layers </span>
