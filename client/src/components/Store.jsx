@@ -182,6 +182,7 @@ export const Store = () => {
                 { key: 'id', name: 'ID', width: 10 },
                 { key: 'name', name: 'Product', resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
+                { key: 'cost', name: 'Cost', width: 100 },
                 { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
                 }},
@@ -192,6 +193,7 @@ export const Store = () => {
                 { key: 'id', name: 'ID', width: 10 },
                 { key: 'name', name: 'Product', resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
+                { key: 'cost', name: 'Cost', width: 100 },
                 { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
                 }},

@@ -160,11 +160,14 @@ def read_inv_products(store_name: str, db: Session, query: Query):
 
         products.append(product)
         # sort changed to top
-        products = sorted(products, key=lambda p: p.inventory[0].status, reverse=False)
+        try:
+            products = sorted(products, key=lambda p: p.inventory[0].status, reverse=False)
+        except Exception as ex:
+            print(ex)
 
         # some resume info
         changed_count = len([p for p in products if p.inventory[0].status == 'changed'])
-        inv_valuation = np.sum([(p.cost * p.inventory[0].quantity) for p in products])
+        inv_valuation = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.active == 1 and p.inventory[0].quantity > 0])
         inv_valuation_changed = np.sum([(p.cost * p.inventory[0].next_quantity) for p in products if p.inventory[0].status == 'changed'])
         inv_valuation_not_changed = np.sum([(p.cost * p.inventory[0].quantity) for p in products if p.inventory[0].status != 'changed'])
 

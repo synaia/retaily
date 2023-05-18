@@ -419,6 +419,8 @@ FROM app_inventory i, app_store st, product p
  WHERE
 	  st.id = i.store_id
   AND i.product_id = p.id
+  AND p.active = 1
+  AND i.quantity > 0
   AND st.name = %s
 ;
 
@@ -430,6 +432,8 @@ FROM app_inventory i, app_store st, product p
  WHERE
 	  st.id = i.store_id
   AND i.product_id = p.id
+  AND p.active = 1
+  AND i.quantity > 0
   AND i.status = 'changed'
   AND st.name = %s
 ;
