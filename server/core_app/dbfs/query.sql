@@ -35,6 +35,36 @@ SELECT
   ORDER BY p.id DESC
 ;
 
+--SELECT_ALL_PRODUCT_DATE_ORDERED
+SELECT
+    p.id,
+    p.name,
+    p.cost,
+    p.price,
+    p.margin,
+    p.code,
+    p.img_path,
+    p.date_create,
+    p.active,
+    p.image_raw,
+    (SELECT  i.last_update
+       FROM app_inventory i
+       WHERE
+             i.product_id = p.id
+	     AND i.last_update = (SELECT MAX(x.last_update)
+                                  FROM app_inventory x
+								WHERE x.store_id = %s
+								  AND  x.product_id = p.id
+                                 LIMIT 1)
+      LIMIT 1
+	)
+    AS last_update_inv
+  FROM product  p
+   WHERE
+      p.active = 1
+  ORDER BY COALESCE(last_update_inv, p.date_create) DESC
+;
+
 --SELECT_ALL_PRODUCT_BY_ID
 SELECT
     p.id,

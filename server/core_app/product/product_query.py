@@ -115,6 +115,7 @@ def read_pricing_labels(db: Session, query: Query):
     return pricings
 
 
+# deprecated
 def read_inv_products(store_name: str, db: Session, query: Query):
     sql_raw = query.SELECT_ALL_PRODUCT
     sql_raw_product_inv = query.SELECT_PRODUCT_INV
@@ -182,16 +183,16 @@ def read_inv_products(store_name: str, db: Session, query: Query):
     return result
 
 
-def read_all_inv_products(db: Session, query: Query):
-    sql_raw: str = query.SELECT_ALL_PRODUCT
+def read_all_inv_products(store_id: int, db: Session, query: Query):
+    sql_raw: str = query.SELECT_ALL_PRODUCT_DATE_ORDERED
     sql_raw_product_inv: str = query.SELECT_PRODUCT_ALL_INV
 
     products: list = []
     count_resume: dict = {}
 
     cur = get_cursor(db)
-
-    cur.execute(sql_raw)
+    data = (store_id,)
+    cur.execute(sql_raw, data)
 
     resp = cur.fetchall()
 
@@ -397,7 +398,7 @@ def read_stores_inv(db: Session, query: Query):
 
         cur.execute(sql_raw_inv_valuation, (store.name,))
         iv = cur.fetchall()
-        inv_valuation = iv[0]['inv_valuation']
+        inv_valuation = 0 if iv[0]['inv_valuation'] is None else iv[0]['inv_valuation']
 
         cur.execute(sql_raw_inv_valuation_changed, (store.name,))
         ivc = cur.fetchall()
@@ -798,7 +799,13 @@ def process_order(product_order: ProductOrder, db: Session, query: Query):
     line = ProductOrderLine()
     line.product_order_id = product_order.id
     line.order_type = product_order.order_type
-    return read_product_order_by_id(line, db, query)
+
+    response: list = {
+            'order': read_product_order_by_id(line, db, query),
+            'line': line
+    }
+
+    return response
 
 
 def rollback_order(product_order: ProductOrder, db: Session, query: Query):
@@ -823,7 +830,13 @@ def rollback_order(product_order: ProductOrder, db: Session, query: Query):
     line = ProductOrderLine()
     line.product_order_id = product_order.id
     line.order_type = product_order.order_type
-    return read_product_order_by_id(line, db, query)
+
+    response: list = {
+            'order': read_product_order_by_id(line, db, query),
+            'line': line
+    }
+
+    return response
 
 
 def issue_order_line(line: ProductOrderLine, db: Session, query: Query):

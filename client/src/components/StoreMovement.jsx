@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
+import { getProductsAllInventory } from "../redux/features/product.feature.js";
 import { addProductOrderLine, rollbackOrder } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
@@ -39,6 +40,12 @@ export const StoreMovement = () => {
 
     const [productFoundLeft, SetProductFoundLeft] = useState(0);
     const [productFoundRight, SetProductFoundRight] = useState(0);
+
+    useEffect(() => {
+        if (order != null) {
+            dispatch(getProductsAllInventory(order.from_store.id));   
+        }
+    }, [order]);
 
 
     const get_rows_from_products = (__products, __order) => {

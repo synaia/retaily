@@ -85,9 +85,9 @@ export const getProductsByInventory = createAsyncThunk('products/getProductsByIn
 });
 
 
-export const getProductsAllInventory = createAsyncThunk('products/all_inv_new_version', async () => {
-    console.log('getProductsAllInventory: [products, count_resume]');
-    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv_new_version`, {
+export const getProductsAllInventory = createAsyncThunk('products/all_inv_new_version', async (store_id) => {
+    console.log('getProductsAllInventory: [products, count_resume] store_id', store_id);
+    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv_new_version/${store_id}`, {
         headers: {
             'Authorization': `bearer ${TOKEN}`,
             'store': STORE

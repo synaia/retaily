@@ -94,6 +94,7 @@ async def get_products(
     return products
 
 
+# deprecated
 @router.get("/all_inv",)
 async def get_all_inv_products(
         store_name: str,
@@ -105,14 +106,15 @@ async def get_all_inv_products(
     return products
 
 
-@router.get("/all_inv_new_version",)
+@router.get("/all_inv_new_version/{store_id}",)
 async def __all_inv_new_version(
+        store_id: int,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
         user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        products = read_all_inv_products(db, query)
+        products = read_all_inv_products(store_id, db, query)
         return products
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
@@ -352,7 +354,7 @@ async def __read_product_order_by_id(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/process_order", response_model=schemas.ProductOrder)
+@router.post("/process_order",)
 async def __process_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),
@@ -364,7 +366,7 @@ async def __process_order(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.post("/rollback_order", response_model=schemas.ProductOrder)
+@router.post("/rollback_order",)
 async def __rollback_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),
