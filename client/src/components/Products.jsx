@@ -11,6 +11,7 @@ import 'react-data-grid/lib/styles.css';
 export const Products = () => {
     const products = useSelector((state) => state.product.all_products);
     const pricing_labels = useSelector((state) => state.product.pricing_labels);
+    const stores = useSelector((state) => state.product.stores);
     const theme = useSelector((state) => state.user.theme);
     const dispatch = useDispatch();
     const [cellNavigationMode, setCellNavigationMode] = useState('NONE');
@@ -27,8 +28,13 @@ export const Products = () => {
         // ];
         const price_columns = [];
         pricing_labels.forEach( label => {
-            price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, pricing_id: label.id});
+            price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, width: 200, pricing_id: label.id});
             // return true;
+        });
+
+        const store_columns  = [];
+        stores.forEach( st => {
+            store_columns.push({ key: st.name, name: st.name});
         });
 
         // console.log(price_columns);
@@ -61,6 +67,7 @@ export const Products = () => {
             },
             ...first_columns,
             ...price_columns,
+            ...store_columns,
             { key: 'code', name: 'SKU', width: 100, editor: textEditor },
           ];
     }); 
@@ -82,6 +89,12 @@ export const Products = () => {
                 const price = list.price;
                 const pricelist_name = list.pricing.price_key;
                 row[pricelist_name] = price;
+            });
+
+            product.inventory.forEach(inv => {
+                const quantity = inv.quantity;
+                const store_name = inv.store.name;
+                row[store_name] = quantity;
             });
     
             _rows_.push(row)

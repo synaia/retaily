@@ -53,6 +53,7 @@ def read_products(store: str, db: Session, query: Query):
 def read_all_products(db: Session, query: Query, product_id: int = -1):
     sql_raw = query.SELECT_ALL_PRODUCT if product_id == -1 else query.SELECT_ALL_PRODUCT_BY_ID
     sql_raw_pricinglist = query.SELECT_PRICING_LIST
+    sql_raw_invlist = query.SELECT_PRODUCT_ALL_INV
 
     products = []
 
@@ -93,6 +94,24 @@ def read_all_products(db: Session, query: Query, product_id: int = -1):
             li.pricing = pri
             plist.append(li)
         product.pricinglist = plist
+
+        cur.execute(sql_raw_invlist, (product.id,))
+        inv = cur.fetchall()
+        invlist = []
+        for l in inv:
+            inventory = models.Inventory()
+            store = models.Store()
+            inventory.id = l['id']
+            inventory.prev_quantity = l['prev_quantity']
+            inventory.quantity = l['quantity']
+            inventory.next_quantity = l['next_quantity']
+            inventory.status = l['status']
+            store.id = l['store_id']
+            store.name = l['name']
+            inventory.store = store
+            invlist.append(inventory)
+        product.inventory = invlist
+
         products.append(product)
 
     return products
