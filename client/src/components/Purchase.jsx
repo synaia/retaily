@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { addProductOrderLine, rollbackOrder, assignOrderToBulk } from "../redux/features/product.feature.js";
+import { addProductOrderLine, rollbackOrder, assignOrderToBulk, getProductsAllInventory } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
 
@@ -39,6 +39,13 @@ export const Purchase = () => {
 
     const [productFoundLeft, SetProductFoundLeft] = useState(0);
     const [productFoundRight, SetProductFoundRight] = useState(0);
+
+    useEffect(() => {
+        if (order != null) {
+            const fake_id = -1;
+            dispatch(getProductsAllInventory(fake_id));   
+        }
+    }, [order]);
 
 
     const get_rows_from_products = (__products, __order) => {
@@ -141,7 +148,7 @@ export const Purchase = () => {
             { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity}</div>;
             }},
-            { key: 'quantity_to_move', name: 'Move Quantity', editor: textEditor, width: 100, formatter: ({ row }) => {
+            { key: 'quantity_to_move', name: 'Purchase Qty', editor: textEditor, width: 100, formatter: ({ row }) => {
                 const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
                 return <div className={row_bg_issue}>{row.quantity_to_move}</div>;
             }}

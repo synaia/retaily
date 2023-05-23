@@ -184,7 +184,7 @@ def read_inv_products(store_name: str, db: Session, query: Query):
 
 
 def read_all_inv_products(store_id: int, db: Session, query: Query):
-    sql_raw: str = query.SELECT_ALL_PRODUCT_DATE_ORDERED
+    sql_raw: str = query.SELECT_ALL_PRODUCT_DATE_ORDERED if store_id > 0 else query.SELECT_ALL_PRODUCT
     sql_raw_product_inv: str = query.SELECT_PRODUCT_ALL_INV
 
     products: list = []
@@ -192,7 +192,11 @@ def read_all_inv_products(store_id: int, db: Session, query: Query):
 
     cur = get_cursor(db)
     data = (store_id,)
-    cur.execute(sql_raw, data)
+
+    if store_id > 0:
+        cur.execute(sql_raw, data)
+    else:
+        cur.execute(sql_raw)
 
     resp = cur.fetchall()
 
@@ -721,9 +725,10 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
     if line_count == 0: # add quantity
         # substract quantity from store
         if line.quantity != 0:
-            data = (line.quantity, line.user_receiver, line.from_store.id, line.product_id)
-            cur.execute(sql_raw_substract_from_store, data)
-            cur.connection.commit()
+            if line.order_type != 'purchase':
+                data = (line.quantity, line.user_receiver, line.from_store.id, line.product_id)
+                cur.execute(sql_raw_substract_from_store, data)
+                cur.connection.commit()
 
             # reserve quantity
             data = (line.product_id, line.from_store.id, line.to_store.id, line.product_order_id, line.quantity, line.quantity)
@@ -738,9 +743,10 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
         product_order_status = resp[0]['status']
         abs_quantity = line.quantity - product_order_quantity
 
-        data = (abs_quantity, line.user_receiver, line.from_store.id, line.product_id)
-        cur.execute(sql_raw_substract_from_store_dtpq, data)
-        cur.connection.commit()
+        if line.order_type != 'purchase':
+            data = (abs_quantity, line.user_receiver, line.from_store.id, line.product_id)
+            cur.execute(sql_raw_substract_from_store_dtpq, data)
+            cur.connection.commit()
 
         if line.quantity == 0:
             data = (line.product_order_id, line.product_id)
@@ -772,17 +778,18 @@ def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
 
 
 def process_order(product_order: ProductOrder, db: Session, query: Query):
-    sql_raw_process_app_inv = query.PROCESS_APP_INVENTORY
+    #// --> TODO: prev_quantity IS 0 CERO
     sql_raw_process_app_inv_issue_back = query.PROCESS_APP_INVENTORY_ISSUE_BACK
+    sql_raw_process_app_inv = query.PROCESS_APP_INVENTORY
     sql_raw_process_order_line = query.UPDATE_ORDER_LINE_PROCESS
     sql_raw_product_order_process = query.UPDATE_PRODUCT_ORDER_PROCESS
 
     cur = get_cursor(db)
-
     # first: check for any issue correction.
-    data = (product_order.id, product_order.user_receiver)
-    cur.execute(sql_raw_process_app_inv_issue_back, data)
-    cur.connection.commit()
+    if product_order.order_type != 'purchase':
+        data = (product_order.id, product_order.user_receiver)
+        cur.execute(sql_raw_process_app_inv_issue_back, data)
+        cur.connection.commit()
 
     data = (product_order.id, product_order.user_receiver)
     cur.execute(sql_raw_process_app_inv, data)
@@ -814,10 +821,10 @@ def rollback_order(product_order: ProductOrder, db: Session, query: Query):
     sql_raw_cancel_order = query.CANCEL_ORDER
 
     cur = get_cursor(db)
-
-    data = (product_order.id, product_order.user_receiver)
-    cur.execute(sql_raw_rollback_app_inv, data)
-    cur.connection.commit()
+    if product_order.order_type != 'purchase':
+        data = (product_order.id, product_order.user_receiver)
+        cur.execute(sql_raw_rollback_app_inv, data)
+        cur.connection.commit()
 
     data = (product_order.id,)
     cur.execute(sql_raw_cancel_order_line, data)

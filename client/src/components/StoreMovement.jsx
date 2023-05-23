@@ -292,16 +292,19 @@ export const StoreMovement = () => {
         const cInventoryList = products_all_inv[pIndex].inventory;
         const cIndex = cInventoryList.findIndex(i => i.store.id == from_origin_id);
         const available_quantity = cInventoryList[cIndex].prev_quantity;
+        //TODO: prev_quantity IS 0 CERO, *****      Why prev_quantity???
 
         if (qty < 0) {
             alert('NON NEG QTY please');
             return;
         }
 
-       if (available_quantity < qty) {
-            alert('QUANTITY EXCEDED');
-            return;
-       }
+        //TODO: prev_quantity IS 0 CERO
+
+    //    if (available_quantity < qty) {
+    //         alert('QUANTITY EXCEDED');
+    //         return;
+    //    }
 
         const args = {
             "product_id": product_id,

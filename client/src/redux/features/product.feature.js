@@ -680,6 +680,7 @@ const refreshBulkyList = (state, action) => {
 
         return bulk.bulk_order_id  == order.bulk_order_id
     });
+    //TODO: bug bug here .lines <<< not defined on udpdate qty Movement Response.
     const __orderlines = [...__bulk_orders[idxorder].lines];
     const m2 = beauty(__orderlines);
     const idxline = __orderlines.findIndex(ln => ln.product.id == line.product_id);
