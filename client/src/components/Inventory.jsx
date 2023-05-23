@@ -52,99 +52,116 @@ export const Inventory = () => {
 
     return (
         <React.Fragment>
-            <div className="inventory-bar">
-                <button className="fbutton-inventory fbutton-green" onClick={() => navigator(`store/`, {replace: false})} 
-                        data-invoice-status="all">
-                    <span className="material-icons-sharp"> layers </span>
-                        <span>Store List</span>
-                </button>
-                <button className="fbutton-inventory fbutton-green" onClick={() => navigator(`bulklist/`, {replace: false})} 
-                        data-invoice-status="all">
-                    <span className="material-icons-sharp"> layers </span>
-                        <span>Bulk New</span>
-                </button>
-                <button className="fbutton-inventory fbutton-orange" onClick={() => navigator(`storemov/`, {replace: false})}  
-                        data-invoice-status="open">
-                        <span className="material-icons-sharp"> layers </span>
-                        <span>Request: Inventory Mov.</span>
-                </button>
-                <button className="fbutton-inventory fbutton-purple" onClick={() => navigator(`storemovresp/`, {replace: false})} 
-                        data-invoice-status="close">
-                        <span className="material-icons-sharp"> layers </span>
-                        <span>Response: Inventory Mov.</span>
-                </button>
-                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`purchase/`, {replace: false})} 
-                        data-invoice-status="close">
-                        <span className="material-icons-sharp"> layers </span>
-                        <span>Purchases Orders</span>
-                </button>
-                <button className="fbutton-inventory fbutton-red" onClick={() => navigator(`purchaseresp/`, {replace: false})} 
-                        data-invoice-status="close">
-                        <span className="material-icons-sharp"> layers </span>
-                        <span>Receive: Purchases Orders</span>
-                </button>
-            </div>
-
             <div className="insights">
-                {/* <!-- SALES --> */}
-                <div className="sales" onClick={() => navigator('products', {replace: false})}>
-                    <span className="material-icons-sharp"> analytics </span>
-                    <div className="middle">
-                        <div className="left">
-                            <h2>PRODUCTS</h2>
-                            <h3>$25,024</h3>
-                        </div>
-                        <div className="progress">
-                            <svg>
-                                <circle cx="38" cy="38" r="36"></circle>
-                            </svg>
-                            <div className="number">
-                                <p>81%</p>
+            <div className="inventory-resume " onClick={() => navigator(`products/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp inv-success"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Products</h3>
                             </div>
                         </div>
                     </div>
-                    <small className="text-muted"> Last 24 hours </small>
                 </div>
-
-                <div className="expenses"  onClick={() => navigator('pricelist', {replace: false})}>
-                    <span className="material-icons-sharp"> bar_chart </span>
-                        <div className="middle">
-                            <div className="left">
-                                <h2>PRICE LIST</h2>
-                                <h3>$14,160</h3>
-                            </div>
-                            <div className="progress">
-                                <svg>
-                                    <circle cx="38" cy="38" r="36"></circle>
-                                </svg>
-                                <div className="number">
-                                    <p>62%</p>
-                                </div>
-                            </div>
-                        </div>
-                    <small className="text-muted"> Last 24 hours </small>
-                </div>
-
-                {/* <!-- INCOME --> */}
-                <div className="income" onClick={() => navigator('newproduct', {replace: false})}>
-                    <span className="material-icons-sharp"> stacked_line_chart </span>
-                    <div className="middle">
-                        <div className="left">
-                            <h2>ADD PRODUCT</h2>
-                            <h3>$10,864</h3>
-                        </div>
-                        <div className="progress">
-                            <svg>
-                                <circle cx="38" cy="38" r="36"></circle>
-                            </svg>
-                            <div className="number">
-                                <p>44%</p>
+                <div className="inventory-resume" onClick={() => navigator(`pricelist/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp inv-success"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Price List</h3>
                             </div>
                         </div>
                     </div>
-                    <small className="text-muted"> Last 24 hours </small>
                 </div>
-        </div>
+                <div className="inventory-resume" onClick={() => navigator(`newproduct/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp inv-success"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>New Product</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`store/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Store List</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`bulklist/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Bulk New</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`storemov/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Request: Inventory Mov</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`storemovresp/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Response: Inventory Mov.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`purchase/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Purchases Orders</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`purchaseresp/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Receive: Purchases Orders</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </React.Fragment>
     )
 };

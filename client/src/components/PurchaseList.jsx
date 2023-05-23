@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 
 import { F_, validateInputX } from "../util/Utils";
-import { addProductOrder, getInventoryHeadByStoreId } from "../redux/features/product.feature.js";
+import { addProductOrder, getInventoryHeadByStoreId, getPurchaseProductOrders, cleanBulkOrders } from "../redux/features/product.feature.js";
 
 
 export const PurchaseList = () => {
@@ -64,8 +64,11 @@ export const PurchaseList = () => {
     };
 
     useEffect(() => {
-        console.log(stores)
-    }, [stores]);
+        dispatch(getPurchaseProductOrders());
+        return () => { 
+            dispatch(cleanBulkOrders());
+        }
+    }, []);
 
     const OnChangeOrigin = () => {
         SetToStores(stores);

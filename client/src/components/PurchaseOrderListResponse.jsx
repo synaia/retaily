@@ -3,12 +3,15 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
+import { getPurchaseProductOrders, cleanBulkOrders } from "../redux/features/product.feature.js";
+
 
 import { F_ } from "../util/Utils";
 
 
 export const PurchaseOrderListResponse = () => {
     const navigator = useNavigate();
+    const dispatch = useDispatch();
     const params = useParams();
     const order_type = 'movement';
 
@@ -20,8 +23,11 @@ export const PurchaseOrderListResponse = () => {
 
 
     useEffect(() => {
-        console.log(stores)
-    }, [stores]);
+        dispatch(getPurchaseProductOrders());
+        return () => { 
+            dispatch(cleanBulkOrders());
+        }
+    }, []);
 
     const isBulkClosed = (bulky) => {
         let flag = true

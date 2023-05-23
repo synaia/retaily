@@ -709,6 +709,7 @@ const refreshBulkyList = (state, action) => {
     // fromPurchaseToBulk(state.purchase_orders, state);
 }
 
+
 const fromPurchaseToBulk = (__purchase_orders, state) => {
     let __bulk_orders = [...state.bulk_orders];
 
@@ -760,6 +761,9 @@ const productsSlice = createSlice({
         pickNewClientAction: pickNewClient,
         discardSaleAction: discardSale,
         refreshProductListAction: refreshProductList,
+        cleanBulkOrders: (state, action) => {
+            state.bulk_orders = [];
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -972,7 +976,12 @@ const productsSlice = createSlice({
             state.loading = true;
         }).addCase(addProductOrder.fulfilled, (state, action) => {
             state.loading = false;
-            state.orders = action.payload
+            const { order_type } = action.meta.arg;
+            if (order_type == 'purchase') {
+                state.purchase_orders = action.payload;
+            } else {
+                state.orders = action.payload;
+            }
         }).addCase(addProductOrder.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR addProductOrder() ; ${action.error.message}`
@@ -1051,7 +1060,8 @@ export const {
     pickClientAction, 
     pickNewClientAction,
     discardSaleAction,
-    refreshProductListAction
+    refreshProductListAction,
+    cleanBulkOrders
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
