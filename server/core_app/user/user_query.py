@@ -41,6 +41,7 @@ class Token(BaseModel):
     token_type: str
     scopes: List[str] = []
     stores: List[str] = []
+    pic: str | None = None
 
 
 class TokenData(BaseModel):

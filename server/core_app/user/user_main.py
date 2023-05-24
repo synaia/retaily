@@ -61,7 +61,13 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
         data={"sub": user.username, "scopes": scopes, "stores": stores, "is_active": user.is_active},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer", "scopes": scopes, "stores": stores}
+    return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "scopes": scopes,
+            "stores": stores,
+            "pic": user.pic
+        }
 
 
 

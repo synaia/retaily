@@ -1,13 +1,34 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import Axios from "axios";
 
+
+import { persistUser, getCurrentUser, getPreference } from "../../api/db";
+import { BACKEND_HOST } from "../../util/constants";
+
+const current = await getCurrentUser();
+const pref = await getPreference('store');
 
 const initialState = {
+    currentUser: current,
+    preferences: {
+        selectedStore: pref?.value
+    },
     theme: {
-        ui_theme: undefined,
-        grid_theme: undefined,
+        ui_theme: 'dark-theme-variables"',
+        grid_theme: 'rdg-dark',
         dark_theme_base: 'dark-theme-variables',
     }
 };
+
+export const auth = createAsyncThunk('users/token', async (args) => {
+    let response = await Axios.post(
+        `${BACKEND_HOST}/users/token?username=${args.username}&password=${args.password}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.data;
+});
 
 
 const userSlice = createSlice({
@@ -24,6 +45,19 @@ const userSlice = createSlice({
                 dark_theme_base: 'dark-theme-variables',
             }
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(auth.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(auth.fulfilled, (state, action) => {
+            state.loading = false;
+            state.currentUser = action.payload;
+            const { username } = action.meta.arg;
+            persistUser(action.payload, username);
+        }).addCase(auth.rejected, (state, action) => {
+            state.loading = false;
+            console.log(`Error happen: ${action.error.message}`)
+        });
     }
 });
 

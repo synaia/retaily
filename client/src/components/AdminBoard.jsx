@@ -10,10 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
 
 import { changeTheme } from "../redux/features/user.feature.js";
+import EventBus from "../common/EventBus"
 import package_file from "../../package.json";
 
 
 export const AdminBoard = ({Content, Title, Search}) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
@@ -96,49 +98,49 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 <div className="sidebar-btn" onClick={() => hideSideBar()}>
                   <span className="material-icons-sharp"> {menu_open} </span>
                 </div>
-                <a href="/#/admin/">
+                <a href="/#/admin/" key={1}>
                   <span className="material-icons-sharp"> dashboard </span>
                   <h3>Dashboard</h3>
                 </a>
-                <a href="/">
+                <a href="/" key={2}>
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>POS</h3>
                 </a>
                 {/* Test NavLink */}
-                <a href="/#/admin/sales">
+                <a href="/#/admin/sales" key={3}>
                   <span className="material-icons-sharp"> receipt_long </span>
                   <h3>Sales</h3>
                 </a>
-                <a href="/#/admin/inventory">
+                <a href="/#/admin/inventory" key={4}>
                   <span className="material-icons-sharp"> inventory </span>
                   <h3>Inventory</h3>
                 </a>
-                <a href="/#/admin/users">
+                <a href="/#/admin/users/login">
                   <span className="material-icons-sharp"> person_outline </span>
                   <h3>Users</h3>
                 </a>
-                <a href="#">
+                <a href="#" key={6}>
                   <span className="material-icons-sharp"> report_gmailerrorred </span>
                   <h3>Reports</h3>
                 </a>
-                <a href="#">
+                <a href="#" key={7}>
                   <span className="material-icons-sharp"> insights </span>
                   <h3>Analytics</h3>
                 </a>
-                <a href="#">
+                <a href="#" key={8}>
                   <span className="material-icons-sharp"> mail_outline </span>
                   <h3>Messages</h3>
                   <span className="message-count">26</span>
                 </a>
-                <a href="#">
+                <a href="#" key={9}>
                   <span className="material-icons-sharp"> settings </span>
                   <h3>Settings</h3>
                 </a>
-                <a href="/#/admin/inventory/newproduct">
+                <a href="/#/admin/inventory/newproduct" key={10}>
                   <span className="material-icons-sharp"> add </span>
                   <h3>Add Product</h3>
                 </a>
-                <a href="#">
+                <a href="#" key={11} onClick={() => EventBus.dispatch("logout")}>
                   <span className="material-icons-sharp"> logout </span>
                   <h3>Logout</h3>
                 </a>
@@ -167,11 +169,15 @@ export const AdminBoard = ({Content, Title, Search}) => {
                             </div>
                             <div className="profile">
                             <div className="info">
-                                <p>Hey, <b>Wilton</b></p>
+                            {currentUser &&
+                                <p>Hey, <b>{currentUser.username}</b></p>
+                            }
                                 <a href="/#/admin"><small className="text-muted">Admin</small></a>
                             </div>
                             <div className="profile-photo">
-                                <img src="./assets/images/profile-1.png" alt="Profile Picture" />
+                              {currentUser &&
+                                <img src={currentUser.pic} alt="Profile Picture" />
+                              }
                             </div>
                             </div>
                         </div>      

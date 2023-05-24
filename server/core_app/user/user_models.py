@@ -25,6 +25,7 @@ class User(Base):
     is_active = Column(Integer)
     date_joined = Column(DateTime)
     last_login = Column(DateTime)
+    pic = Column(String)
     scope = relationship("Scope", back_populates='owner')
 
     stores = relationship("Store", back_populates='user', secondary=app_user_store, uselist=True)

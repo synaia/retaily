@@ -20,6 +20,7 @@ class User(BaseModel):
     is_active: bool | None = None
     date_joined: datetime | None = None
     last_login: datetime | None = None
+    pic: str | None = None
     scope: list[Scope] = []
     stores: list[Store] = []
 

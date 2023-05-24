@@ -101,18 +101,6 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
-                <div className="inventory-resume" onClick={() => navigator(`bulklist/`, {replace: false})}  >
-                    <div className="icon">
-                        <span className="material-icons-sharp"> layers </span>
-                    </div>
-                    <div className="inventory-resume-r">
-                        <div className="inventory-resume-c">
-                            <div className="info">
-                                <h3>Bulk New</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div className="inventory-resume" onClick={() => navigator(`storemov/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -133,6 +121,18 @@ export const Inventory = () => {
                         <div className="inventory-resume-c">
                             <div className="info">
                                 <h3>Response: Inventory Mov.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="inventory-resume" onClick={() => navigator(`bulklist/`, {replace: false})}  >
+                    <div className="icon">
+                        <span className="material-icons-sharp"> layers </span>
+                    </div>
+                    <div className="inventory-resume-r">
+                        <div className="inventory-resume-c">
+                            <div className="info">
+                                <h3>Bulk New</h3>
                             </div>
                         </div>
                     </div>

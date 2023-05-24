@@ -1,4 +1,5 @@
 import requests
+import socket
 
 headers = {
     'accept': 'application/json',
@@ -12,8 +13,19 @@ params = {
 
 response = requests.post('https://127.0.0.1:8500/users/token', params=params, headers=headers, verify=False)
 
-body = """// Generate With Python :)
-export const BACKEND_HOST = 'https://10.0.0.6:8500';
+my_lan_ip: str = None
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    my_lan_ip = s.getsockname()[0]
+    print(f'\n###### My Wifi IP ######\n######  {my_lan_ip}  ######\n')
+except Exception as ex:
+    print(ex)
+finally:
+    s.close()
+
+body = f"""// Generate With Python :)
+export const BACKEND_HOST = 'https://{my_lan_ip}:8500';
 
 // constants for test pupuses
 export const TOKEN = 'TOKEN_KEY';
