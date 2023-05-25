@@ -50,7 +50,7 @@ def read_products(store: str, db: Session, query: Query):
     return products
 
 
-def read_all_products(db: Session, query: Query, product_id: int = -1):
+def read_all_products(token_info: dict, db: Session, query: Query, product_id: int = -1):
     sql_raw = query.SELECT_ALL_PRODUCT if product_id == -1 else query.SELECT_ALL_PRODUCT_BY_ID
     sql_raw_pricinglist = query.SELECT_PRICING_LIST
     sql_raw_invlist = query.SELECT_PRODUCT_ALL_INV
@@ -70,7 +70,7 @@ def read_all_products(db: Session, query: Query, product_id: int = -1):
         product = models.Product()
         product.id = rp['id']
         product.name = rp['name']
-        product.cost = rp['cost']
+        product.cost = rp['cost'] if 'product.view.cost' in token_info['token_scopes'] else 0
         product.price = rp['price']
         product.margin = rp['margin']
         product.code = rp['code']

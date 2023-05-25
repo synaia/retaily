@@ -30,6 +30,45 @@ export const BACKEND_HOST = 'https://{my_lan_ip}:8500';
 // constants for test pupuses
 export const TOKEN = 'TOKEN_KEY';
 export const STORE = 'SAMBIL';
+
+export const SCOPES = {{
+   DASHBOARD: {{
+    VIEW: 'dashboard.view'
+   }},
+   SALES: {{
+    POS: 'sales.pos',
+    VIEW: 'sales.view',
+   }},
+   INVENTORY: {{
+    VIEW: 'inventory.view',
+    STORES: 'inventory.stores',
+    BULK: 'inventory.bulk',
+    MOVEMENT: {{
+        REQUEST: 'inventory.movement.request',
+        RESPONSE: 'inventory.movement.response',
+    }},
+    PURCHASE: {{
+        REQUEST: 'inventory.purchase.request',
+        RESPONSE: 'inventory.purchase.response',
+    }}
+   }},
+   USER: {{
+    VIEW: 'user.view',
+    SETTING: 'user.setting',
+   }},
+   REPORT: {{
+    VIEW: 'report.view',
+   }},
+   ANALYTIC: {{
+    VIEW: 'analityc.view',
+   }},
+   PRODUCT: {{
+    ADD: 'product.add',
+    VIEW: 'product.view',
+    PRICELIST: 'product.pricelist',
+    VIEWCOST: 'product.view.cost',
+   }}
+}}
 """
 
 token = [f for f in response.json().items()][0][1]

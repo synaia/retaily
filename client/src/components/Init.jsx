@@ -27,17 +27,17 @@ import { getBulkOrder } from  "../redux/features/product.feature.js";
 export const Init = () => {
     // const navigator = useNavigate();
     const dispatch = useDispatch();
-    // dispatch(loadProducts());
-    // dispatch(loadAllProducts());
-    // dispatch(loadClients());
-    // dispatch(getPricingLabels());
-    // dispatch(getPricing());
-    // dispatch(getStores());
+    dispatch(loadProducts());
+    dispatch(loadAllProducts());
+    dispatch(loadClients());
+    dispatch(getPricingLabels());
+    dispatch(getPricing());
+    dispatch(getStores());
     
-    // dispatch(getMovProductOrders());
-    // dispatch(getPurchaseProductOrders());
-    // dispatch(loadProviders());
-    // dispatch(getBulkOrder());
+    dispatch(getMovProductOrders());
+    dispatch(getPurchaseProductOrders());
+    dispatch(loadProviders());
+    dispatch(getBulkOrder());
 
     return (
         <React.Fragment></React.Fragment>

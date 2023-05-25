@@ -7,7 +7,7 @@ import server.core_app.user.user_schema as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import Token
 from server.core_app.user.user_query import create_access_token
-from server.core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES
+from server.core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES, ACCESS_TOKEN_EXPIRE_SECONDS
 from server.core_app.user.user_query import validate_permissions
 
 router = APIRouter(prefix='/users', tags=['users'])
@@ -56,7 +56,8 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     scopes = [s.name for s in user.scope]
     stores = [s.name for s in user.stores]
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(seconds=ACCESS_TOKEN_EXPIRE_SECONDS)
     access_token = create_access_token(
         data={"sub": user.username, "scopes": scopes, "stores": stores, "is_active": user.is_active},
         expires_delta=access_token_expires,

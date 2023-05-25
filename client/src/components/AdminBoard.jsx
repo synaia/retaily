@@ -12,6 +12,7 @@ import { loadSales } from "../redux/features/sale.feature.js";
 import { changeTheme } from "../redux/features/user.feature.js";
 import EventBus from "../common/EventBus"
 import package_file from "../../package.json";
+import { SCOPES } from "../util/constants";
 
 
 export const AdminBoard = ({Content, Title, Search}) => {
@@ -94,57 +95,78 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </div>
               </div>
 
+             {currentUser &&
               <div className="sidebar">
                 <div className="sidebar-btn" onClick={() => hideSideBar()}>
                   <span className="material-icons-sharp"> {menu_open} </span>
                 </div>
+                {currentUser.scopes.includes(SCOPES.DASHBOARD.VIEW) &&
                 <a href="/#/admin/" key={1}>
                   <span className="material-icons-sharp"> dashboard </span>
                   <h3>Dashboard</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.SALES.POS) &&
                 <a href="/" key={2}>
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>POS</h3>
                 </a>
-                {/* Test NavLink */}
+                }
+                {currentUser.scopes.includes(SCOPES.SALES.VIEW) &&
                 <a href="/#/admin/sales" key={3}>
                   <span className="material-icons-sharp"> receipt_long </span>
                   <h3>Sales</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.VIEW) &&
                 <a href="/#/admin/inventory" key={4}>
                   <span className="material-icons-sharp"> inventory </span>
                   <h3>Inventory</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.USER.VIEW) &&
                 <a href="/#/admin/users/login">
                   <span className="material-icons-sharp"> person_outline </span>
                   <h3>Users</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.ADMIN) &&
                 <a href="#" key={6}>
                   <span className="material-icons-sharp"> report_gmailerrorred </span>
                   <h3>Reports</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.ANALYTIC.VIEW) &&
                 <a href="#" key={7}>
                   <span className="material-icons-sharp"> insights </span>
                   <h3>Analytics</h3>
                 </a>
+                }
+
                 <a href="#" key={8}>
                   <span className="material-icons-sharp"> mail_outline </span>
                   <h3>Messages</h3>
                   <span className="message-count">26</span>
                 </a>
+
+                {currentUser.scopes.includes(SCOPES.USER.SETTING) &&
                 <a href="#" key={9}>
                   <span className="material-icons-sharp"> settings </span>
                   <h3>Settings</h3>
                 </a>
+                }
+                {currentUser.scopes.includes(SCOPES.PRODUCT.ADD) &&
                 <a href="/#/admin/inventory/newproduct" key={10}>
                   <span className="material-icons-sharp"> add </span>
                   <h3>Add Product</h3>
                 </a>
+                }
                 <a href="#" key={11} onClick={() => EventBus.dispatch("logout")}>
                   <span className="material-icons-sharp"> logout </span>
                   <h3>Logout</h3>
                 </a>
               </div>
+              }
             </aside>
 
             <main>

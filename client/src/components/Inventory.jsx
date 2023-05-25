@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getStoresInv, addStore } from "../redux/features/product.feature.js";
 import { F_, validateInputX } from "../util/Utils";
+import { SCOPES } from "../util/constants";
 
 export const Inventory = () => {
     const count_resume = useSelector((state) => state.product.count_resume);
+    const currentUser = useSelector((state) => state.user.currentUser);
 
     const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
     const resume_inv = useSelector((state) => state.product.resume_inv);
@@ -52,8 +54,10 @@ export const Inventory = () => {
 
     return (
         <React.Fragment>
+        {currentUser &&
             <div className="insights">
-            <div className="inventory-resume " onClick={() => navigator(`products/`, {replace: false})}  >
+                {currentUser.scopes.includes(SCOPES.PRODUCT.VIEW) &&
+                <div className="inventory-resume " onClick={() => navigator(`products/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp inv-success"> layers </span>
                     </div>
@@ -65,6 +69,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.PRODUCT.PRICELIST) &&
                 <div className="inventory-resume" onClick={() => navigator(`pricelist/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp inv-success"> layers </span>
@@ -77,6 +83,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.PRODUCT.ADD) &&
                 <div className="inventory-resume" onClick={() => navigator(`newproduct/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp inv-success"> layers </span>
@@ -89,6 +97,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.STORES) &&
                 <div className="inventory-resume" onClick={() => navigator(`store/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -101,6 +111,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.MOVEMENT.REQUEST) &&
                 <div className="inventory-resume" onClick={() => navigator(`storemov/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -113,6 +125,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.MOVEMENT.RESPONSE) &&
                 <div className="inventory-resume" onClick={() => navigator(`storemovresp/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -125,6 +139,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.BULK) &&
                 <div className="inventory-resume" onClick={() => navigator(`bulklist/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -137,6 +153,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.PURCHASE.REQUEST) &&
                 <div className="inventory-resume" onClick={() => navigator(`purchase/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -149,6 +167,8 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
+                {currentUser.scopes.includes(SCOPES.INVENTORY.PURCHASE.RESPONSE) &&
                 <div className="inventory-resume" onClick={() => navigator(`purchaseresp/`, {replace: false})}  >
                     <div className="icon">
                         <span className="material-icons-sharp"> layers </span>
@@ -161,7 +181,9 @@ export const Inventory = () => {
                         </div>
                     </div>
                 </div>
+                }
             </div>
+        }
     </React.Fragment>
     )
 };

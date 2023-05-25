@@ -2,6 +2,7 @@ USE retaily_db;
 
 CREATE TABLE sambil_db__client AS
 SELECT
+SELECT
       c.id, (c.id + 12000) AS new_id, c.name, c.document_id, c.address, c.celphone,
       c.email, c.date_create, c.wholesaler
  FROM sambil_db.client c
@@ -203,6 +204,8 @@ CREATE TABLE `app_store` (
 
 INSERT INTO app_store (`id`, `name`) VALUES (1, 'MADELTA');
 INSERT INTO app_store (`id`, `name`) VALUES (2, 'SAMBIL');
+INSERT INTO app_store (`id`, `name`) VALUES (3, 'LOPE');
+
 
 -- DROP TABLE app_inventory;
 CREATE TABLE `app_inventory` (
@@ -259,6 +262,7 @@ CREATE TABLE `app_users` (
   `is_active` int DEFAULT NULL,
   `date_joined` datetime DEFAULT NULL,
   `last_login` datetime DEFAULT NULL,
+  `pic` longtext,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_app_users_username` (`username`),
   KEY `ix_app_users_id` (`id`)
@@ -388,7 +392,7 @@ SELECT * FROM evofit_sambil.provider;
 
 CREATE TABLE `scopes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
@@ -421,11 +425,11 @@ SELECT * FROM evofit_sambil.scopes;
 --      and  p.active = 1
 --      and quantity > 0;
 
-INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
- SELECT p.quantity, p.quantity, p.id, 1 FROM madelta_db.product p ;
+INSERT INTO app_inventory (prev_quantity, quantity, next_quantity, product_id, store_id)
+ SELECT p.quantity, p.quantity, p.quantity, p.id, 1 FROM madelta_db.product p ;
 
- INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
- SELECT 0, 0, p.id, 2  FROM madelta_db.product p
+ INSERT INTO app_inventory (prev_quantity, quantity, next_quantity, product_id, store_id)
+ SELECT 0, 0, 0, p.id, 2  FROM madelta_db.product p
 	 WHERE p.id NOT IN (
 			 SELECT m.id
 			  FROM madelta_db.product m, sambil_db__product s
@@ -435,11 +439,11 @@ INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
     ;
 
 
- INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
- SELECT p.quantity, p.quantity, p.new_product_id, 2 FROM sambil_db__product p ;
+ INSERT INTO app_inventory (prev_quantity, quantity, next_quantity, product_id, store_id)
+ SELECT p.quantity, p.quantity, p.quantity, p.new_product_id, 2 FROM sambil_db__product p ;
 
- INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
- SELECT 0, 0, p.new_product_id, 1 FROM sambil_db__product p
+ INSERT INTO app_inventory (prev_quantity, quantity, next_quantity, product_id, store_id)
+ SELECT 0, 0, 0, p.new_product_id, 1 FROM sambil_db__product p
 	 WHERE p.new_product_id NOT IN (
 			 SELECT m.id
 			  FROM madelta_db.product m, sambil_db__product s
@@ -450,6 +454,13 @@ INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
 DELETE FROM app_inventory WHERE id IN (4321, 4480, 4481, 4482, 4169, 4477, 4468);
 
 
+INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
+ SELECT 0, 0, p.id, 3 FROM product p ;
+
+INSERT INTO bulk_order (name, memo, user_create) VALUES ('IMPORACION', 'DEMO DEBUG', 'SYS');
+
+ALTER TABLE `retaily_db`.`product`
+ADD COLUMN `user_modified` VARCHAR(45) NULL AFTER `active`;
 
 -- -- 8936
 SELECT p.id, count(*) FROM product p, app_inventory i
@@ -462,7 +473,7 @@ SELECT p.id, count(*) FROM product p, app_inventory i
     HAVING COUNT(p.id) > 1
 ;
 -- -- -- --
-SELECT * FROM app_inventory WHERE product_id = 8787 and store_id = 2;
+-- SELECT * FROM app_inventory WHERE product_id = 8787 and store_id = 2;
 
 -- SELECT * FROM sambil_db__product WHERE new_product_id = 7888;
 -- SELECT * FROM product WHERE id = 7888;
@@ -524,3 +535,25 @@ SELECT * FROM app_inventory WHERE product_id = 8787 and store_id = 2;
 --   ORDER BY i.product_id;
 --
 --   select *  from product where id = 7342;
+
+select * from scopes;
+COMMIT;
+
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.bulk', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.request', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.response', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.request', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.response', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.setting', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('report.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('analityc.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.add', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.pricelist', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view.cost', '7');

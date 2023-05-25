@@ -11,9 +11,10 @@ from server.core_app.database import get_db
 
 
 # openssl rand -hex 32
-SECRET_KEY = "82b033a1e8d51dfeb8503f722bb194ab9187ebe7163ea2f47ef0b29c38dd42ad"
+SECRET_KEY = "1f0cf1b58b6207323d9fb963b3b6ce85c1f725a474713ae8054b2969be23c0d0"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60*5
+ACCESS_TOKEN_EXPIRE_SECONDS = 60*20
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -99,13 +100,17 @@ async def validate_user(
                 headers={"WWW-Authenticate": authenticate_value},
             )
 
-    return user_active
+    return {
+        'username': username,
+        'user_active': user_active,
+        'token_scopes': token_scopes
+    }
 
 
-async def validate_permissions(user_active: models.User = Security(validate_user)):
-    if not user_active:
+async def validate_permissions(token_info: models.User = Security(validate_user)):
+    if not token_info['user_active']:
         raise HTTPException(status_code=400, detail="Inactive user")
-    return user_active
+    return token_info
 
 
 def create_user(user: models.User, db: Session):

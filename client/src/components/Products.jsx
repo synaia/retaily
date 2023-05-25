@@ -5,6 +5,8 @@ import {SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
 import { useDispatch , useSelector } from "react-redux";
 import { refreshProductListAction, updateProduct } from "../redux/features/product.feature.js";
 
+import { SCOPES } from "../util/constants";
+
 import 'react-data-grid/lib/styles.css';
 
 
@@ -18,6 +20,8 @@ export const Products = () => {
     const [rows, setRows] = useState([]);
     const search = useRef();
     const gridRef = useRef(null);
+
+    const currentUser = useSelector((state) => state.user.currentUser);
 
    
     const columns = useMemo( () => {
@@ -39,12 +43,20 @@ export const Products = () => {
 
         // console.log(price_columns);
         
+        let first_columns = [];
 
-        const first_columns = [
-            { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
-            { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
-        ];
+        if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEWCOST)) {
+            first_columns = [
+                { key: 'id', name: 'ID', width: 10 },
+                { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
+                { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
+            ];
+        } else {
+            first_columns = [
+                { key: 'id', name: 'ID', width: 10 },
+                { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
+            ];
+        }
 
         return [
             {

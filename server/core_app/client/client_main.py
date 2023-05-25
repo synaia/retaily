@@ -14,7 +14,7 @@ router = APIRouter(prefix='/clients', tags=['clients'])
 @router.get("/", response_model=list[schemas.Client])
 async def get_clients(
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     products = read_clients(db)
     return products
@@ -24,7 +24,7 @@ async def get_clients(
 async def add_client(
         client: schemas.Client,
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     new_client = client_models.Client(**{
         "name": client.name,
@@ -47,7 +47,7 @@ async def upt_client(
         client_id: int,
         client: schemas.Client,
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     new_client = client_models.Client(**{
         "id": client_id,

@@ -78,7 +78,7 @@ async def startup_event():
 async def get_products(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     products = read_products(store, db, query)
     return products
@@ -88,9 +88,9 @@ async def get_products(
 async def get_products(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["product.view"])
 ):
-    products = read_all_products(db, query)
+    products = read_all_products(token_info, db, query)
     return products
 
 
@@ -100,7 +100,7 @@ async def get_all_inv_products(
         store_name: str,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     products = read_inv_products(store_name, db, query)
     return products
@@ -111,7 +111,7 @@ async def __all_inv_new_version(
         store_id: int,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         products = read_all_inv_products(store_id, db, query)
@@ -125,7 +125,7 @@ async def __all_inv_new_version(
 async def get_pricing_labels(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     pricings = read_pricing_labels(db, query)
     return pricings
@@ -148,7 +148,7 @@ async def update_product(
 async def get_pricing(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     pricings = read_pricing(db, query)
     return pricings
@@ -157,7 +157,7 @@ async def get_pricing(
 @router.get("/stores", response_model=list[schemas.Store])
 async def get_stores(
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     stores = read_stores(db, query)
     return stores
@@ -166,7 +166,7 @@ async def get_stores(
 @router.get("/stores_inv")
 async def get_stores_inv(
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     stores = read_stores_inv(db, query)
     return stores
@@ -208,7 +208,9 @@ async def __update_pricing(
 @router.post("/add_product", response_model=list[schemas.Product])
 async def __add_product(
                         product: schemas.Product,
-                        db: Session = Depends(get_db)):
+                        db: Session = Depends(get_db),
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["product.add"])
+):
     try:
         return add_product(product, db, query)
     except Exception as ex:
@@ -219,7 +221,7 @@ async def __add_product(
 async def open_inventory(
                         head: schemas.InventoryHead,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return add_new_inventory_head(head, db, query)
@@ -231,7 +233,7 @@ async def open_inventory(
 async def get_inventory_head(
                         store_name: str,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return read_inventory_head(store_name, db, query)
@@ -243,7 +245,7 @@ async def get_inventory_head(
 async def get_inventory_head(
                         store_id: str,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return read_inventory_head_by_store_id(store_id, db, query)
@@ -258,7 +260,7 @@ async def update_next_qty(
                         product_id: int,
                         store_id: int,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return update_next_inventory_qty(next_quantity, user_updated,  product_id, store_id, db, query)
@@ -270,7 +272,7 @@ async def update_next_qty(
 async def close_inventory(
                         store: schemas.Store,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return reorder_inventory_qty(store, db, query)
@@ -282,7 +284,7 @@ async def close_inventory(
 async def cancel_inventory(
                         store: schemas.Store,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return cancel_inventory_in_progress(store, db, query)
@@ -294,7 +296,7 @@ async def cancel_inventory(
 async def __add_product_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return add_product_order(order, db, query)
@@ -306,7 +308,7 @@ async def __add_product_order(
 async def __add_product_order_line(
                         line: schemas.ProductOrderLine,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return add_product_order_line(line, db, query)
@@ -318,7 +320,7 @@ async def __add_product_order_line(
 async def __issue_order_line(
                         line: schemas.ProductOrderLine,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return issue_order_line(line, db, query)
@@ -330,7 +332,7 @@ async def __issue_order_line(
 async def __read_product_order(
                         order_type: str,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return read_product_order(order_type, db, query)
@@ -343,7 +345,7 @@ async def __read_product_order_by_id(
                         product_order_id: int,
                         order_type: str,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         line = schemas.ProductOrderLine()
@@ -358,7 +360,7 @@ async def __read_product_order_by_id(
 async def __process_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return process_order(order, db, query)
@@ -370,7 +372,7 @@ async def __process_order(
 async def __rollback_order(
                         order: schemas.ProductOrder,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return rollback_order(order, db, query)
@@ -382,7 +384,7 @@ async def __rollback_order(
 async def __read_bulk_order(
                         order_type: str,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return read_product_order(order_type, db, query)
@@ -394,7 +396,7 @@ async def __read_bulk_order(
 async def __assign_order_to_bulk(
                         line: schemas.BulkOrderLine,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return assign_order_to_bulk(line, db, query)
@@ -405,7 +407,7 @@ async def __assign_order_to_bulk(
 @router.get("/read_bulk_order", response_model=list[schemas.BulkOrder])
 async def __read_bulk_order(
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return read_bulk_order(db, query)
@@ -417,7 +419,7 @@ async def __read_bulk_order(
 async def __add_bulk_order(
                         bo: schemas.BulkOrder,
                         db: Session = Depends(get_db),
-                        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
         return add_bulk_order(bo, db, query)

@@ -27,7 +27,7 @@ query = Query(path)
 @router.get("/", response_model=list[schemas.Provider])
 async def get_providers(
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     products = read_providers(db, query)
     return products
@@ -37,6 +37,6 @@ async def get_providers(
 async def add_provider(
         provider: schemas.Provider,
         db: Session = Depends(get_db),
-        user_active: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     pass
