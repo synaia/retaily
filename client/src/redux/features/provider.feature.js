@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { TOKEN, STORE, BACKEND_HOST } from "../../util/constants";
+import { BACKEND_HOST } from "../../util/constants";
 
 
 const initialState = {
@@ -11,12 +11,7 @@ const initialState = {
 
 export const loadProviders = createAsyncThunk('provider', async () => {
     console.log('provider .... ');
-    let response = await Axios.get(`${BACKEND_HOST}/provider/`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/provider/`, {});
     return response.data;
 });
 

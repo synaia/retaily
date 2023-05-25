@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { TOKEN, STORE, BACKEND_HOST } from "../../util/constants";
+import { BACKEND_HOST } from "../../util/constants";
 
 const initialState = {
     loading: false,
@@ -17,10 +17,6 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
             invoice_status: data_range.invoice_status,
             client_id: data_range.client_id
         },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
     });
 
     return response.data;
@@ -32,10 +28,6 @@ export const addPay = createAsyncThunk('sale/add_pay', async (data_request) => {
     let response = await Axios.put(`${BACKEND_HOST}/sales/add_pay`, data_request.paids, {
         params: {
             sale_id: data_request.sale_id,
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -43,12 +35,7 @@ export const addPay = createAsyncThunk('sale/add_pay', async (data_request) => {
 
 export const cancelSale = createAsyncThunk('sale/cancel_sale', async (data_request) => {
     const sale_id = data_request.id;
-    let response = await Axios.put(`${BACKEND_HOST}/sales/cancel_sale/${sale_id}`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.put(`${BACKEND_HOST}/sales/cancel_sale/${sale_id}`, {});
     return response.data;
 });
 

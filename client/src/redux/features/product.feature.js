@@ -7,7 +7,7 @@
  */
 import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { TOKEN, STORE, BACKEND_HOST } from "../../util/constants";
+import { BACKEND_HOST } from "../../util/constants";
 import { storeInfo } from "../../common/store-info";
 import { beauty } from "../../util/Utils.js";
 
@@ -45,27 +45,17 @@ const initialState = {
     errorMessage: null
 };
 
-export const loadProducts = createAsyncThunk('products/loadProducts', async () => {
-    console.log('loadProducts...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
 
+export const loadProducts = createAsyncThunk('products/loadProducts', async () => {
+    console.log('> loadProducts...');
+    let response = await Axios.get(`${BACKEND_HOST}/products/`, {});
     return response.data;
 });
 
-export const loadAllProducts = createAsyncThunk('products/load_all_products', async () => {
+export const loadAllProducts = createAsyncThunk('products/load_all_products', async (args, thunkAPI) => {
+    const state = thunkAPI.getState();
     console.log('load_all_products...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/all`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
-
+    let response = await Axios.get(`${BACKEND_HOST}/products/all`, {});
     return response.data;
 });
 
@@ -75,10 +65,6 @@ export const getProductsByInventory = createAsyncThunk('products/getProductsByIn
     let response = await Axios.get(`${BACKEND_HOST}/products/all_inv`, {
         params: {
             store_name: store_name
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
         }
     });
     return response.data;
@@ -87,12 +73,7 @@ export const getProductsByInventory = createAsyncThunk('products/getProductsByIn
 
 export const getProductsAllInventory = createAsyncThunk('products/all_inv_new_version', async (store_id) => {
     console.log('getProductsAllInventory: [products, count_resume] store_id', store_id);
-    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv_new_version/${store_id}`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/all_inv_new_version/${store_id}`, {});
     return response.data;
 });
 
@@ -102,10 +83,6 @@ export const getInventoryHead = createAsyncThunk('products/getInventoryHead', as
     let response = await Axios.get(`${BACKEND_HOST}/products/inventory_head`, {
         params: {
             store_name: store_name
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
         }
     });
     return response.data;
@@ -117,10 +94,6 @@ export const getInventoryHeadByStoreId = createAsyncThunk('products/inventory_he
     let response = await Axios.get(`${BACKEND_HOST}/products/inventory_head_store_id/${store_id}`, {
         params: {
             'store_id': store_id
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
         }
     });
     return response.data;
@@ -135,10 +108,6 @@ export const updateNextQty = createAsyncThunk('product/updateNextQty', async (ar
             user_updated: args.user_updated,
             product_id: args.product_id,
             store_id: args.store_id,
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -147,24 +116,14 @@ export const updateNextQty = createAsyncThunk('product/updateNextQty', async (ar
 
 export const getPricingLabels = createAsyncThunk('products/get_pricing_labels', async () => {
     console.log('get_pricing_labels...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/pricing_labels`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/pricing_labels`, {});
 
     return response.data;
 });
 
 export const getPricing = createAsyncThunk('products/get_pricing', async () => {
     console.log('get_pricing [table] ...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/pricing`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/pricing`, {});
 
     return response.data;
 });
@@ -172,11 +131,7 @@ export const getPricing = createAsyncThunk('products/get_pricing', async () => {
 
 export const getStores = createAsyncThunk('products/get_stores', async () => {
     console.log('get_stores [table] ...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/stores`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/stores`, {});
 
     return response.data;
 });
@@ -184,11 +139,7 @@ export const getStores = createAsyncThunk('products/get_stores', async () => {
 
 export const getStoresInv = createAsyncThunk('products/getStoresInv', async () => {
     console.log('getStoresInv [table] ...');
-    let response = await Axios.get(`${BACKEND_HOST}/products/stores_inv`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/stores_inv`, {});
 
     return response.data;
 });
@@ -197,10 +148,6 @@ export const addStore = createAsyncThunk('product/add_store', async (args, ) => 
     let response = await Axios.post(`${BACKEND_HOST}/products/add_store`, args,  {
         params: {
             'store_name': args
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -214,10 +161,6 @@ export const updateProduct = createAsyncThunk('product/update_product', async (a
             product_id: args.product_id,
             field: args.field,
             value: value
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
 });
@@ -228,10 +171,6 @@ export const addPricing = createAsyncThunk('product/add_pricing', async (args, )
     let response = await Axios.post(`${BACKEND_HOST}/products/add_pricing`, pricing,  {
         params: {
             percent: args.percent,
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -240,46 +179,26 @@ export const addPricing = createAsyncThunk('product/add_pricing', async (args, )
 
 export const addProduct = createAsyncThunk('product/add_product', async (product, ) => {
     console.log(product);
-    let response = await Axios.post(`${BACKEND_HOST}/products/add_product`, product,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_product`, product,  {});
     return response.data;
 });
 
 
 export const openInventory = createAsyncThunk('product/openInventory', async (head, ) => {
     console.log(head);
-    let response = await Axios.post(`${BACKEND_HOST}/products/open_inventory`, head,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/open_inventory`, head,  {});
     return response.data;
 });
 
 export const closeInventory = createAsyncThunk('product/closeInventory', async (store, ) => {
     console.log(store);
-    let response = await Axios.post(`${BACKEND_HOST}/products/close_inventory`, store,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/close_inventory`, store,  {});
     return response.data;
 });
 
 
 export const cancelInventory = createAsyncThunk('product/cancelInventory', async (store, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/cancel_inventory`, store,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/cancel_inventory`, store,  {});
     return response.data;
 });
 
@@ -291,10 +210,6 @@ export const updatePricing = createAsyncThunk('product/update_pricing', async (a
             price_id: args.price_id,
             field: args.field,
             value: value
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -302,55 +217,30 @@ export const updatePricing = createAsyncThunk('product/update_pricing', async (a
 
 
 export const addProductOrder = createAsyncThunk('product/add_product_order', async (order, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order`, order,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order`, order,  {});
     return response.data;
 });
 
 export const processOrder = createAsyncThunk('product/process_order', async (order, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/process_order`, order,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/process_order`, order,  {});
     return response.data;
 });
 
 
 export const rollbackOrder = createAsyncThunk('product/rollback_order', async (order, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/rollback_order`, order,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/rollback_order`, order,  {});
     return response.data;
 });
 
 
 export const addProductOrderLine = createAsyncThunk('product/add_product_order_line', async (line, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order_line`, line,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_product_order_line`, line,  {});
     return response.data;
 });
 
 
 export const issueProductOrderLine = createAsyncThunk('product/issue_order_line', async (line, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/issue_order_line`, line,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/issue_order_line`, line,  {});
     return response.data;
 });
 
@@ -358,10 +248,6 @@ export const getMovProductOrders = createAsyncThunk('product/product_order', asy
     let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
         params: {
             'order_type': 'movement'
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -371,10 +257,6 @@ export const getPurchaseProductOrders = createAsyncThunk('product/purchase_produ
     let response = await Axios.get(`${BACKEND_HOST}/products/product_order`,   {
         params: {
             'order_type': 'purchase'
-        },
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
         }
     });
     return response.data;
@@ -382,32 +264,17 @@ export const getPurchaseProductOrders = createAsyncThunk('product/purchase_produ
 
 
 export const assignOrderToBulk = createAsyncThunk('product/assign_order_to_bulk', async (line, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/assign_order_to_bulk`, line,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/assign_order_to_bulk`, line,  {});
     return response.data;
 });
 
 export const getBulkOrder = createAsyncThunk('product/read_bulk_order', async () => {
-    let response = await Axios.get(`${BACKEND_HOST}/products/read_bulk_order`,   {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/products/read_bulk_order`,   {});
     return response.data;
 });
 
 export const addBulkOrder = createAsyncThunk('product/add_bulk_order', async (line, ) => {
-    let response = await Axios.post(`${BACKEND_HOST}/products/add_bulk_order`, line,  {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/products/add_bulk_order`, line,  {});
     return response.data;
 });
 

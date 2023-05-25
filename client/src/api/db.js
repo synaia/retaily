@@ -8,12 +8,10 @@ const VERSION = 1;
 //    table: users
 //-----------------------------
 db.version(VERSION).stores({
-  users: '++id, username, token, scopes, stores, pic, dateupdate'
-});
-
-db.version(VERSION).stores({
+  users: '++id, username, token, scopes, stores, pic, dateupdate',
   preferences: '++id, preference_name, value'
 });
+
 
 export const persistUser = async (user, username) => {
   const freshuser = {

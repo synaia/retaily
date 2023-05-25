@@ -28,8 +28,8 @@ body = f"""// Generate With Python :)
 export const BACKEND_HOST = 'https://{my_lan_ip}:8500';
 
 // constants for test pupuses
-export const TOKEN = 'TOKEN_KEY';
-export const STORE = 'SAMBIL';
+// export const TOKEN = 'TOKEN_KEY';
+// export const STORE = 'SAMBIL';
 
 export const SCOPES = {{
    DASHBOARD: {{

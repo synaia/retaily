@@ -1,7 +1,6 @@
 import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { TOKEN, STORE, BACKEND_HOST } from "../../util/constants";
-import { storeInfo } from "../../common/store-info";
+import { BACKEND_HOST } from "../../util/constants";
 
 const initialState = {
     loading: false,
@@ -11,31 +10,16 @@ const initialState = {
 
 export const loadClients = createAsyncThunk('clients/loadClients', async () => {
     console.log('loadClients .... ');
-    let response = await Axios.get(`${BACKEND_HOST}/clients/`, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE
-        }
-    });
+    let response = await Axios.get(`${BACKEND_HOST}/clients/`, {});
     return response.data;
 });
 
 export const addClient = createAsyncThunk('clients/addClient', async (client,) => {
-    let response = await Axios.post(`${BACKEND_HOST}/clients/add`, client, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.post(`${BACKEND_HOST}/clients/add`, client, {});
 });
 
 export const updateClient = createAsyncThunk('clients/updateClient', async (client, ) => {
-    let response = await Axios.put(`${BACKEND_HOST}/clients/update/${client.id}`, client, {
-        headers: {
-            'Authorization': `bearer ${TOKEN}`,
-            'Content-Type': 'application/json',
-        }
-    });
+    let response = await Axios.put(`${BACKEND_HOST}/clients/update/${client.id}`, client, {});
 });
 
 const putClientinList = (state, action) => {

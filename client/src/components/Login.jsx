@@ -21,7 +21,9 @@ export const Login = () => {
 
     useEffect(() => {
         console.log(currentUser)
-        // persistPreference('store', currentUser.stores[0]); //MADELTA
+        if (currentUser != null) {
+            persistPreference('store', currentUser.stores[0]); //MADELTA
+        }
     }, [currentUser]);
 
     useEffect(() => {

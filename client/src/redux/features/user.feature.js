@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Axios from "axios";
+import axios from "axios";
 
 
 import { persistUser, getCurrentUser, getPreference } from "../../api/db";
@@ -19,6 +20,20 @@ const initialState = {
         dark_theme_base: 'dark-theme-variables',
     }
 };
+
+export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const TOKEN  = state.user.currentUser.token;
+    const STORE  = state.user.preferences.selectedStore;
+    axios.interceptors.request.use(config => {
+        config.headers = {
+            'Authorization': `bearer ${TOKEN}`,
+            'store': STORE,
+            'Content-Type': 'application/json'
+        }
+        return config;
+    });
+});
 
 export const auth = createAsyncThunk('users/token', async (args) => {
     let response = await Axios.post(

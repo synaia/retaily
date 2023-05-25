@@ -1,3 +1,5 @@
+import store from "../redux/store.js";
+
 export const F_ = (number_value) => {
     number_value = (number_value == undefined) ? 0 : number_value;
     const n = new Intl.NumberFormat('en-US', {
@@ -129,5 +131,17 @@ export const  beep = (duration, frequency, volume) => {
         }catch(error){
             reject(error);
         }
+    });
+}
+
+export const Azzed = () => {
+    console.log(store)
+    axios.interceptors.request.use(config => {
+        // config.headers = {
+        //     'Authorization': `bearer ${TOKEN}`,
+        //     'store': STORE
+        // }
+        // console.log('axios.interceptors.request', config)
+        return config;
     });
 }

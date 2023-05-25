@@ -10,6 +10,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 
+import { interceptor } from "../redux/features/user.feature.js";
 import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
@@ -27,6 +28,7 @@ import { getBulkOrder } from  "../redux/features/product.feature.js";
 export const Init = () => {
     // const navigator = useNavigate();
     const dispatch = useDispatch();
+    dispatch(interceptor());
     dispatch(loadProducts());
     dispatch(loadAllProducts());
     dispatch(loadClients());
