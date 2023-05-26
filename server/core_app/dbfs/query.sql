@@ -892,3 +892,39 @@ SELECT
   FROM bulk_order bl
 ORDER BY bl.id DESC
 ;
+
+--SELECT_USER
+SELECT
+      u.id,
+      u.username,
+      u.password,
+      u.first_name,
+      u.last_name,
+      u.is_active,
+      u.date_joined,
+      u.last_login,
+      u.pic
+FROM
+     app_users u
+WHERE
+    u.username = %s
+ ;
+
+--SELECT_USER_STORE
+SELECT
+      s.name as store_name
+FROM
+     app_user_store x, app_store s
+WHERE
+     x.user_id = %s
+AND  s.id = x.store_id
+;
+
+--SELECT_USER_SCOPES
+SELECT
+      s.name as scope
+FROM
+     scopes s
+WHERE
+     s.user_id = %s
+;

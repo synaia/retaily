@@ -16,11 +16,13 @@ export const Theme = () => {
     const theme = useSelector((state) => state.user.theme);
 
     useEffect(() => {
+      if (theme != null) {
         if (theme.ui_theme == undefined) {
             document.body.classList.remove(theme.dark_theme_base);
-          } else {
+        } else {
             document.body.classList.add(theme.dark_theme_base);
-          }
+        }
+      }
     }, [theme]);
     
 

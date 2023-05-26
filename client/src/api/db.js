@@ -20,7 +20,7 @@ export const persistUser = async (user, username) => {
     'scopes': user.scopes,
     'stores': user.stores,
     'pic': user.pic,
-    'dateupdate': new Date().toISOString()
+    'dateupdate': user.dateupdate
 	};
 
   const count = await db.users.where({'username': username}).modify(freshuser);
@@ -28,6 +28,8 @@ export const persistUser = async (user, username) => {
   if (count == 0) {
     await db.users.add(freshuser);
   }
+
+  console.log('USER REFRESH .... ', freshuser);
 }
 
 export const getCurrentUser = async () => {

@@ -1,4 +1,6 @@
-from datetime import timedelta
+import sys
+import os
+from datetime import timedelta, datetime
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
@@ -10,7 +12,20 @@ from server.core_app.user.user_query import create_access_token
 from server.core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES, ACCESS_TOKEN_EXPIRE_SECONDS
 from server.core_app.user.user_query import validate_permissions
 
+from server.core_app.dbfs.Query import Query
+
 router = APIRouter(prefix='/users', tags=['users'])
+
+gettrace = getattr(sys, 'gettrace', None)
+# is debug mode :-) ?
+if gettrace():
+    path = os.getcwd() + '/dbfs/query.sql'
+    print('Debugging :-* ')
+else:
+    path = os.getcwd() + '/server/core_app/dbfs/query.sql'
+    print('Run normally.')
+
+query = Query(path)
 
 
 @router.post("/add", response_model=schemas.User)
@@ -43,7 +58,7 @@ async def get(db: Session = Depends(get_db)):
 
 @router.get('/{username}', response_model=schemas.User)
 async def get_user(username: str, db: Session = Depends(get_db)):
-    user = user_query.get_user(username, db)
+    user = user_query.get_user(username, db, query)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -51,9 +66,13 @@ async def get_user(username: str, db: Session = Depends(get_db)):
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(username: str, password: str,  db: Session = Depends(get_db)):
-    user = user_query.authenticate_user(username, password, db)
+    user = user_query.authenticate_user(username, password, db, query)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+
     scopes = [s.name for s in user.scope]
     stores = [s.name for s in user.stores]
     # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -67,7 +86,8 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
             "token_type": "bearer",
             "scopes": scopes,
             "stores": stores,
-            "pic": user.pic
+            "pic": user.pic,
+            'dateupdate': datetime.now().strftime("%H:%M:%S %Y-%m-%d")
         }
 
 

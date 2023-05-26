@@ -12,7 +12,7 @@ class Scope(BaseModel):
 
 
 class User(BaseModel):
-    # id: int
+    id: int | None = None
     username: str | None = None
     password: str | None = None
     first_name: str | None = None

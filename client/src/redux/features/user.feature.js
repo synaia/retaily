@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import Axios from "axios";
+import Axios, { AxiosError } from "axios";
 import axios from "axios";
 
 
@@ -21,28 +21,64 @@ const initialState = {
     }
 };
 
-export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
-    const state = thunkAPI.getState();
-    const TOKEN  = state.user.currentUser.token;
-    const STORE  = state.user.preferences.selectedStore;
-    axios.interceptors.request.use(config => {
-        config.headers = {
-            'Authorization': `bearer ${TOKEN}`,
-            'store': STORE,
-            'Content-Type': 'application/json'
+const solve = (trans) => {
+    if (trans instanceof AxiosError) {
+        return {
+            status: trans.response.status,
+            detail: trans.response.data.detail,
+            data: undefined
         }
-        return config;
-    });
+    } else {
+        return {
+            status: trans.status,
+            detail: trans.statusText,
+            data: trans.data
+        }
+    }
+}
+
+export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
+    axios.interceptors.request.use(
+        async (config) => {
+            const T = await getCurrentUser();
+            const S = await getPreference('store');
+            // console.log(`INTERCEPTOR UPDATE @ ${T.dateupdate} URL(${config.url})`)
+            config.headers = {
+                'Authorization': `bearer ${T.token}`,
+                'store': S.selectedStore,
+                'Content-Type': 'application/json'
+            }
+            return config;
+        }
+    );
+
+    axios.interceptors.response.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
+            const e_401 = error?.response?.status;
+            const detail = error?.response?.data.detail;
+            if (401 == e_401 && detail == "Signature has expired.") {
+                console.log(error.message);
+                window.location.href = '/#/admin/users/login';
+            }
+            return error;  // TODO: this was my problem with cath the puto error on auth method.
+        }
+    );
 });
 
 export const auth = createAsyncThunk('users/token', async (args) => {
-    let response = await Axios.post(
+    return await Axios.post(
         `${BACKEND_HOST}/users/token?username=${args.username}&password=${args.password}`, {
         headers: {
             'Content-Type': 'application/json'
         }
+    }).then( resp => {
+        return solve(resp);
+    }).catch( err => {
+        return solve(err);
     });
-    return response.data;
 });
 
 
@@ -66,9 +102,11 @@ const userSlice = createSlice({
             state.loading = true;
         }).addCase(auth.fulfilled, (state, action) => {
             state.loading = false;
-            state.currentUser = action.payload;
+            console.log(action.payload)
+            const { data } = action.payload
             const { username } = action.meta.arg;
-            persistUser(action.payload, username);
+            state.currentUser = data;
+            persistUser(data, username);
         }).addCase(auth.rejected, (state, action) => {
             state.loading = false;
             console.log(`Error happen: ${action.error.message}`)

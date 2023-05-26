@@ -7,8 +7,8 @@
  */
 
 
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { interceptor } from "../redux/features/user.feature.js";
 import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
@@ -26,9 +26,17 @@ import { getBulkOrder } from  "../redux/features/product.feature.js";
 
 
 export const Init = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     // const navigator = useNavigate();
     const dispatch = useDispatch();
+    // TODO: instance.interceptors.request.clear();
     dispatch(interceptor());
+
+    // useEffect(() => {
+    //     console.log('> CAMBIO:', currentUser.dateupdate);
+    //     dispatch(interceptor());
+    // }, [currentUser]);
+
     dispatch(loadProducts());
     dispatch(loadAllProducts());
     dispatch(loadClients());
