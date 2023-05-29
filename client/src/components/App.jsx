@@ -59,7 +59,7 @@ export const App = () => {
   useEffect(() => {
     EventBus.on("logout", () => {
       logOut();
-    });
+  });
 
     return () => {
       EventBus.remove("logout");

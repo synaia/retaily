@@ -1,14 +1,15 @@
 import sys
 import os
 from datetime import timedelta, datetime
-from fastapi import APIRouter, Depends, HTTPException, Security, status
+from fastapi import APIRouter, Depends, HTTPException, Security, status, Header
 from sqlalchemy.orm import Session
+from typing import Optional
 from server.core_app.database import get_db
 import server.core_app.user.user_query as user_query
 import server.core_app.user.user_schema as schemas
 import server.core_app.user.user_models as models
 from server.core_app.user.user_query import Token
-from server.core_app.user.user_query import create_access_token
+from server.core_app.user.user_query import create_access_token, logout_token
 from server.core_app.user.user_query import ACCESS_TOKEN_EXPIRE_MINUTES, ACCESS_TOKEN_EXPIRE_SECONDS
 from server.core_app.user.user_query import validate_permissions
 
@@ -93,6 +94,22 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
         }
 
 
+@router.post("/logout")
+async def __logout_token(Authorization: Optional[str] = Header(None),):
+    try:
+        token: str = Authorization.split(" ")[1]
+        info = logout_token(token)
+
+        return {
+            "username": info['user']['sub'],
+            "access_token": info['token_expired'],
+            "token_type": "bearer",
+            "scopes": info['user']['scopes'],
+            "stores": info['user']['stores'],
+            'dateupdate': datetime.now().isoformat()
+        }
+    except Exception as ex:
+        raise HTTPException(status_code=401, detail=ex)
 
 
 

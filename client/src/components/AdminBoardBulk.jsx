@@ -94,10 +94,6 @@ export const AdminBoardBulk = ({Content, Title, Search, Key}) => {
                             <button id="menu-btn">
                             <span className="material-icons-sharp"> menu </span>
                             </button>
-                            <div className="theme-toggler-variant">
-                            <span className="material-icons-sharp "> wifi </span>
-                            <span className="material-icons-sharp"> print </span>
-                            </div>
                             <div className="theme-toggler">
                             <span className="material-icons-sharp "> light_mode </span>
                             <span className="material-icons-sharp active"> dark_mode </span>

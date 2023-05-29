@@ -16,6 +16,7 @@ import { pickClientAction, pickNewClientAction } from "../redux/features/product
 import { Loading } from "./Loading.jsx";
 
 export const Client = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const dispatch = useDispatch();
 
     const clientState = useSelector((state) => state.client);
@@ -187,7 +188,7 @@ export const Client = () => {
             <main>
                 <div className="header-content">
                     <div>
-                        <h1>Dashboard:Client</h1>
+                        <h1>POS:Client</h1>
                     </div>
                     <div>
                         <div className="right">
@@ -205,11 +206,16 @@ export const Client = () => {
                                 </div>
                                 <div className="profile">
                                     <div className="info">
-                                        <p>Hey, <b>Wilton</b></p>
-                                        <small className="text-muted">Admin</small>
+                                    {currentUser && currentUser.selectedStore &&
+                                        <a href="/#/admin">
+                                        <p><b>{currentUser.first_name}</b>@{currentUser.selectedStore}</p>
+                                        </a>
+                                    }
                                     </div>
                                     <div className="profile-photo">
-                                        <img src="./assets/images/profile-1.png" alt="Profile Picture" />
+                                    {currentUser &&
+                                        <img src={currentUser.pic} alt="Profile Picture" />
+                                    }
                                     </div>
                                 </div>
                             </div>      

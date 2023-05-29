@@ -32,9 +32,14 @@ export const persistUser = async (user) => {
   }
 
   console.log('USER REFRESH .... ', freshuser);
-  if (user.selectedStore != null ) {
+  if (user.selectedStore != null && user.is_logout == null) {
     window.location.href = '/#/admin/';
   }
+
+  if (user.is_logout != null) {
+    window.location.href = '/#/admin/users/login';
+  }
+
 }
 
 export const getCurrentUser = async (url) => {

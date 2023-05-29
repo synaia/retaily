@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { persistPreference } from "../api/db.js";
@@ -11,8 +11,9 @@ export const Login = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
     const product_loading = useSelector((state) => state.product.loading);
     const preferences = useSelector((state) => state.user.preferences);
-    const loading = useSelector((state) => state.user.loading);
+    const loading_function = useSelector((state) => state.user.loading_function);
     const errorMessage = useSelector((state) => state.user.errorMessage);
+    const [loggeSucess, SetLoggeSucess] = useState(false);
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
@@ -20,10 +21,20 @@ export const Login = () => {
     const password = useRef();
     const btn = useRef();
 
+
+
+    useEffect(() => {
+        return  () => {
+            console.log('Leaving Login');
+            SetLoggeSucess(false);
+        }
+    }, []);
+
     const onLogin = () => {
         const args = {
             'username': username.current?.value,
-            'password': password.current?.value
+            'password': password.current?.value,
+            'loggeSucess': SetLoggeSucess
         }
         dispatch(auth(args));
     }
@@ -47,17 +58,21 @@ export const Login = () => {
         <>
         <div className="login">
             <h5>Login Form</h5>
+            {!loggeSucess && 
             <input type="text" ref={username} name="usern" placeholder="Username" className="text" 
                 autoFocus onKeyDown={onEnter}  />
+            }
+            {!loggeSucess && 
             <input type="Password" ref={password} name="passwd" placeholder="Password" className="text" 
                           onKeyDown={onEnter} />
-            {!product_loading && 
+            }
+            {!loggeSucess &&
                 <input type="button" ref={btn} name="usern" value="Login" className="btn" onClick={() => onLogin()} />
             }
             {product_loading && 
                 <span>Loading....</span>
             }
-            {!product_loading && currentUser != null && currentUser.selectedStore == null &&
+            {!product_loading && currentUser != null && currentUser.selectedStore == null && loggeSucess &&
                  <select className="select-from-store" onChange={onChangeStore}>
                     <option disabled selected value> -- select your store -- </option>
                      { currentUser.stores.map((s, i) => (

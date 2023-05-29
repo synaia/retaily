@@ -89,16 +89,31 @@ export const auth = createAsyncThunk('users/token', async (args) => {
             'Content-Type': 'application/json'
         }
     }).then( resp => {
+        args.loggeSucess(true);
         return solve(resp);
     }).catch( err => {
+        args.loggeSucess(false);
         return solve(err);
     });
 });
 
 export const logout = createAsyncThunk('users/logout', async (args) => {
-    const T = await getCurrentUser('users/logout');
-    T.token = undefined;
-    window.location.href = '/#/admin/users/login';
+    // const T = await getCurrentUser('users/logout');
+    // T.token = undefined;
+    // T.selectedStore = undefined;
+    // persistUser(T);
+    // window.location.href = '/#/admin/users/login';
+
+    return await Axios.post(
+        `${BACKEND_HOST}/users/logout`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solve(resp);
+    }).catch( err => {
+        return solve(err);
+    });
 });
 
 
@@ -147,6 +162,20 @@ const userSlice = createSlice({
             console.log(`Error happen: ${action.error.message}`)
             state.errorMessage = action.error.message;
         });
+
+        builder.addCase(logout.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(logout.fulfilled, (state, action) => {
+            state.loading = false;
+            const { user, status, detail } = action.payload
+            user.is_logout = true;
+            persistUser(user);
+            state.currentUser = user; // expired token - user
+            state.errorMessage = '';
+        }).addCase(logout.rejected, (state, action) => {
+            state.loading = false;
+        })
+
     }
 });
 

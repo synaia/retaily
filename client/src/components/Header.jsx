@@ -1,11 +1,13 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 export const Header = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
 
     return (
         <div className="header-content">
             <div>
-                <h1>Dashboard</h1>
+                <h1>POS</h1>
             </div>
             <div>
                 <div className="right">
@@ -22,13 +24,18 @@ export const Header = () => {
                     <span className="material-icons-sharp active"> dark_mode </span>
                     </div>
                     <div className="profile">
-                    <div className="info">
-                        <p>Hey, <b>Wilton</b></p>
-                        <a href="/#/admin"><small className="text-muted">Admin</small></a>
-                    </div>
-                    <div className="profile-photo">
-                        <img src="./assets/images/profile-1.png" alt="Profile Picture" />
-                    </div>
+                        <div className="info">
+                        {currentUser && currentUser.selectedStore &&
+                            <a href="/#/admin">
+                            <p><b>{currentUser.first_name}</b>@{currentUser.selectedStore}</p>
+                            </a>
+                        }
+                        </div>
+                        <div className="profile-photo">
+                        {currentUser &&
+                            <img src={currentUser.pic} alt="Profile Picture" />
+                        }
+                        </div>
                     </div>
                 </div>      
                 </div>

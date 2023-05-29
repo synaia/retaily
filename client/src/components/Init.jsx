@@ -33,17 +33,19 @@ export const Init = () => {
     dispatch(interceptor());
 
     useEffect(() => {
-        dispatch(loadProducts());
-        dispatch(loadAllProducts());
-        dispatch(loadClients());
-        dispatch(getPricingLabels());
-        dispatch(getPricing());
-        dispatch(getStores());
-        
-        dispatch(getMovProductOrders());
-        dispatch(getPurchaseProductOrders());
-        dispatch(loadProviders());
-        dispatch(getBulkOrder());
+        if (currentUser.is_logout == null) {
+            dispatch(loadProducts());
+            dispatch(loadAllProducts());
+            dispatch(loadClients());
+            dispatch(getPricingLabels());
+            dispatch(getPricing());
+            dispatch(getStores());
+            
+            dispatch(getMovProductOrders());
+            dispatch(getPurchaseProductOrders());
+            dispatch(loadProviders());
+            dispatch(getBulkOrder());
+        }
     }, [currentUser]);
 
     return (

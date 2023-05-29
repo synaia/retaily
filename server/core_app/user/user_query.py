@@ -188,3 +188,18 @@ def authenticate_user(username: str, password: str, db: Session, query: Query):
     if not verify_password(password, user.password):
         return False
     return user
+
+
+def logout_token(token: str):
+    expire = datetime.utcnow() + timedelta(seconds=1)
+    token_decoded = None
+
+    try:
+        token_decoded = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except Exception as ex:
+        token_decoded = {"sub": "dummy", "scopes": [], "stores": [], "is_active": "1", "exp": 0}
+
+    token_decoded.update({"exp": expire})
+    token_expired = jwt.encode(token_decoded, key=SECRET_KEY, algorithm=ALGORITHM)
+    print(token_expired)
+    return {'user': token_decoded, 'token_expired': token_expired}
