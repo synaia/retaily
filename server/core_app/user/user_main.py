@@ -82,12 +82,14 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
         expires_delta=access_token_expires,
     )
     return {
+            "username": username,
+            "first_name": user.first_name,
             "access_token": access_token,
             "token_type": "bearer",
             "scopes": scopes,
             "stores": stores,
             "pic": user.pic,
-            'dateupdate': datetime.now().strftime("%H:%M:%S %Y-%m-%d")
+            'dateupdate': datetime.now().isoformat()
         }
 
 

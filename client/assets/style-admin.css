@@ -1805,6 +1805,7 @@ main .search-terminal-bulk span {
 	margin-top: 180px;
 	padding: 30px;
 	border-top: 2px solid var(--color-primary);
+  box-shadow: var(--box-shadow);
 }
 
 .login h5{

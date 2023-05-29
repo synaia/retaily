@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
+import { logout } from "../redux/features/user.feature.js";
 
 import { changeTheme } from "../redux/features/user.feature.js";
 import EventBus from "../common/EventBus"
@@ -20,6 +21,10 @@ export const AdminBoard = ({Content, Title, Search}) => {
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
+
+  useEffect(()=> {
+    console.log('ADMIN BOARD, ', currentUser)
+  }, [currentUser]);
   
 
   useEffect(() => {
@@ -81,6 +86,12 @@ export const AdminBoard = ({Content, Title, Search}) => {
   };
 
   const fullpath = Breadcrumbs();
+
+  const onLogout = (event) => {
+    dispatch(logout());
+    event.preventDefault();
+
+  }
    
     return (
           <div className="container">
@@ -161,7 +172,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                   <h3>Add Product</h3>
                 </a>
                 }
-                <a href="#" key={11} onClick={() => EventBus.dispatch("logout")}>
+                <a href="#" key={11} onClick={(e) => onLogout(e)}>
                   <span className="material-icons-sharp"> logout </span>
                   <h3>Logout</h3>
                 </a>
@@ -191,10 +202,11 @@ export const AdminBoard = ({Content, Title, Search}) => {
                             </div>
                             <div className="profile">
                             <div className="info">
-                            {currentUser &&
-                                <p>Hey, <b>{currentUser.username}</b></p>
+                            {currentUser && currentUser.selectedStore &&
+                                <a href="/#/admin">
+                                  <p><b>{currentUser.first_name}</b>@{currentUser.selectedStore}</p>
+                                </a>
                             }
-                                <a href="/#/admin"><small className="text-muted">Admin</small></a>
                             </div>
                             <div className="profile-photo">
                               {currentUser &&

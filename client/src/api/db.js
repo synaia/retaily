@@ -8,32 +8,38 @@ const VERSION = 1;
 //    table: users
 //-----------------------------
 db.version(VERSION).stores({
-  users: '++id, username, token, scopes, stores, pic, dateupdate',
+  users: '++id, username, token, scopes, stores, pic, dateupdate, selectedStore',
   preferences: '++id, preference_name, value'
 });
 
 
-export const persistUser = async (user, username) => {
+export const persistUser = async (user) => {
   const freshuser = {
-    'username': username,
+    'username': user.username,
+    'first_name': user.first_name,
 	  'token': user.access_token,
     'scopes': user.scopes,
     'stores': user.stores,
     'pic': user.pic,
-    'dateupdate': user.dateupdate
+    'dateupdate': new Date(user.dateupdate),
+    'selectedStore': user.selectedStore
 	};
 
-  const count = await db.users.where({'username': username}).modify(freshuser);
+  const count = await db.users.where({'username': user.username}).modify(freshuser);
   
   if (count == 0) {
     await db.users.add(freshuser);
   }
 
   console.log('USER REFRESH .... ', freshuser);
+  if (user.selectedStore != null ) {
+    window.location.href = '/#/admin/';
+  }
 }
 
-export const getCurrentUser = async () => {
-  const current = await db.users.where({'id': 1}).first();
+export const getCurrentUser = async (url) => {
+  const current = await db.users.orderBy('dateupdate').last();
+  console.log(current, url);
   return current;
 }
 
@@ -51,7 +57,11 @@ export const persistPreference = async (pref, value) => {
   }
 }
 
-export const getPreference = async (pref) => {
-  const pref_value = await db.preferences.where({'preference_name': pref}).first();
-  return pref_value;
+export const getPreferences = async () => {
+  const values = await db.preferences.toArray();
+  const prefs = values.reduce((dict, data) => {
+    dict[data.preference_name] = data.value;
+    return dict;
+  }, {})
+  return prefs;
 }

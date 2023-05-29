@@ -32,22 +32,19 @@ export const Init = () => {
     // TODO: instance.interceptors.request.clear();
     dispatch(interceptor());
 
-    // useEffect(() => {
-    //     console.log('> CAMBIO:', currentUser.dateupdate);
-    //     dispatch(interceptor());
-    // }, [currentUser]);
-
-    dispatch(loadProducts());
-    dispatch(loadAllProducts());
-    dispatch(loadClients());
-    dispatch(getPricingLabels());
-    dispatch(getPricing());
-    dispatch(getStores());
-    
-    dispatch(getMovProductOrders());
-    dispatch(getPurchaseProductOrders());
-    dispatch(loadProviders());
-    dispatch(getBulkOrder());
+    useEffect(() => {
+        dispatch(loadProducts());
+        dispatch(loadAllProducts());
+        dispatch(loadClients());
+        dispatch(getPricingLabels());
+        dispatch(getPricing());
+        dispatch(getStores());
+        
+        dispatch(getMovProductOrders());
+        dispatch(getPurchaseProductOrders());
+        dispatch(loadProviders());
+        dispatch(getBulkOrder());
+    }, [currentUser]);
 
     return (
         <React.Fragment></React.Fragment>

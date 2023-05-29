@@ -5,16 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { persistPreference } from "../api/db.js";
 
 import { auth } from "../redux/features/user.feature.js";
-import { interceptor } from "../redux/features/user.feature.js";
+import { interceptor, changeStore } from "../redux/features/user.feature.js";
 
 export const Login = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const product_loading = useSelector((state) => state.product.loading);
     const preferences = useSelector((state) => state.user.preferences);
+    const loading = useSelector((state) => state.user.loading);
+    const errorMessage = useSelector((state) => state.user.errorMessage);
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
     const username = useRef();
     const password = useRef();
+    const btn = useRef();
 
     const onLogin = () => {
         const args = {
@@ -22,32 +26,48 @@ export const Login = () => {
             'password': password.current?.value
         }
         dispatch(auth(args));
-        // navigator('/#/admin', {replace: true});
     }
 
-    useEffect(() => {
-        if (currentUser != null) {
-            // console.log(currentUser)
-
-            // persistPreference('store', currentUser.stores[0]); //MADELTA
-
-            // dispatch(interceptor());
+    const onEnter = (event) => {
+        if (event.key == 'Enter') {
+            if (event.currentTarget.name == 'usern')
+                password.current.focus();
+            else
+                btn.current.click();
         }
-    }, [currentUser]);
+    }
 
-    useEffect(() => {
-        // if (preferences != null){
-        //     console.log(preferences)
-        // }
-    }, [preferences])
+    const onChangeStore = (event) => {
+        const store = event.target.value;
+        console.log(store);
+        dispatch(changeStore(store));
+    }
 
     return (
         <>
-           <div className="login">
+        <div className="login">
             <h5>Login Form</h5>
-            <input type="text" ref={username} name="usern" placeholder="Username" className="text" />
-            <input type="Password" ref={password} name="usern" placeholder="Password" className="text" />
-            <input type="button" name="usern" value="Login" className="btn" onClick={() => onLogin()} />
+            <input type="text" ref={username} name="usern" placeholder="Username" className="text" 
+                autoFocus onKeyDown={onEnter}  />
+            <input type="Password" ref={password} name="passwd" placeholder="Password" className="text" 
+                          onKeyDown={onEnter} />
+            {!product_loading && 
+                <input type="button" ref={btn} name="usern" value="Login" className="btn" onClick={() => onLogin()} />
+            }
+            {product_loading && 
+                <span>Loading....</span>
+            }
+            {!product_loading && currentUser != null && currentUser.selectedStore == null &&
+                 <select className="select-from-store" onChange={onChangeStore}>
+                    <option disabled selected value> -- select your store -- </option>
+                     { currentUser.stores.map((s, i) => (
+                         <option key={i} value={s}>{s}</option>
+                     ))}
+                 </select>
+            }
+            {errorMessage &&
+                <h3 className="danger">{errorMessage}</h3>
+            }
         </div>
         </>
     )

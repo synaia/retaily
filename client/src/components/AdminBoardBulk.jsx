@@ -14,6 +14,7 @@ import package_file from "../../package.json";
 
 
 export const AdminBoardBulk = ({Content, Title, Search, Key}) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
@@ -103,8 +104,11 @@ export const AdminBoardBulk = ({Content, Title, Search, Key}) => {
                             </div>
                             <div className="profile">
                             <div className="info">
-                                <p>Hey, <b>Wilton</b></p>
-                                <a href="/#/admin"><small className="text-muted">Admin</small></a>
+                            {currentUser && currentUser.selectedStore &&
+                                <a href="/#/admin">
+                                  <p><b>{currentUser.first_name}</b>@{currentUser.selectedStore}</p>
+                                </a>
+                            }
                             </div>
                             <div className="profile-photo">
                                 <img src="./assets/images/profile-1.png" alt="Profile Picture" />

@@ -3,49 +3,62 @@ import Axios, { AxiosError } from "axios";
 import axios from "axios";
 
 
-import { persistUser, getCurrentUser, getPreference } from "../../api/db";
+import { persistUser, getCurrentUser, getPreferences, persistPreference } from "../../api/db";
 import { BACKEND_HOST } from "../../util/constants";
+import { beauty } from "../../util/Utils";
 
-const current = await getCurrentUser();
-const pref = await getPreference('store');
+
+let current = await getCurrentUser('url:user.feature.js');
+current.dateupdate = current.dateupdate.toISOString();
+const { store, ui_theme, grid_theme } = await getPreferences();
 
 const initialState = {
+    loading: false,
+    errorMessage: null,
     currentUser: current,
     preferences: {
-        selectedStore: pref?.value
+        selectedStore: store
     },
     theme: {
-        ui_theme: 'dark-theme-variables"',
-        grid_theme: 'rdg-dark',
+        'ui_theme': ui_theme,
+        'grid_theme': grid_theme,
         dark_theme_base: 'dark-theme-variables',
     }
 };
 
 const solve = (trans) => {
     if (trans instanceof AxiosError) {
+        if (trans.code != null && AxiosError.ERR_NETWORK == trans.code) {
+            return {
+                status: 502,
+                detail: trans.message,
+                user: undefined
+            }
+        }
         return {
             status: trans.response.status,
             detail: trans.response.data.detail,
-            data: undefined
+            user: undefined
         }
-    } else {
-        return {
-            status: trans.status,
-            detail: trans.statusText,
-            data: trans.data
-        }
+    }
+
+    return {
+        status: trans.status,
+        detail: trans.statusText,
+        user: trans.data
     }
 }
 
 export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
+    axios.interceptors.request.clear();
+
     axios.interceptors.request.use(
         async (config) => {
-            const T = await getCurrentUser();
-            const S = await getPreference('store');
-            // console.log(`INTERCEPTOR UPDATE @ ${T.dateupdate} URL(${config.url})`)
+            const T = await getCurrentUser(config.url);
+            const { store } = await getPreferences();
             config.headers = {
                 'Authorization': `bearer ${T.token}`,
-                'store': S.selectedStore,
+                'store': store,
                 'Content-Type': 'application/json'
             }
             return config;
@@ -60,10 +73,11 @@ export const interceptor = createAsyncThunk('interceptor/util', async (args, thu
             const e_401 = error?.response?.status;
             const detail = error?.response?.data.detail;
             if (401 == e_401 && detail == "Signature has expired.") {
-                console.log(error.message);
                 window.location.href = '/#/admin/users/login';
+                console.log(detail)
             }
-            return error;  // TODO: this was my problem with cath the puto error on auth method.
+            return Promise.reject(error);
+            // return error;  // TODO: this was my problem with cath the puto error on auth method.
         }
     );
 });
@@ -81,6 +95,12 @@ export const auth = createAsyncThunk('users/token', async (args) => {
     });
 });
 
+export const logout = createAsyncThunk('users/logout', async (args) => {
+    const T = await getCurrentUser('users/logout');
+    T.token = undefined;
+    window.location.href = '/#/admin/users/login';
+});
+
 
 const userSlice = createSlice({
     name: 'user',
@@ -95,6 +115,13 @@ const userSlice = createSlice({
                 grid_theme: rdg,
                 dark_theme_base: 'dark-theme-variables',
             }
+
+            persistPreference('ui_theme', dtvars);
+            persistPreference('grid_theme', rdg);
+        },
+        changeStore: (state, action) => {
+            state.currentUser.selectedStore = action.payload; 
+            persistUser(beauty(state.currentUser));
         }
     },
     extraReducers: (builder) => {
@@ -102,17 +129,26 @@ const userSlice = createSlice({
             state.loading = true;
         }).addCase(auth.fulfilled, (state, action) => {
             state.loading = false;
-            console.log(action.payload)
-            const { data } = action.payload
-            const { username } = action.meta.arg;
-            state.currentUser = data;
-            persistUser(data, username);
+            const { user, status, detail } = action.payload
+            if (status >= 200 && status <= 300) {
+                if (user?.stores.length > 0) {
+                    const store_default = (user?.stores.length == 1) ? user?.stores[0] : undefined;
+                    user.selectedStore = store_default;
+                  }
+                persistUser(user);
+                state.currentUser = user;
+                // dateupdate.toISOString();
+                state.errorMessage = '';
+            } else {
+                state.errorMessage = detail;
+            }
         }).addCase(auth.rejected, (state, action) => {
             state.loading = false;
             console.log(`Error happen: ${action.error.message}`)
+            state.errorMessage = action.error.message;
         });
     }
 });
 
-export const { changeTheme } = userSlice.actions;
+export const { changeTheme, changeStore } = userSlice.actions;
 export default userSlice.reducer;
