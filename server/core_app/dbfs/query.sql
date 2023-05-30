@@ -19,6 +19,23 @@ WHERE
   and s.name = %s
   ;
 
+--SELECT_ALL_PRODUCT_ACTIVE
+SELECT
+    p.id,
+    p.name,
+    p.cost,
+    p.price,
+    p.margin,
+    p.code,
+    p.img_path,
+    p.date_create,
+    p.active,
+    p.image_raw
+  FROM product  p
+    WHERE p.active = 1
+  ORDER BY p.id DESC
+;
+
 --SELECT_ALL_PRODUCT
 SELECT
     p.id,

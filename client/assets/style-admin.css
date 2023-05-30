@@ -30,6 +30,8 @@
   --color-scheme: light;
 
   --color-solid-black: #363949;
+
+  --animation-login: 30s;
 }
 
 /* DARK THEME VARIABLES */
@@ -1795,17 +1797,26 @@ main .search-terminal-bulk span {
 }
 
 
+.root-opaque {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
 /*----- LOGIN ----------*/
 
 .login{
 	width: 340px;
 	height: 340px;
-  background: var(--color-background);
+  /* background: var(--color-background); */
 	margin: auto;
 	margin-top: 180px;
 	padding: 30px;
-	border-top: 2px solid var(--color-primary);
+	/* border-top: 2px solid var(--color-primary); */
   box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
 }
 
 .login h5{
@@ -1827,6 +1838,7 @@ main .search-terminal-bulk span {
 	padding: 14px 10px;
 	font-weight: bold;
 	margin-bottom: 16px;
+  transition: all 300ms ease;
 }
 
 .text:hover {
@@ -1841,6 +1853,7 @@ main .search-terminal-bulk span {
 	background: var(--color-background);
   color: var(--color-info-dark);
 	font-weight: bold;
+  transition: all 300ms ease;
 }
 .btn:hover {
   color: var(--color-info-light);
@@ -1852,6 +1865,39 @@ main .search-terminal-bulk span {
   background: var(--color-success);
   transform: translate(0, -3px) scale(.9);
   transition: all 600ms ease;
+}
+
+.select-store-login {
+  width: 100% !important;
+}
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.moving-border {
+  position: relative;
+  background: var(--color-background);
+  transition: all 300ms ease;
+}
+.moving-border::before,
+.moving-border::after {
+  content: "";
+  position: absolute;
+  inset: -0.05rem;
+  z-index: -1;
+  background: linear-gradient(var(--angle), 
+    var(--color-primary), var(--color-background), var(--color-success));
+  animation: rotate var(--animation-login) linear infinite;
+}
+.moving-border::after {
+  filter: blur(5px);
+}
+@keyframes rotate {
+  0%     { --angle: 0deg; }
+  100%   { --angle: 360deg;
+  }
 }
 
 /*----- END LOGIN ----------*/

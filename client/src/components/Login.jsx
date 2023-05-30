@@ -20,6 +20,7 @@ export const Login = () => {
     const username = useRef();
     const password = useRef();
     const btn = useRef();
+    const divLogin = useRef();
 
 
 
@@ -54,13 +55,27 @@ export const Login = () => {
         dispatch(changeStore(store));
     }
 
+    useEffect(() => {
+        if (product_loading) {
+            divLogin.current.style.setProperty("--animation-login", "1s");
+        } else {
+            divLogin.current.style.setProperty("--animation-login", "30s");
+        }
+        
+    }, [product_loading])
+
     return (
         <>
-        <div className="login">
-            <h5>Login Form</h5>
+        <div className="login moving-border" ref={divLogin} >
+            {product_loading && 
+                <h5>Loading....</h5>
+            }
+            {!product_loading && 
+                <h5>Login Form</h5>
+            }
             {!loggeSucess && 
             <input type="text" ref={username} name="usern" placeholder="Username" className="text" 
-                autoFocus onKeyDown={onEnter}  />
+                autoFocus onKeyDown={onEnter}  autoComplete="off" />
             }
             {!loggeSucess && 
             <input type="Password" ref={password} name="passwd" placeholder="Password" className="text" 
@@ -69,16 +84,15 @@ export const Login = () => {
             {!loggeSucess &&
                 <input type="button" ref={btn} name="usern" value="Login" className="btn" onClick={() => onLogin()} />
             }
-            {product_loading && 
-                <span>Loading....</span>
-            }
             {!product_loading && currentUser != null && currentUser.selectedStore == null && loggeSucess &&
+                <div className="select-div select-store-login">
                  <select className="select-from-store" onChange={onChangeStore}>
                     <option disabled selected value> -- select your store -- </option>
                      { currentUser.stores.map((s, i) => (
                          <option key={i} value={s}>{s}</option>
                      ))}
                  </select>
+                 </div>
             }
             {errorMessage &&
                 <h3 className="danger">{errorMessage}</h3>

@@ -7,9 +7,14 @@ import { persistUser, getCurrentUser, getPreferences, persistPreference } from "
 import { BACKEND_HOST } from "../../util/constants";
 import { beauty } from "../../util/Utils";
 
+const LOGIN = '/#/admin/users/login';
 
 let current = await getCurrentUser('url:user.feature.js');
-current.dateupdate = current.dateupdate.toISOString();
+if (current)
+    current.dateupdate = current.dateupdate.toISOString();
+else 
+    window.location.href = LOGIN;
+
 const { store, ui_theme, grid_theme } = await getPreferences();
 
 const initialState = {
@@ -54,11 +59,13 @@ export const interceptor = createAsyncThunk('interceptor/util', async (args, thu
 
     axios.interceptors.request.use(
         async (config) => {
-            const T = await getCurrentUser(config.url);
-            const { store } = await getPreferences();
+            if (config.url.includes('/users/token')) {
+                return config;
+            }
+            const U = await getCurrentUser(config.url);
             config.headers = {
-                'Authorization': `bearer ${T.token}`,
-                'store': store,
+                'Authorization': `bearer ${U.token}`,
+                'store': U.selectedStore,
                 'Content-Type': 'application/json'
             }
             return config;
@@ -73,7 +80,7 @@ export const interceptor = createAsyncThunk('interceptor/util', async (args, thu
             const e_401 = error?.response?.status;
             const detail = error?.response?.data.detail;
             if (401 == e_401 && detail == "Signature has expired.") {
-                window.location.href = '/#/admin/users/login';
+                window.location.href = LOGIN;
                 console.log(detail)
             }
             return Promise.reject(error);
@@ -102,7 +109,7 @@ export const logout = createAsyncThunk('users/logout', async (args) => {
     // T.token = undefined;
     // T.selectedStore = undefined;
     // persistUser(T);
-    // window.location.href = '/#/admin/users/login';
+    // window.location.href = LOGIN;
 
     return await Axios.post(
         `${BACKEND_HOST}/users/logout`, {

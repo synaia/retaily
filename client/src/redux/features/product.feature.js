@@ -635,9 +635,10 @@ const productsSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
             state.loading = true
-        }).addCase(loadProducts.fulfilled, (state, action) => {
-            state.loading = false
+        }).addCase(loadProducts.fulfilled, (state, action) => {            
             state.products = action.payload
+            console.log('VARIABLE ASIGNADA')
+            state.loading = false
         }).addCase(loadProducts.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR loadProducts; ${action.error.message}`
@@ -690,6 +691,7 @@ const productsSlice = createSlice({
             const {inventory_head_list, resume} = action.payload
             state.inventory_head_list = inventory_head_list
             state.resume_inv = resume
+            console.log('DELAY DELAY')
         }).addCase(getStoresInv.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR getStoresInv ; ${action.error.message}`
@@ -770,6 +772,7 @@ const productsSlice = createSlice({
             state.loading = false;
             // const changed = state.products_inv.filter(p => p.inventory[0].status === "changed");
             state.inventory_head = action.payload;
+            console.log('inventory_head DELAY');
             // state.inventory_head.changed = changed.length;
         }).addCase(getInventoryHead.rejected, (state, action) => {
             state.loading = false;

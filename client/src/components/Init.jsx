@@ -33,7 +33,7 @@ export const Init = () => {
     dispatch(interceptor());
 
     useEffect(() => {
-        if (currentUser.is_logout == null) {
+        if (currentUser && currentUser.is_logout == null) {
             dispatch(loadProducts());
             dispatch(loadAllProducts());
             dispatch(loadClients());

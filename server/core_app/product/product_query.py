@@ -136,7 +136,7 @@ def read_pricing_labels(db: Session, query: Query):
 
 # deprecated
 def read_inv_products(store_name: str, db: Session, query: Query):
-    sql_raw = query.SELECT_ALL_PRODUCT
+    sql_raw = query.SELECT_ALL_PRODUCT_ACTIVE
     sql_raw_product_inv = query.SELECT_PRODUCT_INV
 
     products = []

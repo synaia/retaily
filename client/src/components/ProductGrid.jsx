@@ -120,7 +120,7 @@ export const ProductGrid = () => {
 
             <div className="products" id="products">
 
-                {loading && <Loading Text="Here maybe another kind of loading :)" Intro="true" />}
+                {loading && <Loading Text="retaily." Intro="true" />}
                 {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
                 {!loading && search.current?.value.length > 0 && products_partial.length == 0 && 
                 <div> <h1>{search.current?.value?.toUpperCase()} Not found</h1></div> }
