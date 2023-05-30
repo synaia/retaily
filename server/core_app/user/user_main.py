@@ -52,8 +52,11 @@ async def create(user: schemas.User, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[schemas.User])
-async def get(db: Session = Depends(get_db)):
-    users = user_query.get_users(db)
+async def get(
+        db: Session = Depends(get_db),
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales.view"])
+):
+    users = user_query.get_users(db, token_info)
     return users
 
 

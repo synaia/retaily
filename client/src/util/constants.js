@@ -12,6 +12,10 @@ export const SCOPES = {
    SALES: {
     POS: 'sales.pos',
     VIEW: 'sales.view',
+    FILTER: {
+        USER: 'sales.filter.user',
+        STORE: 'sales.filter.store'
+    }
    },
    INVENTORY: {
     VIEW: 'inventory.view',
@@ -39,6 +43,7 @@ export const SCOPES = {
    PRODUCT: {
     ADD: 'product.add',
     VIEW: 'product.view',
+    EDIT: 'product.edit',
     PRICELIST: 'product.pricelist',
     VIEWCOST: 'product.view.cost',
    }

@@ -212,7 +212,7 @@ async def __add_product(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["product.add"])
 ):
     try:
-        return add_product(product, db, query)
+        return add_product(product, db, query, token_info)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 

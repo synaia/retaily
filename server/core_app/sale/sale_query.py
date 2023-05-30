@@ -8,18 +8,29 @@ from server.core_app.database import get_cursor
 import datetime
 
 
-def read_sales(init_date: str, end_date: str, store: str, invoice_status: str, client_id: int, db: Session, query: Query):
+def read_sales(init_date: str, end_date: str, store: str, store_s: str, invoice_status: str,
+               client_id: int, user_login: str, db: Session, query: Query, token_info: dict):
     sql_raw_paid = query.SELECT_PAID
     sql_raw_line = query.SELECT_LINE
-
     cur = get_cursor(db)
     invoice_status = ('open', 'cancelled', 'close',) if invoice_status == 'all' else (invoice_status,)
+
+    if 'sales.filter.user' in token_info['token_scopes']:
+        user_login: str = '^(.+)$' if user_login == 'all' else user_login
+    else:
+        user_login: str = user_login if user_login == token_info['username'] else token_info['username']
+
+    if 'sales.filter.store' in token_info['token_scopes']:
+        store: str = store if 'same' == store_s else store_s
+    else:
+        store: str = store
+
     sql_raw_main = query.SELECT_SALES_BY_INVOICE_STATUS
     if client_id == 0:
-        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status))
+        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status, user_login))
     else:
         sql_raw_main = query.SELECT_SALES_BY_CLIENT
-        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status, client_id))
+        cur.execute(sql_raw_main, (store, init_date, end_date, invoice_status, client_id, user_login))
 
     resp = cur.fetchall()
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { loadSales } from "../redux/features/sale.feature.js";
+import { SCOPES } from "../util/constants";
 
 
 
@@ -26,7 +27,7 @@ const SuggestionsList = props => {
                   className={classname}
                   onClick={() => onSelectSuggestion(index)}
                 >
-                  {suggestion.name} - {suggestion.id}
+                  {suggestion.name} - {suggestion.celphone}
                 </li>
               );
             })}
@@ -41,6 +42,9 @@ const SuggestionsList = props => {
 
 
 export const SearchBar = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+    const stores = useSelector((state) => state.product.stores);
+    const users = useSelector((state) => state.user.users);
     const dispatch = useDispatch();
     const clientState = useSelector((state) => state.client);
     const {loading, errorMessage, clients } = clientState;
@@ -101,6 +105,8 @@ export const SearchBar = () => {
             end_date:  end_date,
             invoice_status: 'all',
             client_id: 0,
+            'user_login':  'all',
+            'store_s': 'same'
           };
         dispatch(loadSales(data_range));
         
@@ -133,13 +139,17 @@ export const SearchBar = () => {
 
             const inp = document.querySelector('.input-fancy'); 
             const client_id =  !isNaN(parseInt(inp.dataset.clientId)) ? inp.dataset.clientId : 0;
-            console.log('client_id', client_id);
+            const user_login = document.querySelector('.user-login').value;
+            const store_s = document.querySelector('.store-s').value;
+            console.log('store_s', store_s);
 
             const data_range = {
                 'init_date': _init_date,
                 'end_date':  _end_date,
                 'invoice_status': _invoice_status,
                 'client_id': client_id,
+                'user_login': user_login,
+                'store_s': store_s
               };
               dispatch(loadSales(data_range));
 
@@ -166,10 +176,35 @@ export const SearchBar = () => {
         inp.dataset.clientId = 0;
     };
 
-
+   
 
     return (
      <div className="search-bar">
+         <div className="select-div select-store-login">
+            <select className="select-from-store user-login" >
+            {currentUser && currentUser.scopes.includes(SCOPES.SALES.FILTER.USER) &&
+                <option value="all">All users</option>
+            }
+                { users.map((U, i) => (
+                    <option key={i} value={U.username}>{U.username}</option>
+                ))}
+            </select>
+        </div>
+        <div className="select-div select-store-login">
+            {currentUser && currentUser.scopes.includes(SCOPES.SALES.FILTER.USER) &&
+            <select className="select-from-store store-s">
+                <option value={currentUser.selectedStore} >{currentUser.selectedStore}</option>
+                { stores.map((S, i) => (
+                    <option key={i} value={S.name}  >{S.name}</option>
+                ))}
+            </select>
+            }
+            {currentUser && !currentUser.scopes.includes(SCOPES.SALES.FILTER.USER) &&
+            <select className="select-from-store store-s">
+                <option value={currentUser.selectedStore} >{currentUser.selectedStore}</option>
+            </select>
+            }
+        </div>
         <div className="date">
             <input type="date" className="init_date"  />
         </div>

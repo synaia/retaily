@@ -11,6 +11,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { interceptor } from "../redux/features/user.feature.js";
+import { users } from "../redux/features/user.feature.js";
 import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
@@ -34,6 +35,7 @@ export const Init = () => {
 
     useEffect(() => {
         if (currentUser && currentUser.is_logout == null) {
+            dispatch(users());
             dispatch(loadProducts());
             dispatch(loadAllProducts());
             dispatch(loadClients());

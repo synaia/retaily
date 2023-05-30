@@ -30,9 +30,10 @@ export const Products = () => {
         //     { key: 'DISC_15', name: 'Discount -15%', editor: textEditor},
         //     { key: 'MEGA', name: 'Mega', editor: textEditor },
         // ];
+        const _text_Editor = (currentUser.scopes.includes(SCOPES.PRODUCT.EDIT)) ? textEditor :  () => true;
         const price_columns = [];
         pricing_labels.forEach( label => {
-            price_columns.push({ key: label.price_key, name: label.label, editor: textEditor, width: 200, pricing_id: label.id});
+            price_columns.push({ key: label.price_key, name: label.label, editor: _text_Editor, width: 200, pricing_id: label.id});
             // return true;
         });
 
@@ -45,16 +46,17 @@ export const Products = () => {
         
         let first_columns = [];
 
+
         if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEWCOST)) {
             first_columns = [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
+                { key: 'name', name: 'Product', resizable: true, width: 400, editor: _text_Editor},
                 { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
             ];
         } else {
             first_columns = [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400, editor: textEditor},
+                { key: 'name', name: 'Product', resizable: true, width: 400, editor: _text_Editor},
             ];
         }
 
@@ -80,7 +82,7 @@ export const Products = () => {
             ...first_columns,
             ...price_columns,
             ...store_columns,
-            { key: 'code', name: 'SKU', width: 100, editor: textEditor },
+            { key: 'code', name: 'SKU', width: 100, editor: _text_Editor },
           ];
     }); 
 

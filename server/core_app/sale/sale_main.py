@@ -39,11 +39,13 @@ async def get_sales(
         end_date: str,
         invoice_status: str,
         client_id: int,
+        user_login: str,
+        store_s: str,
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    sales = read_sales(init_date, end_date, store, invoice_status, client_id, db, query)
+    sales = read_sales(init_date, end_date, store, store_s, invoice_status, client_id, user_login, db, query, token_info)
     return sales
 
 

@@ -28,7 +28,8 @@ const initialState = {
         'ui_theme': ui_theme,
         'grid_theme': grid_theme,
         dark_theme_base: 'dark-theme-variables',
-    }
+    },
+    users: []
 };
 
 const solve = (trans) => {
@@ -37,20 +38,20 @@ const solve = (trans) => {
             return {
                 status: 502,
                 detail: trans.message,
-                user: undefined
+                data: undefined
             }
         }
         return {
             status: trans.response.status,
             detail: trans.response.data.detail,
-            user: undefined
+            data: undefined
         }
     }
 
     return {
         status: trans.status,
         detail: trans.statusText,
-        user: trans.data
+        data: trans.data
     }
 }
 
@@ -104,13 +105,20 @@ export const auth = createAsyncThunk('users/token', async (args) => {
     });
 });
 
-export const logout = createAsyncThunk('users/logout', async (args) => {
-    // const T = await getCurrentUser('users/logout');
-    // T.token = undefined;
-    // T.selectedStore = undefined;
-    // persistUser(T);
-    // window.location.href = LOGIN;
+export const users = createAsyncThunk('users/get', async () => {
+    return await Axios.get(
+        `${BACKEND_HOST}/users`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solve(resp);
+    }).catch( err => {
+        return solve(err);
+    });
+});
 
+export const logout = createAsyncThunk('users/logout', async (args) => {
     return await Axios.post(
         `${BACKEND_HOST}/users/logout`, {
         headers: {
@@ -151,7 +159,7 @@ const userSlice = createSlice({
             state.loading = true;
         }).addCase(auth.fulfilled, (state, action) => {
             state.loading = false;
-            const { user, status, detail } = action.payload
+            const { data: user, status, detail } = action.payload
             if (status >= 200 && status <= 300) {
                 if (user?.stores.length > 0) {
                     const store_default = (user?.stores.length == 1) ? user?.stores[0] : undefined;
@@ -174,14 +182,30 @@ const userSlice = createSlice({
             state.loading = true;
         }).addCase(logout.fulfilled, (state, action) => {
             state.loading = false;
-            const { user, status, detail } = action.payload
+            const { data: user, status, detail } = action.payload
             user.is_logout = true;
             persistUser(user);
             state.currentUser = user; // expired token - user
             state.errorMessage = '';
         }).addCase(logout.rejected, (state, action) => {
             state.loading = false;
-        })
+        });
+
+        builder.addCase(users.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(users.fulfilled, (state, action) => {
+            const { data, status, detail } = action.payload
+            if (status >= 200 && status <= 300) {
+                state.users = data;
+                state.errorMessage = '';
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
+        }).addCase(users.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = action.error.message;
+        });
 
     }
 });

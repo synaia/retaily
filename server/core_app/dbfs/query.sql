@@ -216,6 +216,7 @@ WHERE s.client_id = cli.id
       ELSE 'close'
 	 END) in %s
   AND cli.id = %s
+  AND s.login REGEXP %s
 ORDER BY s.id DESC
 ;
 
@@ -275,6 +276,7 @@ WHERE s.client_id = cli.id
 						)) > 0 THEN 'open'
       ELSE 'close'
 	 END) in %s
+  AND s.login REGEXP %s
 ORDER BY s.id DESC
 ;
 

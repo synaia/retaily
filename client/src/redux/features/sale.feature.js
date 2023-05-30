@@ -15,7 +15,9 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
             init_date: data_range.init_date,
             end_date: data_range.end_date,
             invoice_status: data_range.invoice_status,
-            client_id: data_range.client_id
+            client_id: data_range.client_id,
+            user_login: data_range.user_login,
+            store_s: data_range.store_s
         },
     });
 

@@ -175,9 +175,13 @@ def get_user(username: str, db: Session, query: Query):
     return user
 
 
-def get_users(db: Session):
+def get_users(db: Session, token_info: dict):
     # res = db.query(models.User, models.Scopes).filter(models.User.id == models.Scopes.user_id).all()
-    res = db.query(models.User).all()
+    if 'sales.filter.user' in token_info['token_scopes']:
+        res = db.query(models.User).all()
+    else:
+        res = db.query(models.User).filter(models.User.username == token_info['username']).all()
+
     return res
 
 
