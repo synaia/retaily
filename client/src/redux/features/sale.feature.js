@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BACKEND_HOST } from "../../util/constants";
+import { solveResponse } from "../../util/Utils";
 
 const initialState = {
     loading: false,
@@ -8,9 +9,11 @@ const initialState = {
     errorMessage: null
 };
 
-export const loadSales = createAsyncThunk('products/loadSales', async (data_range) => {
+export const loadSales = createAsyncThunk('products/loadSales', async ({data_range, abortInstance}) => {
     console.log('loadSales...');
-    let response = await Axios.get(`${BACKEND_HOST}/sales/`, {
+
+
+    return await Axios.get(`${BACKEND_HOST}/sales/`, {
         params: {
             init_date: data_range.init_date,
             end_date: data_range.end_date,
@@ -19,9 +22,15 @@ export const loadSales = createAsyncThunk('products/loadSales', async (data_rang
             user_login: data_range.user_login,
             store_s: data_range.store_s
         },
-    });
+        signal: abortInstance.current.getSignal()
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        if (Axios.isCancel(err))
+            console.log('Request cancelled', err);
 
-    return response.data;
+        return solveResponse(err);
+    });
 });
 
 
@@ -76,8 +85,14 @@ const salesSlice = createSlice({
         builder.addCase(loadSales.pending, (state, action) => {
             state.loading = true
         }).addCase(loadSales.fulfilled, (state, action) => {
-            state.loading = false
-            state.sales = action.payload
+            const { data, status, detail } = action.payload;
+            if (status >= 200 && status <= 300) {
+                state.sales = data;
+                state.errorMessage = '';
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
         }).addCase(loadSales.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR loadSales; ${action.error.message}`

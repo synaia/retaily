@@ -789,6 +789,24 @@ main .recent-orders a {
   align-items: center;
 }
 
+.btn-cancel-request {
+  position:absolute;
+  top: 30%;
+  left: 36%;
+  z-index:1;
+  background-color: var(--color-dark);
+  pointer-events: all !important;
+}
+.btn-cancel-request span {
+  font-size: 2.5rem;
+  align-items: center;
+
+}
+
+.disable-click {
+  pointer-events:none;
+}
+
 .inventory-bar {
   /* background-color: var(--color-white); */
   /* display: flex;

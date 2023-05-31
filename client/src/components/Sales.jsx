@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadSales, addPay, cancelSale } from "../redux/features/sale.feature.js";
+import { addPay, cancelSale } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
 import {Loading } from "./Loading";
 

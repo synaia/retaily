@@ -5,7 +5,7 @@ import axios from "axios";
 
 import { persistUser, getCurrentUser, getPreferences, persistPreference } from "../../api/db";
 import { BACKEND_HOST } from "../../util/constants";
-import { beauty } from "../../util/Utils";
+import { beauty, solveResponse } from "../../util/Utils";
 
 const LOGIN = '/#/admin/users/login';
 
@@ -31,29 +31,6 @@ const initialState = {
     },
     users: []
 };
-
-const solve = (trans) => {
-    if (trans instanceof AxiosError) {
-        if (trans.code != null && AxiosError.ERR_NETWORK == trans.code) {
-            return {
-                status: 502,
-                detail: trans.message,
-                data: undefined
-            }
-        }
-        return {
-            status: trans.response.status,
-            detail: trans.response.data.detail,
-            data: undefined
-        }
-    }
-
-    return {
-        status: trans.status,
-        detail: trans.statusText,
-        data: trans.data
-    }
-}
 
 export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
     axios.interceptors.request.clear();
@@ -98,10 +75,10 @@ export const auth = createAsyncThunk('users/token', async (args) => {
         }
     }).then( resp => {
         args.loggeSucess(true);
-        return solve(resp);
+        return solveResponse(resp);
     }).catch( err => {
         args.loggeSucess(false);
-        return solve(err);
+        return solveResponse(err);
     });
 });
 
@@ -112,9 +89,9 @@ export const users = createAsyncThunk('users/get', async () => {
             'Content-Type': 'application/json'
         }
     }).then( resp => {
-        return solve(resp);
+        return solveResponse(resp);
     }).catch( err => {
-        return solve(err);
+        return solveResponse(err);
     });
 });
 
@@ -125,9 +102,9 @@ export const logout = createAsyncThunk('users/logout', async (args) => {
             'Content-Type': 'application/json'
         }
     }).then( resp => {
-        return solve(resp);
+        return solveResponse(resp);
     }).catch( err => {
-        return solve(err);
+        return solveResponse(err);
     });
 });
 
@@ -181,14 +158,19 @@ const userSlice = createSlice({
         builder.addCase(logout.pending, (state, action) => {
             state.loading = true;
         }).addCase(logout.fulfilled, (state, action) => {
-            state.loading = false;
             const { data: user, status, detail } = action.payload
-            user.is_logout = true;
-            persistUser(user);
-            state.currentUser = user; // expired token - user
-            state.errorMessage = '';
+            if (status >= 200 && status <= 300) {
+                user.is_logout = true;
+                persistUser(user);
+                state.currentUser = user; // expired token - user
+                state.errorMessage = '';
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
         }).addCase(logout.rejected, (state, action) => {
             state.loading = false;
+            state.errorMessage = action.error.message;
         });
 
         builder.addCase(users.pending, (state, action) => {

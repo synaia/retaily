@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { loadSales } from "../redux/features/sale.feature.js";
 import { SCOPES } from "../util/constants";
+import { abortController } from "../api/abort.js";
 
 
 
@@ -47,7 +48,8 @@ export const SearchBar = () => {
     const users = useSelector((state) => state.user.users);
     const dispatch = useDispatch();
     const clientState = useSelector((state) => state.client);
-    const {loading, errorMessage, clients } = clientState;
+    const {errorMessage, clients } = clientState;
+    const loading = useSelector((state) => state.sale.loading);
 
     const [icon, setIcon] = useState('search');
 
@@ -57,7 +59,12 @@ export const SearchBar = () => {
     const [displaySuggestions, setDisplaySuggestions] = React.useState(false);
 
     const suggestions = [...clients];
-      
+
+    const abortInstance = useRef(abortController());
+    const abortInstanceChangeButtons = useRef(abortController());
+    
+    const [showTime, setShowTime] = useState();
+    const [timeoutId, setTimeoutId] = useState();
     
     const onChange = event => {
         const value = event.target.value;
@@ -107,9 +114,11 @@ export const SearchBar = () => {
             client_id: 0,
             'user_login':  'all',
             'store_s': 'same'
-          };
-        dispatch(loadSales(data_range));
-        
+        };
+
+        dispatch(loadSales({data_range, abortInstance}));
+
+    
     }, []);
 
     
@@ -141,7 +150,6 @@ export const SearchBar = () => {
             const client_id =  !isNaN(parseInt(inp.dataset.clientId)) ? inp.dataset.clientId : 0;
             const user_login = document.querySelector('.user-login').value;
             const store_s = document.querySelector('.store-s').value;
-            console.log('store_s', store_s);
 
             const data_range = {
                 'init_date': _init_date,
@@ -151,7 +159,8 @@ export const SearchBar = () => {
                 'user_login': user_login,
                 'store_s': store_s
               };
-              dispatch(loadSales(data_range));
+
+              dispatch(loadSales({data_range, abortInstance}));
 
         };
 
@@ -159,6 +168,10 @@ export const SearchBar = () => {
         btns.forEach((b) => { 
             b.addEventListener('click', () => active_btn(b));
          });
+
+         return () => {
+            onCancelRequest();
+         }
 
     }, []);
 
@@ -176,7 +189,58 @@ export const SearchBar = () => {
         inp.dataset.clientId = 0;
     };
 
-   
+    const onCancelRequest = () => {
+        console.log('cancelling.')
+        abortInstance.current.abortPendingRequest();
+    }
+    
+    useEffect(() => {
+        const bar = document.querySelector('.search-bar');
+        if (loading) {
+            bar.classList.add('disable-click');
+
+            let ms = 0;
+            let sec = 0;
+            let min = 0;
+
+            const sw = () => {
+                const t = setTimeout(sw, 10);
+                setTimeoutId(t);
+
+                ms = parseInt(ms);
+                sec = parseInt(sec);
+                min = parseInt(min);
+ 
+                ms++;
+ 
+                if (ms == 100) {
+                    sec = sec + 1;
+                    ms = 0;
+                }
+                if (sec == 60) {
+                    min = min + 1;
+                    sec = 0;
+                }
+                if (ms < 10) {
+                    ms = '0' + ms;
+                }
+                if (sec < 10) {
+                    sec = '0' + sec;
+                }
+                if (min < 10) {
+                    min = '0' + min;
+                }
+ 
+                const time = min + ':' + sec + ':' + ms;
+                setShowTime(time);
+            }
+            sw();
+
+        } else {
+            bar.classList.remove('disable-click');
+            clearTimeout(timeoutId);
+        }
+    }, [loading]);
 
     return (
      <div className="search-bar">
@@ -211,19 +275,25 @@ export const SearchBar = () => {
         <div className="date">
             <input type="date" className="end_date" />
         </div>
-        <button className="fbutton fbutton-green fbutton-green-active" data-invoice-status="all" >
+        {loading &&
+        <button className="fbutton-red btn-cancel-request" onClick={onCancelRequest} >
+            <span className="material-icons-sharp"> cancel </span>
+            <span>Stop Request {showTime} </span>
+        </button>
+        }
+        <button className="fbutton fbutton-green fbutton-green-active" data-invoice-status="all" disabled={loading ? 'disabled' : ''} >
             <span className="material-icons-sharp"> all_inclusive </span>
             <span>ALL</span>
         </button>
-        <button className="fbutton fbutton-orange" data-invoice-status="open">
+        <button className="fbutton fbutton-orange" data-invoice-status="open" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> lock_open </span>
             <span>OPEN</span>
         </button>
-        <button className="fbutton fbutton-purple" data-invoice-status="close">
+        <button className="fbutton fbutton-purple" data-invoice-status="close" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> lock </span>
             <span>CLOSE</span>
         </button>
-        <button className="fbutton fbutton-red" data-invoice-status="cancelled">
+        <button className="fbutton fbutton-red" data-invoice-status="cancelled" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> auto_delete </span>
             <span>CANCELLED</span>
         </button>
@@ -245,7 +315,7 @@ export const SearchBar = () => {
                 suggestions={filteredSuggestions}
             />
         </div>
-        
+
      </div>
     )
 }

@@ -2,7 +2,6 @@ USE retaily_db;
 
 CREATE TABLE sambil_db__client AS
 SELECT
-SELECT
       c.id, (c.id + 12000) AS new_id, c.name, c.document_id, c.address, c.celphone,
       c.email, c.date_create, c.wholesaler
  FROM sambil_db.client c
@@ -536,12 +535,22 @@ SELECT p.id, count(*) FROM product p, app_inventory i
 --
 --   select *  from product where id = 7342;
 
-select * from scopes;
+select * from app_users;
 COMMIT;
+
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', 8);
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', 8);
 
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.user', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.store', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.bulk', '7');
@@ -555,5 +564,8 @@ INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('report.view', '7'
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('analityc.view', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.add', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', '7');
+INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.edit', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.pricelist', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view.cost', '7');
+
+

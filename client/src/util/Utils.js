@@ -1,3 +1,4 @@
+import Axios, { AxiosError } from "axios";
 import store from "../redux/store.js";
 
 export const F_ = (number_value) => {
@@ -144,4 +145,36 @@ export const Azzed = () => {
         // console.log('axios.interceptors.request', config)
         return config;
     });
+}
+
+
+export const solveResponse = (trans) => {
+    if (trans instanceof AxiosError) {
+        if (trans.code != null && AxiosError.ERR_NETWORK == trans.code) {
+            return {
+                status: 502,
+                detail: trans.message,
+                data: undefined
+            }
+        }
+        return {
+            status: trans.response.status,
+            detail: trans.response.data.detail,
+            data: undefined
+        }
+    }
+
+    if (Axios.isCancel(trans)) {
+        return {
+            status: 504,
+            detail: trans.message,
+            data: undefined
+        }
+    }
+
+    return {
+        status: trans.status,
+        detail: trans.statusText,
+        data: trans.data
+    }
 }
