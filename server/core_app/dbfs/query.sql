@@ -15,8 +15,9 @@ SELECT
   FROM product  p, app_inventory i, app_store s
 WHERE
       p.id = i.product_id
-  and s.id = i.store_id
-  and s.name = %s
+  AND s.id = i.store_id
+  AND s.name = %s
+  AND p.active = 1
   ;
 
 --SELECT_ALL_PRODUCT_ACTIVE

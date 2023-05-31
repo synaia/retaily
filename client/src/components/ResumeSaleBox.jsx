@@ -14,16 +14,16 @@ export const ResumeSaleBox = () => {
         <Link to="/payment">
         <div className="middle-left-side-terminal">
                 <div>
-                    <h3>delivery</h3>
+                    <h3>DELIVERY</h3>
                 </div>
                 <div>
-                    <h3>Sub: {F_(sale_detail.sub_total)}</h3>
+                    <h3>SUB: {F_(sale_detail.sub_total)}</h3>
                 </div>
                 <div>
-                    <h3>Itbis: {F_(sale_detail.sub_tax)}</h3>
+                    <h3>ITBIS: {F_(sale_detail.sub_tax)}</h3>
                 </div>
                 <div>
-                     <h2>Total: {F_(sale_detail.gran_total)}</h2>
+                     <h2>TOTAL: {F_(sale_detail.gran_total)}</h2>
                 </div>
             </div>
         </Link>

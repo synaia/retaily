@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
-import { N_ } from "../util/Utils";
+import { F_ } from "../util/Utils";
 
 export const ProductPickedReadOnly = () => {
     console.log('ProductPickedReadOnly: rendered.')
@@ -16,17 +16,17 @@ export const ProductPickedReadOnly = () => {
                     <h3>{product.name}</h3>
                 </div>
                 <div className="dicount">
-                    {(product.discount != undefined && product.discount > 0) && <h3>  (-{N_((product.inventory.quantity_for_sale * product.price)  -  (product.inventory.quantity_for_sale * product.price_for_sale))}) or -{N_(product.discount_percent)}%  </h3>}
+                    {(product.discount != undefined && product.discount > 0) && <h3>  (-{F_((product.inventory[0].quantity_for_sale * product.price)  -  (product.inventory[0].quantity_for_sale * product.price_for_sale))}) or -{F_(product.discount_percent)}%  </h3>}
                 </div>
                 <div className="original-price">
-                    {(product.discount != undefined && product.discount > 0) && <h3>{N_(product.inventory.quantity_for_sale * product.price)}</h3>}
+                    {(product.discount != undefined && product.discount > 0) && <h3>{F_(product.inventory[0].quantity_for_sale * product.price)}</h3>}
                 </div>
                 <div className="total-tags">
                     <div className="quantity-tag">
-                        <h3>{product.inventory.quantity_for_sale} X {N_(product.price_for_sale)}</h3>
+                        <h3>{product.inventory[0].quantity_for_sale} X {F_(product.price_for_sale)}</h3>
                     </div>
                     <div className="sub-tag">
-                        <h3>{N_(product.inventory.quantity_for_sale * product.price_for_sale)}</h3>
+                        <h3>{F_(product.inventory[0].quantity_for_sale * product.price_for_sale)}</h3>
                     </div>
                 </div>
             </div>

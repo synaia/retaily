@@ -1,4 +1,5 @@
 import React from "react";
+import { F_ } from "../util/Utils";
 
 export const Product = ({product, func}) => {
     console.log('Product: rendered.')
@@ -17,10 +18,10 @@ export const Product = ({product, func}) => {
     return (
         <div className="product-card" style={productImgStyle} onClick={() => func(product.id)} data-product-id={product.id}>
             <div className="product-card-top">
-                <h3>$ {product.price}</h3>
+                <h3>{F_(product.price)}</h3>
             </div>
             <div className="product-card-bottom">
-            <div className="description">{product.inventory.quantity} - {product.name}</div>
+            <div className="description">{product.inventory[0].quantity} - {product.name}</div>
             </div>
         </div>
     );

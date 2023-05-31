@@ -281,7 +281,7 @@ export const addBulkOrder = createAsyncThunk('product/add_bulk_order', async (li
 
 const updateSaleDetail = (productPickedList) => {
     const gran_total = productPickedList.reduce((x, p) => {
-        return (x + (p.price_for_sale * p.inventory.quantity_for_sale));
+        return (x + (p.price_for_sale * p.inventory[0].quantity_for_sale));
     }, 0);
 
     const sub_total = gran_total / (1 + storeInfo.tax);
@@ -301,7 +301,7 @@ const pickProduct = (state, action) => {
 
     if (productExist != undefined) {
         let index = productPickedList.findIndex(prod => prod.id == productPicked.id);
-        productPickedList[index].inventory.quantity_for_sale += 1;
+        productPickedList[index].inventory[0].quantity_for_sale += 1;
         productPickedList[index].is_selected = 1;
     } else {
         productPicked.is_selected = 1;
@@ -327,11 +327,11 @@ const reduceProduct = (state, action) => {
     const productId = action.payload;
     const products = [...state.sale.products];
     const index = products.findIndex(prod => prod.id == productId);
-    if (products[index].inventory.quantity_for_sale == 1) {
+    if (products[index].inventory[0].quantity_for_sale == 1) {
         kickProduct(state, action);
         return;
     } else {
-        products[index].inventory.quantity_for_sale -= 1;
+        products[index].inventory[0].quantity_for_sale -= 1;
         products[index].is_selected = 1;
         const sale_detail = updateSaleDetail(products);
         state.sale.products = products;
@@ -402,12 +402,12 @@ const discountTrigger = (state, action) => {
         new_value = Number(new_value);
     }
     
-    const discount = (products[current_index].price - new_value) * products[current_index].inventory.quantity_for_sale;
+    const discount = (products[current_index].price - new_value) * products[current_index].inventory[0].quantity_for_sale;
     products[current_index].price_for_sale = new_value;
     products[current_index].discount = discount;
 
     // rayos
-    const discount_percent = ((discount / products[current_index].price) / products[current_index].inventory.quantity_for_sale) * 100;
+    const discount_percent = ((discount / products[current_index].price) / products[current_index].inventory[0].quantity_for_sale) * 100;
 
     products[current_index].discount_percent = discount_percent;
 

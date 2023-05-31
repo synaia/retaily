@@ -359,7 +359,7 @@ main .recent-orders a {
 
 /* START RIGHT SECTION */
 .right {
-  margin-top: 1.4rem;
+  /* margin-top: 1.4rem; */
 }
 .right .top {
   display: flex;
@@ -399,7 +399,7 @@ main .recent-orders a {
 }
 
 /* START RECENT UPDATES */
-.right .recent-updates {
+.recent-updates {
   margin-top: 1rem;
 }
 .right .recent-updates h2 {
@@ -416,7 +416,7 @@ main .recent-orders a {
   cursor: pointer;
   box-shadow: none;
 }
-.right .recent-updates .updates .update {
+.recent-updates .updates .update {
   display: grid;
   grid-template-columns: 2.6rem auto;
   gap: 1rem;

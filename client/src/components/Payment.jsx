@@ -49,13 +49,13 @@ export const Payment = () => {
                     </div>
                     <div className="middle-left-side-pay">
                         <div>
-                            <h3>delivery</h3>
+                            <h3>DELIVERY</h3>
                         </div>
                         <div>
-                            <h3>sub-total: {F_(sale_detail.sub_total)}</h3>
+                            <h3>SUB: {F_(sale_detail.sub_total)}</h3>
                         </div>
                         <div>
-                            <h3>itbis: {F_(sale_detail.sub_tax)}</h3>
+                            <h3>ITBIS: {F_(sale_detail.sub_tax)}</h3>
                         </div>
                         <div>
                             <h2>TOTAL: {F_(sale_detail.gran_total)}</h2>

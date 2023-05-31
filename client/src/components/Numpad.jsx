@@ -34,13 +34,13 @@ export const Numpad = () => {
     return (
         <div className="bottom-left-side">
                 <div className="numpad-btn" onClick={reduceProductFromPicket}>
-                     <p className="numpad-btn__text">minus</p>
+                    <span className="material-icons-sharp"> remove </span>
                 </div>
                 <div className="numpad-btn" onClick={removeProductFromPicket}>
-                    <p>remove</p>
+                    <span className="material-icons-sharp"> delete </span>
                 </div>
                 <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
-                    <p>reset</p>
+                    <span className="material-icons-sharp"> delete_sweep </span>
                 </div>
                 <Link to='/prods'>
                     <div className="numpad-btn">

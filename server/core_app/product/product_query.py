@@ -35,6 +35,7 @@ def read_products(store: str, db: Session, query: Query):
         product.name = rp['name']
         product.cost = rp['cost']
         product.price = rp['price']
+        product.price_for_sale = rp['price']
         product.margin = rp['margin']
         product.code = rp['code']
         product.img_path = rp['img_path']
@@ -42,6 +43,7 @@ def read_products(store: str, db: Session, query: Query):
         product.active = rp['active']
         product.image_raw = rp['image_raw']
         inventory.quantity = rp['quantity']
+        inventory.quantity_for_sale = 1
         store.name = rp['store_name']
         inventory.store = store
         product.inventory.append(inventory)

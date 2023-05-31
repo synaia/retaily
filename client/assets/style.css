@@ -31,6 +31,7 @@
 
   --box-shadow: 0 2rem 3rem var(--color-light);
 
+  --font-size-pos: 1rem;
   
 }
 
@@ -221,6 +222,7 @@ aside .sidebar .message-count {
   display: grid;
   grid-template-rows: 0.05fr auto 0.9fr 0.3.fr;
   gap: 0.6rem;
+  transition: all 300ms ease;
 }
 .top-left-side-terminal {
   margin-top: 1.4rem;
@@ -242,17 +244,24 @@ aside .sidebar .message-count {
   padding: 0.3rem 0.9rem 0.3rem 0.9rem;
   cursor: pointer;
   color: var(--color-info-dark);
+  transition: all 300ms ease;
 }
 .product-picked-label {
   margin-bottom: 0.5rem;
 }
+
+.product-picked-label h3 {
+  font-size: var(--font-size-pos);
+}
+
 .product-picked-selected {
   color: var(--color-dark);
   background-color: var(--color-primary-use);
-  text-shadow: var(--color-product-selected)
+  text-shadow: var(--color-product-selected);
+  transition: all 400ms ease;
 }
 .dicount > h3, .original-price{
-  font-size: 0.6rem;
+  font-size: 0.8rem;
   display: flex;
   justify-content: end;
 }
@@ -272,6 +281,9 @@ aside .sidebar .message-count {
   justify-content: end;
   gap: 2rem;
 }
+.sub-tag h3 {
+  font-size: var(--font-size-pos);
+}
 /* END LEFT-SIDE */
 
 /*START MIDDLE LEFT-SIDE*/
@@ -281,6 +293,13 @@ aside .sidebar .message-count {
   height: calc(8vh);
   border: 1px dashed var(--color-primary); 
   box-shadow: var(--box-shadow);
+}
+.middle-left-side-terminal:hover {
+  background-color: var(--color-primary);
+  color: var(--color-info-light);
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 300ms ease;
 }
 .top-left-side-terminal {
   border-bottom: 1px dashed var(--color-primary); 
@@ -294,14 +313,15 @@ aside .sidebar .message-count {
 .top-left-side-terminal h2 {
   padding-left: 0.5rem;
 }
-.middle-left-side-terminal h2:hover, .top-left-side-terminal h2:hover {
+.top-left-side-terminal h2:hover {
   background-color: var(--color-primary);
   cursor: pointer;
   box-shadow: none;
   transition: all 300ms ease;
 }
 .middle-left-side-terminal:active, .top-left-side-terminal:active {
-  transform: translate(0, -10px) scale(1.2);
+  transform: translate(0, 1px) scale(.8);
+  transition: all 600ms ease;
 }
 
 .close-btn {
@@ -326,17 +346,20 @@ aside .sidebar .message-count {
 }
 .numpad-btn {
   height: calc(10vh);
-  /* border: 1px solid #f0f7a7; */
   margin: 0.2rem;
-
-  /* display: flex;  */
-
-  border-radius: 10px; 
-  border: 1px dashed #34393c; 
+  border: 1px dashed var(--color-dark); 
   cursor: pointer;
-  
- 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.numpad-btn:hover {
+  background-color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 300ms ease;
+}
+
 .umpad-btn__text {
   justify-content: center;
 }
@@ -771,6 +794,9 @@ main .recent-orders a {
   justify-content: end; */
   /* position: absolute; */
 }
+.product-card-top h3 {
+  font-size: 1.3rem!important;
+}
 .product-card-center {
   display: flex;
   justify-content: center;
@@ -792,16 +818,16 @@ main .recent-orders a {
 
 }
 .description {
-  font-size: 0.75rem;
+  font-size: var(--font-size-pos);
   text-transform: uppercase;
   color: var(--color-description);
 }
 
 
-.right .sales-analytics {
+.sales-analytics {
   margin-top: 2rem;
 }
-.right .sales-analytics h2 {
+.sales-analytics h2 {
   margin-bottom: 0.8rem;
 }
 .right .sales-analytics .item {
