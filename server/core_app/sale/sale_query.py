@@ -143,3 +143,100 @@ def cancel_sale(sale_id: int,  db: Session, query: Query):
     cur.connection.commit()
     return {'sale_id': sale_id}
 
+
+def selected_store(name: str, db:Session, query:Query):
+    sql_raw = query.SELECTED_STORE
+    cur = get_cursor(db)
+    data = (name, )
+    cur.execute(sql_raw, data)
+    s = cur.fetchall()
+
+    store_id: int = 0
+
+    if len(s) > 0:
+        store_id: str = s[0]['store_id']
+
+    return store_id
+
+
+def get_next_sequence(code: str, db: Session, query: Query):
+    sql_raw_update_seq = query.UPDATE_SEQUENCE
+    cur = get_cursor(db)
+    data = (code, )
+    cur.execute(sql_raw_update_seq, data)
+    cur.connection.commit()
+
+    sql_seq = query.SELECT_SEQ
+    cur = get_cursor(db)
+    cur.execute(sql_seq, data)
+    s = cur.fetchall()
+
+    prefix: str = None
+    fill: int = 0
+    current_seq: int = 0
+
+    if len(s) > 0:
+        prefix: str = s[0]['prefix']
+        fill: int = s[0]['fill']
+        current_seq: int = s[0]['current_seq']
+
+    return f"{prefix.ljust(fill, '0')}{current_seq}"
+
+
+def add_sale(transaction: dict,  db: Session, query: Query):
+    sql_raw_insert_sale = query.INSERT_SALE
+    cur = get_cursor(db)
+    TWO_DECIMAL: int = 2 
+
+    amount: float = round(transaction['sale_detail']['gran_total'], TWO_DECIMAL)
+    sub: float = round(transaction['sale_detail']['sub_total'], TWO_DECIMAL)
+    discount: float = round(transaction['sale_detail']['discount_total'], TWO_DECIMAL)
+    tax_amount: float = round(transaction['sale_detail']['sub_tax'], TWO_DECIMAL)
+    delivery_charge: float = 0.0
+
+    # try hardcoded from ui #
+    sequence_type: str = transaction['sequence_type']
+    status: str = transaction['status']
+    sale_type: str = transaction['sale_type']
+    # # # #
+
+    sequence: str = get_next_sequence(code=sequence_type, db=db, query=query)
+
+    login: str = transaction['user']['username']
+    client_id: int = transaction['client']['id']
+    store_name: str = transaction['user']['selectedStore']
+    store_id: int = selected_store(store_name, db, query)
+
+    data = (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
+    cur.execute(sql_raw_insert_sale, data)
+    cur.connection.commit()
+    sale_id = cur.lastrowid
+
+    sql_raw_insert_sale_line = query.INSERT_SALE_LINE
+
+    for p in transaction['products']:
+        amount: float = round(p['price'], TWO_DECIMAL)
+        total_amount: float = round(p['price_for_sale'], TWO_DECIMAL)
+        try:
+            discount: float = round(p['discount'], TWO_DECIMAL)
+        except Exception as ex:
+            discount: float = 0.0
+        qty_for_sale: int = p['inventory'][0]['quantity_for_sale']
+        product_id: int = p['id']
+
+        data = (amount, 0, discount, qty_for_sale, total_amount, sale_id, product_id)
+        cur.execute(sql_raw_insert_sale_line, data)
+        cur.connection.commit()
+
+    # try hardcoded from ui #
+    paids = []
+    for p in transaction['paids']:
+        paid = SalePaid()
+        paid.amount = p['amount']
+        paid.type = p['type']
+        paids.append(paid)
+
+    add_pay(paids, sale_id, db, query)
+    # # # # #
+
+    return True

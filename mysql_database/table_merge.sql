@@ -1,3 +1,4 @@
+-- APP_SEQUENCE EN QUE SECUENCIA ESTA??????
 USE retaily_db;
 
 CREATE TABLE sambil_db__client AS
@@ -152,6 +153,14 @@ FROM
 ALTER TABLE `retaily_db`.`sale`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `retaily_db`.`sale`
+CHANGE COLUMN `date_create` `date_create` DATETIME NULL DEFAULT NOW() ;
+
+set @max_from_sale = (select MAX(id) + 1 from sale);
+SET @alter_table = CONCAT('ALTER TABLE sale AUTO_INCREMENT =', @max_from_sale);
+PREPARE current_statement FROM @alter_table;
+execute current_statement;
 
 
 CREATE TABLE sale_line AS
@@ -567,5 +576,209 @@ INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', '7
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.edit', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.pricelist', '7');
 INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view.cost', '7');
+
+
+
+
+SELECT
+      u.id,
+      u.username,
+      u.password,
+      u.first_name,
+      u.last_name,
+      u.is_active,
+      u.date_joined,
+      u.last_login,
+      u.pic
+FROM
+     app_users u
+WHERE
+    u.username = 'luis'
+ ;
+
+SELECT
+      s.name as scope
+FROM
+     scopes s
+WHERE
+     s.user_id = 7
+;
+
+
+
+
+SELECT
+    p.id,
+    p.name,
+    p.cost,
+    p.price,
+    p.margin,
+    p.code,
+    p.img_path,
+    p.date_create,
+    p.active,
+    p.image_raw,
+    i.quantity,
+    s.name as store_name
+  FROM product  p, app_inventory i, app_store s
+WHERE
+      p.id = i.product_id
+  and s.id = i.store_id
+  and s.name = 'MADELTA'
+  ;
+
+
+
+
+-- SELECT_SALES_BY_INVOICE_STATUS
+SELECT
+	s.id,
+    s.amount,
+    s.sub,
+    s.discount,
+    s.tax_amount,
+    s.delivery_charge,
+    s.sequence,
+    s.sequence_type,
+    s.status,
+    s.sale_type,
+    s.date_create,
+    s.login,
+    cli.id as client_id,
+    cli.name as client_name,
+    cli.document_id,
+    cli.celphone,
+    (SELECT
+        SUM(paid.amount)
+	   FROM sale_paid paid
+      WHERE  paid.sale_id = s.id
+      GROUP BY paid.sale_id
+	) as total_paid,
+    (SELECT
+         COUNT(*)
+	  FROM sale_line line
+     WHERE line.sale_id = s.id
+     GROUP BY line.sale_id
+    ) as total_line,
+
+	(CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - (SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						)) > 0 THEN 'open'
+      ELSE 'close'
+	 END) as invoice_status
+ FROM sale s,  app_store store, client cli
+WHERE s.client_id = cli.id
+  AND s.store_id = store.id
+  AND store.name = 'MADELTA'
+ --  AND s.date_create BETWEEN %s AND %s
+  AND (CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - (SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						)) > 0 THEN 'open'
+      ELSE 'close'
+	 END) in ('open', 'cancelled', 'close')
+  AND s.login REGEXP '^(wilton|danny)$'
+
+-- ORDER BY s.id DESC
+;
+-- DANNY  14630
+-- WILTON  8070
+--        22700
+-- select 14630 + 8070;
+select COUNT(*) from sale s where s.login regexp '^(.+)$';
+
+select COUNT(*) as g from sale s;
+
+select * from app_users;
+
+
+
+SELECT
+	s.id,
+    s.amount,
+    s.sub,
+    s.discount,
+    s.tax_amount,
+    s.delivery_charge,
+    s.sequence,
+    s.sequence_type,
+    s.status,
+    s.sale_type,
+    s.date_create,
+    s.login,
+    cli.id as client_id,
+    cli.name as client_name,
+    cli.document_id,
+    cli.celphone,
+    (SELECT
+        SUM(paid.amount)
+	   FROM sale_paid paid
+      WHERE  paid.sale_id = s.id
+      GROUP BY paid.sale_id
+	) as total_paid,
+    (SELECT
+         COUNT(*)
+	  FROM sale_line line
+     WHERE line.sale_id = s.id
+     GROUP BY line.sale_id
+    ) as total_line,
+
+	(CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - (SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						)) > 0 THEN 'open'
+      ELSE 'close'
+	 END) as invoice_status
+ FROM sale s,  app_store store, client cli
+WHERE s.client_id = cli.id
+  AND s.store_id = store.id
+  AND store.name = 'SAMBIL'
+  -- AND s.date_create BETWEEN %s AND %s
+  AND (CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - (SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						)) > 0 THEN 'open'
+      ELSE 'close'
+	 END) in ('open', 'cancelled', 'close')
+  AND cli.id = 22756
+  -- AND s.login REGEXP 'massiel'
+ORDER BY s.id DESC
+;
+
+select * from sale where sequence = 'B020000009434';
+select * from client where id = 19067;
+
+select * from product where length(trim(name)) > 50;
+
+
+select MAX(id) from sale  ;
+select * from sale order by id desc ;
+INSERT INTO sale
+    (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
+VALUES (500, 450, 50, 30, 0, 'SEQUENCE-00', 'W', 'CASH', 'IN_SHOP', 'walex', 5000, 6000);
+ -- VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ) ;
+select * from app_sequence;
+-- UPDATE app_sequence SET current_seq = current_seq + increment_by WHERE code = '%s';
+select * from sale_line order by id desc limit 10; -- get sale_id
+select * from sale_paid order by id desc limit 10; -- get sale_id
+
+
 
 

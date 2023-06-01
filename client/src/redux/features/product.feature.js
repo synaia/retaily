@@ -10,7 +10,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BACKEND_HOST } from "../../util/constants";
 import { storeInfo } from "../../common/store-info";
 import { beauty } from "../../util/Utils.js";
+import { getLastLoggedUser } from "../../api/db";
 
+let current = await getLastLoggedUser('url:product.feature.js');
 
 const initialState = {
     loading: false,
@@ -37,16 +39,18 @@ const initialState = {
         'client': null, 
         'products': [], 
         'sale_detail': {
+            'discount_total': 0,
             'gran_total': 0, 
             'sub_total': 0, 
             'sub_tax': 0
-        }
+        },
+        'user': current
     },
     errorMessage: null
 };
 
 
-export const loadProducts = createAsyncThunk('products/loadProducts', async () => {
+export const loadProducts = createAsyncThunk('products/loadProducts', async (args, thunkAPI) => {
     console.log('> loadProducts...');
     let response = await Axios.get(`${BACKEND_HOST}/products/`, {});
     return response.data;
@@ -286,7 +290,13 @@ const updateSaleDetail = (productPickedList) => {
 
     const sub_total = gran_total / (1 + storeInfo.tax);
     const sub_tax = sub_total * storeInfo.tax;
-    const sale_detail = {'gran_total': gran_total, 'sub_total': sub_total, 'sub_tax': sub_tax};
+
+    const discount_total = productPickedList.reduce((x, p) => {
+        return (p.discount) ? x + p.discount : x;
+    }, 0)
+
+
+    const sale_detail = {'discount_total': discount_total, 'gran_total': gran_total, 'sub_total': sub_total, 'sub_tax': sub_tax};
     return sale_detail;
 };
 

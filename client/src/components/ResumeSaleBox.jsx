@@ -17,6 +17,9 @@ export const ResumeSaleBox = () => {
                     <h3>DELIVERY</h3>
                 </div>
                 <div>
+                    <h3>DISCOUNTS: {F_(sale_detail.discount_total)}</h3>
+                </div>
+                <div>
                     <h3>SUB: {F_(sale_detail.sub_total)}</h3>
                 </div>
                 <div>

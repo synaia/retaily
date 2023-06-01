@@ -34,6 +34,20 @@ export const loadSales = createAsyncThunk('products/loadSales', async ({data_ran
 });
 
 
+export const addSale = createAsyncThunk('sales/add_dale', async (transaction, ) => {
+    return await Axios.post(`${BACKEND_HOST}/sales/add_sale`, transaction,  {})
+    .then( resp => {
+        return solveResponse(resp);
+    })
+    .catch( err => {
+        if (Axios.isCancel(err))
+            console.log('Request cancelled', err);
+
+        return solveResponse(err);
+    });
+
+});
+
 export const addPay = createAsyncThunk('sale/add_pay', async (data_request) => {
     // console.log(data_request);
     let response = await Axios.put(`${BACKEND_HOST}/sales/add_pay`, data_request.paids, {
@@ -113,6 +127,21 @@ const salesSlice = createSlice({
             updateSaleInList(state, action, action.payload);
         }).addCase(cancelSale.rejected, (state, action) => {
             state.errorMessage = `ERROR cancelSale; ${action.error.message}`
+        });
+
+        builder.addCase(addSale.pending, (state, action) => {
+            state.loading = true
+        }).addCase(addSale.fulfilled, (state, action) => {
+            const { data, status, detail } = action.payload;
+            if (status >= 200 && status <= 300) {
+                state.errorMessage = detail;
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
+        }).addCase(addSale.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR addSale; ${action.error.message}`
         });
     }
 });

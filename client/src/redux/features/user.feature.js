@@ -3,16 +3,14 @@ import Axios, { AxiosError } from "axios";
 import axios from "axios";
 
 
-import { persistUser, getCurrentUser, getPreferences, persistPreference } from "../../api/db";
+import { persistUser, getLastLoggedUser, getPreferences, persistPreference } from "../../api/db";
 import { BACKEND_HOST } from "../../util/constants";
 import { beauty, solveResponse } from "../../util/Utils";
 
 const LOGIN = '/#/admin/users/login';
 
-let current = await getCurrentUser('url:user.feature.js');
-if (current)
-    current.dateupdate = current.dateupdate.toISOString();
-else 
+let current = await getLastLoggedUser('url:user.feature.js');
+if (!current)
     window.location.href = LOGIN;
 
 const { store, ui_theme, grid_theme } = await getPreferences();
@@ -40,7 +38,7 @@ export const interceptor = createAsyncThunk('interceptor/util', async (args, thu
             if (config.url.includes('/users/token')) {
                 return config;
             }
-            const U = await getCurrentUser(config.url);
+            const U = await getLastLoggedUser(config.url);
             config.headers = {
                 'Authorization': `bearer ${U.token}`,
                 'store': U.selectedStore,

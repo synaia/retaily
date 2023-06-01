@@ -948,3 +948,31 @@ FROM
 WHERE
      s.user_id = %s
 ;
+
+--UPDATE_SEQUENCE
+UPDATE app_sequence
+   SET current_seq = current_seq + increment_by
+  WHERE code = %s;
+
+--SELECT_SEQ
+SELECT
+    s.prefix,
+    s.fill,
+    s.increment_by,
+    s.current_seq
+ FROM app_sequence s
+   WHERE s.code = %s
+;
+
+--SELECTED_STORE
+SELECT s.id AS store_id FROM app_store s WHERE s.name = %s;
+
+--INSERT_SALE
+INSERT INTO sale
+    (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ) ;
+
+--INSERT_SALE_LINE
+INSERT INTO sale_line (amount, tax_amount, discount, quantity, total_amount, sale_id, product_id)
+ VALUES (%s, %s, %s, %s, %s, %s, %s)
+;

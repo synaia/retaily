@@ -42,9 +42,12 @@ export const persistUser = async (user) => {
 
 }
 
-export const getCurrentUser = async (url) => {
+export const getLastLoggedUser = async (url) => {
   const current = await db.users.orderBy('dateupdate').last();
   // console.log(current, url);
+  if (current)
+    current.dateupdate = current.dateupdate.toISOString();
+    
   return current;
 }
 

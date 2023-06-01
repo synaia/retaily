@@ -3,15 +3,41 @@ import { Link } from "react-router-dom";
 import { Header } from "./Header";
 import { ProductPickedReadOnly } from "./ProductPickedReadOnly";
 import { F_ } from "../util/Utils";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addSale } from "../redux/features/sale.feature.js";
 
 
 
 export const Payment = () => {
     const sale = useSelector((store) => store.product.sale);
+    const dispatch = useDispatch();
     const sale_detail = sale.sale_detail;
 
     console.log('Payment: rendered.')
+
+    const payButton = () => {
+        // mockup vars ....
+        const sx = {...sale};
+        sx.sequence_type = 'CF';
+        sx.status = 'CASH';
+        sx.sale_type = 'IN_SHOP';
+        const paids = [
+            {
+                'amount': 700.0,
+                'type': 'CASH',
+            },
+            {
+                'amount': 100.0,
+                'type': 'CC',
+            },
+        ]
+        sx.paids = paids;
+        // --
+
+        console.log(sx);
+        dispatch(addSale(sx));
+    }
+
     return (
 
         <div className="container-pay">
@@ -47,9 +73,12 @@ export const Payment = () => {
                     <div>
                          {sale.client != null  && <h2>Phone: {sale.client?.celphone}</h2>}
                     </div>
-                    <div className="middle-left-side-pay">
+                    <div className="middle-left-side-pay" onClick={payButton}>
                         <div>
                             <h3>DELIVERY</h3>
+                        </div>
+                        <div>
+                            <h3>DISCOUNTS: {F_(sale_detail.discount_total)}</h3>
                         </div>
                         <div>
                             <h3>SUB: {F_(sale_detail.sub_total)}</h3>

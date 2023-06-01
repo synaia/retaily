@@ -264,7 +264,7 @@ export const Sales = () => {
                                         <tr key={ix}>
                                             <td>{line.product.name}</td>
                                             <td>{line.quantity} x {line.amount - (line.discount/line.quantity)}</td>
-                                            <td>{F_(line.total_amount)}</td>
+                                            <td>{F_(line.total_amount * line.quantity)}</td>
                                         </tr>
                                     ))
                                     }
