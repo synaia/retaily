@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 import server.core_app.sale.sale_models as models
-from server.core_app.sale.sale_schemas import SalePaid
+from server.core_app.sale.sale_schemas import SalePaid, Sequence
 from server.core_app.client.client_models import Client
 from server.core_app.product.product_models import Product
 from server.core_app.dbfs.Query import Query
@@ -194,11 +194,9 @@ def add_sale(transaction: dict,  db: Session, query: Query):
     tax_amount: float = round(transaction['sale_detail']['sub_tax'], TWO_DECIMAL)
     delivery_charge: float = 0.0
 
-    # try hardcoded from ui #
     sequence_type: str = transaction['sequence_type']
     status: str = transaction['status']
     sale_type: str = transaction['sale_type']
-    # # # #
 
     sequence: str = get_next_sequence(code=sequence_type, db=db, query=query)
 
@@ -228,15 +226,36 @@ def add_sale(transaction: dict,  db: Session, query: Query):
         cur.execute(sql_raw_insert_sale_line, data)
         cur.connection.commit()
 
-    # try hardcoded from ui #
     paids = []
-    for p in transaction['paids']:
-        paid = SalePaid()
-        paid.amount = p['amount']
-        paid.type = p['type']
-        paids.append(paid)
+    if status != "CREDIT":
+        for p in transaction['paids']:
+            paid = SalePaid()
+            paid.amount = p['amount']
+            paid.type = p['type']
+            paids.append(paid)
 
-    add_pay(paids, sale_id, db, query)
-    # # # # #
+        add_pay(paids, sale_id, db, query)
 
     return True
+
+
+def sequences(db:Session, query:Query):
+    sql_raw = query.SELECT_SEQ_ALL
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    seq = cur.fetchall()
+
+    seqlist = []
+    for s in seq:
+        q = Sequence()
+        q.id = s['id']
+        q.name = s['name']
+        q.code = s['code']
+        q.prefix = s['prefix']
+        q.fill = s['fill']
+        q.increment_by = s['increment_by']
+        q.current_seq = s['current_seq']
+        seqlist.append(q)
+
+    return seqlist
+

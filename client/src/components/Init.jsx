@@ -23,6 +23,7 @@ import { getMovProductOrders } from "../redux/features/product.feature.js";
 import { getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { loadProviders } from "../redux/features/provider.feature.js";
 import { getBulkOrder } from  "../redux/features/product.feature.js";
+import { sequences } from "../redux/features/sale.feature.js";
 
 
 
@@ -47,6 +48,7 @@ export const Init = () => {
             dispatch(getPurchaseProductOrders());
             dispatch(loadProviders());
             dispatch(getBulkOrder());
+            dispatch(sequences());
         }
     }, [currentUser]);
 

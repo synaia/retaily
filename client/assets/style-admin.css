@@ -684,6 +684,14 @@ main .recent-orders a {
   color: var(--color-dark-variant);
 }
 
+.sale-card-paid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0rem;
+  align-items: flex-start;
+  color: var(--color-dark-variant);
+}
+
 .sale-card-amounts {
   text-align: right;
   padding-right: 10px;
@@ -997,6 +1005,24 @@ main .recent-orders a {
   gap: 0px;
   align-items: center;
 }
+.pay-input-frm {
+  display: flex;
+  gap: 0px;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+.pay-input-frm-typed {
+  display: flex;
+  gap: 0px;
+}
+
+.product-grid-frm {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: var(--color-white);
+  padding: 1rem;
+}
 .pay-input-t {
   background-color:  var(--color-background);
   color: var(--color-info-dark);
@@ -1006,11 +1032,62 @@ main .recent-orders a {
   padding-left: 5px;
 }
 
+.info-pay {
+  text-align: right;
+  grid-column: span 3; 
+}
+.info-pay h3 {
+  font-size: 1.4rem ;
+  padding-right: 18px;
+  font-family: "Lucida Console", "Courier New", monospace;
+
+}
+
 .pay-input-i {
   background-color:  var(--color-background);
   height: 30px;
   padding: 2px;
 }
+
+.pay-input-t-frm {
+  background-color:  var(--color-background);
+  color: var(--color-info-dark);
+  height: 50px;
+  width: 240px;
+  font-size: 27px;
+  padding-left: 5px;
+  padding-right: 15px;
+  text-align: right;
+  letter-spacing: 1px;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-weight: 800;
+}
+
+.pay-input-t-typed {
+  background-color:  var(--color-background);
+  color: var(--color-info-dark);
+  height: 50px;
+  width: 240px;
+  font-size: 27px;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding-right: 15px;
+  text-align: right;
+  letter-spacing: 1px;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-weight: 800;
+}
+
+.pay-input-i-frm {
+  background-color:  var(--color-background);
+  height: 50px;
+  padding-top: 8px;
+  padding-left: 5px;
+  font-size: 35px;
+}
+
+input::-webkit-outer-spin-button, 
+input::-webkit-inner-spin-button { margin-left: 15px; }
 
 .pay-input-t::-webkit-outer-spin-button,
 .pay-input-t::-webkit-inner-spin-button {
@@ -2121,4 +2198,71 @@ main .search-terminal-bulk span {
   52.81% {
     opacity: 1;
   }
+}
+
+.hidde-paid-form {
+  display: none;
+}
+
+.switch-field {
+  padding-top: 2em;
+  padding-bottom: 1em;
+	overflow: hidden;
+}
+.switch-field input {
+  display: none;
+}
+
+.switch-field label {
+  float: left;
+  font-size: 1.1rem !important;
+}
+
+.switch-field label {
+  display: inline-block;
+  background-color: var(--color-background);
+  color: var(--color-dark);
+  font-size: 1em;
+  font-weight: normal;
+  text-align: center;
+  text-shadow: none;
+  padding: 0.5em 1em;
+  border: 0.05em solid rgba(0, 0, 0, 0.15);
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition:    all 0.1s ease-in-out;
+  -ms-transition:     all 0.1s ease-in-out;
+  -o-transition:      all 0.1s ease-in-out;
+  transition:         all 0.1s ease-in-out;
+}
+
+.switch-field label:hover {
+	cursor: pointer;
+}
+
+.switch-field input:checked + label {
+  background-color: var(--color-primary);
+	color: white;
+}
+
+.credit-radio:checked + label {
+  background-color: var(--color-danger) !important;
+}
+
+.switch-field label:first-of-type {
+  /* border-radius: 3px 0 0 3px; */
+}
+
+.switch-field label:last-of-type {
+  /* border-radius: 0 3px 3px 0; */
+}
+
+.payment-btns {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+}
+
+.select-seq {
+  font-size: 1rem ;
+  margin-top: 13px !important;
 }

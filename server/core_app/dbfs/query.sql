@@ -964,6 +964,19 @@ SELECT
    WHERE s.code = %s
 ;
 
+--SELECT_SEQ_ALL
+SELECT
+    s.id,
+    s.name,
+    s.code,
+    s.prefix,
+    s.fill,
+    s.increment_by,
+    s.current_seq
+ FROM app_sequence s
+ ORDER BY s.id DESC
+;
+
 --SELECTED_STORE
 SELECT s.id AS store_id FROM app_store s WHERE s.name = %s;
 

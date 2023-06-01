@@ -7,6 +7,19 @@ import server.core_app.client.client_schemas as client
 import server.core_app.product.product_schemas as product
 
 
+class Sequence(BaseModel):
+    id: int | None = None
+    name: str | None = None
+    code: str | None = None
+    prefix: str | None = None
+    fill: int | None = None
+    increment_by: int | None = None
+    current_seq: int | None = None
+
+    class Config:
+        orm_mode = True
+
+
 class SalePaid(BaseModel):
     id: int | None = None
     amount: float | None = None

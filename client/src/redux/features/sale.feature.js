@@ -6,6 +6,7 @@ import { solveResponse } from "../../util/Utils";
 const initialState = {
     loading: false,
     sales: [],
+    sequences: [],
     errorMessage: null
 };
 
@@ -36,6 +37,21 @@ export const loadSales = createAsyncThunk('products/loadSales', async ({data_ran
 
 export const addSale = createAsyncThunk('sales/add_dale', async (transaction, ) => {
     return await Axios.post(`${BACKEND_HOST}/sales/add_sale`, transaction,  {})
+    .then( resp => {
+        return solveResponse(resp);
+    })
+    .catch( err => {
+        if (Axios.isCancel(err))
+            console.log('Request cancelled', err);
+
+        return solveResponse(err);
+    });
+
+});
+
+
+export const sequences = createAsyncThunk('sales/sequences', async () => {
+    return await Axios.get(`${BACKEND_HOST}/sales/sequences`,  {})
     .then( resp => {
         return solveResponse(resp);
     })
@@ -142,6 +158,22 @@ const salesSlice = createSlice({
         }).addCase(addSale.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR addSale; ${action.error.message}`
+        });
+
+        builder.addCase(sequences.pending, (state, action) => {
+            state.loading = true
+        }).addCase(sequences.fulfilled, (state, action) => {
+            const { data, status, detail } = action.payload;
+            if (status >= 200 && status <= 300) {
+                state.sequences = data;
+                state.errorMessage = detail;
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
+        }).addCase(sequences.rejected, (state, action) => {
+            state.loading = false
+            state.errorMessage = `ERROR sequences; ${action.error.message}`
         });
     }
 });

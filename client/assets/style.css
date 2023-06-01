@@ -1371,6 +1371,7 @@ main .client-grid small {
   border: 1px dashed var(--color-primary); 
   box-shadow: var(--box-shadow);
   margin-top: 3rem;
+  text-align: right;
 }
 .top-left-side-pay {
   border-bottom: 1px dashed var(--color-primary); 
