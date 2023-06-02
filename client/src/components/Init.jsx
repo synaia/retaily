@@ -30,7 +30,7 @@ import { Loading } from "./Loading.jsx";
 
 export const Init = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
-    const loading = useSelector((store) => store.product.loading);
+    const loading_all_products = useSelector((store) => store.product.loading_all_products);
     // const navigator = useNavigate();
     const dispatch = useDispatch();
     // TODO: instance.interceptors.request.clear();
@@ -56,7 +56,7 @@ export const Init = () => {
 
     return (
         <React.Fragment>
-            {loading && <Loading Text="retaily." Intro="true" />}
+            {loading_all_products && <Loading Text="retaily." Intro="true" />}
         </React.Fragment>
     );
 };

@@ -6,7 +6,7 @@ import { ProductPickedReadOnly } from "./ProductPickedReadOnly";
 import { F_ } from "../util/Utils";
 import { useSelector, useDispatch } from "react-redux";
 import { addSale } from "../redux/features/sale.feature.js";
-import { finishSaleAction } from "../redux/features/product.feature.js";
+import { finishSaleAction, lowOffProductQtyAction } from "../redux/features/product.feature.js";
 import { useRef, useState } from "react";
 
 
@@ -85,11 +85,18 @@ export const Payment = () => {
 
         dispatch(addSale(sx));
 
+        const args = {
+            'productlist': sale.products,
+            'selectedStore': sale.user.selectedStore
+        }
+
+        dispatch(lowOffProductQtyAction(args));
+
         dispatch(finishSaleAction());
         
-        if(confirm('Requiere Printing?')) {
-            callPrintAPI(sx);
-        }
+        // if(confirm('Requiere Printing?')) {
+        //     callPrintAPI(sx);
+        // }
 
         navigator('/', {replace: false});
     }

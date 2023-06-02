@@ -109,6 +109,12 @@ ALTER TABLE `retaily_db`.`client`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
 
+SET @max_from_sale = (select MAX(id) + 1 from client);
+SET @alter_table = CONCAT('ALTER TABLE client AUTO_INCREMENT =', @max_from_sale);
+PREPARE current_statement FROM @alter_table;
+EXECUTE current_statement;
+
+
 
 CREATE TABLE TMP_PRODUCT AS
 SELECT
@@ -157,10 +163,15 @@ ADD PRIMARY KEY (`id`);
 ALTER TABLE `retaily_db`.`sale`
 CHANGE COLUMN `date_create` `date_create` DATETIME NULL DEFAULT NOW() ;
 
-set @max_from_sale = (select MAX(id) + 1 from sale);
+ALTER TABLE `retaily_db`.`sale`
+ADD COLUMN `additional_info` VARCHAR(1000) NULL;
+
+
+
+SET @max_from_sale = (select MAX(id) + 1 from sale);
 SET @alter_table = CONCAT('ALTER TABLE sale AUTO_INCREMENT =', @max_from_sale);
 PREPARE current_statement FROM @alter_table;
-execute current_statement;
+EXECUTE current_statement;
 
 
 CREATE TABLE sale_line AS
@@ -178,6 +189,11 @@ ALTER TABLE `retaily_db`.`sale_line`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
 
+SET @max_from_sale = (select MAX(id) + 1 from sale_line);
+SET @alter_table = CONCAT('ALTER TABLE sale_line AUTO_INCREMENT =', @max_from_sale);
+PREPARE current_statement FROM @alter_table;
+EXECUTE current_statement;
+
 
 CREATE TABLE sale_paid AS
 SELECT
@@ -191,6 +207,11 @@ FROM sambil_db__sale_paid s;
 ALTER TABLE `retaily_db`.`sale_paid`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
+
+SET @max_from_sale = (select MAX(id) + 1 from sale_paid);
+SET @alter_table = CONCAT('ALTER TABLE sale_paid AUTO_INCREMENT =', @max_from_sale);
+PREPARE current_statement FROM @alter_table;
+EXECUTE current_statement;
 
 
 CREATE TABLE app_sequence AS
@@ -769,16 +790,18 @@ select * from product where length(trim(name)) > 50;
 
 
 select MAX(id) from sale  ;
-select * from sale order by id desc ;
-INSERT INTO sale
-    (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
-VALUES (500, 450, 50, 30, 0, 'SEQUENCE-00', 'W', 'CASH', 'IN_SHOP', 'walex', 5000, 6000);
- -- VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ) ;
+SELECT s.id FROM app_store s WHERE s.name = 'SAMBIL';
+
+select * from sale  order by id desc ;
+
 select * from app_sequence;
 -- UPDATE app_sequence SET current_seq = current_seq + increment_by WHERE code = '%s';
-select * from sale_line order by id desc limit 10; -- get sale_id
+select * from sale_line order by id DESC  limit 10; -- get sale_id
+
 select * from sale_paid order by id desc limit 10; -- get sale_id
 
 
-
+DELETE from sale where id = 300869;
+DELETE from sale_line where sale_id = 300869 and id > 0;
+DELETE from sale_paid where sale_id = 300869 and id > 0;
 

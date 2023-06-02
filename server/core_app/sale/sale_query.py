@@ -185,7 +185,7 @@ def get_next_sequence(code: str, db: Session, query: Query):
 
 
 def add_sale(transaction: dict,  db: Session, query: Query):
-    sql_raw_insert_sale = query.INSERT_SALE
+    sql_raw_insert_sale: str = query.INSERT_SALE
     cur = get_cursor(db)
     TWO_DECIMAL: int = 2 
 
@@ -212,6 +212,7 @@ def add_sale(transaction: dict,  db: Session, query: Query):
     cur.connection.commit()
     sale_id = cur.lastrowid
 
+    sql_upd_inv = query.UPDATE_INV_ON_SALE
     sql_raw_insert_sale_line = query.INSERT_SALE_LINE
 
     for p in transaction['products']:
@@ -228,7 +229,11 @@ def add_sale(transaction: dict,  db: Session, query: Query):
         cur.execute(sql_raw_insert_sale_line, data)
         cur.connection.commit()
 
-        # TODO: discount product from inventory .... obvio.
+        # lower product from app_inventory
+        data = (qty_for_sale, product_id, store_id)
+        cur.execute(sql_upd_inv, data)
+        cur.connection.commit()
+
 
     paids = []
     if status != "CREDIT":

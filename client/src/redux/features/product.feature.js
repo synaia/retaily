@@ -16,6 +16,7 @@ let current = await getLastLoggedUser('url:product.feature.js');
 
 const initialState = {
     loading: false,
+    loading_all_products: false,
     products: [],
     products_inv: [],
     products_all_inv: [],
@@ -636,6 +637,27 @@ const fromPurchaseToBulk = (__purchase_orders, state) => {
     state.bulk_orders = __bulk_orders;
 }
 
+const updateProductInstance = (productlist, productsInstance, selectedStore, stateReference) => {
+    productlist.forEach( p => {
+        const index = productsInstance.findIndex(prod => prod.id == p.id);
+        const invIndex = productsInstance[index].inventory.findIndex(inv => inv.store.name == selectedStore);
+
+        const availableQty = productsInstance[index].inventory[invIndex].quantity;
+        const soldQty = p.inventory[0].quantity_for_sale; // alway 0:index
+        const residualQty = availableQty - soldQty;
+        productsInstance[index].inventory[invIndex].quantity = residualQty;
+        stateReference = productsInstance;
+    });
+}
+
+const lowOffProductQty = (state, action) => {
+    const {productlist, selectedStore } = action.payload;
+    const products = [...state.products];
+    const all_products = [...state.all_products];
+    updateProductInstance(productlist, products, selectedStore, state.products);
+    updateProductInstance(productlist, all_products, selectedStore, state.all_products);
+}
+
 const productsSlice = createSlice({
     name: 'products',
     initialState: initialState,
@@ -649,19 +671,23 @@ const productsSlice = createSlice({
         discardSaleAction: discardSale,
         finishSaleAction: finishSale,
         refreshProductListAction: refreshProductList,
+        lowOffProductQtyAction: lowOffProductQty,
         cleanBulkOrders: (state, action) => {
             state.bulk_orders = [];
         },
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
+            state.loading_all_products = true;
             state.loading = true
         }).addCase(loadProducts.fulfilled, (state, action) => {            
             state.products = action.payload
             console.log('VARIABLE ASIGNADA')
-            state.loading = false
+            state.loading = false;
+            state.loading_all_products  = false;
         }).addCase(loadProducts.rejected, (state, action) => {
-            state.loading = false
+            state.loading = false;
+            state.loading_all_products  = false;
             state.errorMessage = `ERROR loadProducts; ${action.error.message}`
         });
 
@@ -953,7 +979,8 @@ export const {
     discardSaleAction,
     finishSaleAction,
     refreshProductListAction,
-    cleanBulkOrders
+    cleanBulkOrders,
+    lowOffProductQtyAction
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -991,3 +991,12 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ) ;
 INSERT INTO sale_line (amount, tax_amount, discount, quantity, total_amount, sale_id, product_id)
  VALUES (%s, %s, %s, %s, %s, %s, %s)
 ;
+
+--UPDATE_INV_ON_SALE
+UPDATE app_inventory i
+  SET  i.prev_quantity = i.quantity ,
+       i.quantity = i.quantity - %s
+WHERE
+      i.product_id = %s
+  AND i.store_id = %s
+;

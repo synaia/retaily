@@ -10,12 +10,13 @@ export const Loading = ({Text, Intro}) => {
     const anim = Intro != undefined ? "anim-grad " : "" 
 
     useEffect(() => {
-        if(Intro != undefined ) {
-        const root = document.querySelector('#root')
-        root.classList.add('root-opaque');
-        return () => {
-            root.classList.remove('root-opaque');
-        }
+        console.log('Intro', Intro)
+        if(Intro == "true" ) {
+            const root = document.querySelector('#root')
+            root.classList.add('root-opaque');
+            return () => {
+                root.classList.remove('root-opaque');
+            }
         }
     }, []);
 
