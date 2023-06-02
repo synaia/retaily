@@ -24,11 +24,13 @@ import { getPurchaseProductOrders } from "../redux/features/product.feature.js";
 import { loadProviders } from "../redux/features/provider.feature.js";
 import { getBulkOrder } from  "../redux/features/product.feature.js";
 import { sequences } from "../redux/features/sale.feature.js";
+import { Loading } from "./Loading.jsx";
 
 
 
 export const Init = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const loading = useSelector((store) => store.product.loading);
     // const navigator = useNavigate();
     const dispatch = useDispatch();
     // TODO: instance.interceptors.request.clear();
@@ -53,6 +55,8 @@ export const Init = () => {
     }, [currentUser]);
 
     return (
-        <React.Fragment></React.Fragment>
+        <React.Fragment>
+            {loading && <Loading Text="retaily." Intro="true" />}
+        </React.Fragment>
     );
 };

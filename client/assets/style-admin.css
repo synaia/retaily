@@ -1,6 +1,7 @@
 /* DECLARATIONS */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
+
 /* ROOT VARIABLES */
 :root {
   --color-primary: #7380ec;
@@ -1037,8 +1038,8 @@ main .recent-orders a {
   grid-column: span 3; 
 }
 .info-pay h3 {
-  font-size: 1.4rem ;
-  padding-right: 18px;
+  font-size: 1.6rem ;
+  padding-right: 15px;
   font-family: "Lucida Console", "Courier New", monospace;
 
 }
@@ -1929,7 +1930,7 @@ main .search-terminal-bulk span {
 	color: var(--color-info-dark);
 	border: 1px solid var(--color-solid-black);
 	background: var(--color-background);
-	font-size: 14px;
+	font-size: 2rem;
 	padding: 14px 10px;
 	font-weight: bold;
 	margin-bottom: 16px;
@@ -2265,4 +2266,47 @@ main .search-terminal-bulk span {
 .select-seq {
   font-size: 1rem ;
   margin-top: 13px !important;
+}
+
+input::placeholder, textarea::placeholder {
+  font-family: poppins, sans-serif;
+  opacity: 0.3;
+  text-align: left;
+  padding-left: 20px;
+  font-weight: 100;
+  font-size: 1.5rem;
+  color: var(--color-info-dark)
+}
+
+.pay-msg {
+  position: absolute;
+  /* top: -2px; */
+  /* left: -2px; */
+  height: 15%;
+  width: 65%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pay-msg span {
+  font-size: 2.7rem;
+}
+
+.aditional-info {
+  margin-top: 30px;
+  width: 100%;
+  font-family: poppins, sans-serif;
+  text-transform: none !important;
+}
+
+.aditional-info-r {
+  padding-top: 1px !important;
+  margin-top: 5px;
+  width: 97%;
+  font-family: poppins, sans-serif;
+  text-transform: none !important;
+  border-bottom: 0px !important;
+  font-size: 1rem !important;
+  color: var(--color-dark-variant);
 }

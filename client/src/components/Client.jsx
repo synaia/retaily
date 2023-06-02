@@ -8,7 +8,7 @@
 
 import React, { useState, createContext, forwardRef } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRef, useEffect } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
@@ -17,6 +17,7 @@ import { Loading } from "./Loading.jsx";
 
 export const Client = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const payment_redirect = useSelector((state) => state.sale.payment_redirect);
     const dispatch = useDispatch();
 
     const clientState = useSelector((state) => state.client);
@@ -32,9 +33,12 @@ export const Client = () => {
     const email = useRef()
     const navigator = useNavigate()
 
+    const params = useParams();
+
     document.querySelector('.search-bar').focus();
 
     useEffect(() => {
+        console.log('payment_redirect', payment_redirect)
         set_clients_partial(clients.slice(0, 20));
         const gridObject = document.querySelector('.client-grid');
         let c = 1;
@@ -50,9 +54,21 @@ export const Client = () => {
         });
     }, [clients]);
 
+    useEffect(() => {
+        const root = document.querySelector("#root");
+        root.classList.add('page-anim');
+        return () => {
+            root.classList.remove('page-anim');
+        }
+    }, []);
+
     const pickClient = (clientId)=> {
         dispatch(pickClientAction({clientId, clients}));
-        navigator('/', {replace: true});
+        if (payment_redirect) {
+            navigator('/payment', {replace: false});
+        } else {
+            navigator('/', {replace: false});
+        }
     }
 
     const createClient = () => {

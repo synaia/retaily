@@ -443,19 +443,29 @@ const pickNewClient = (state, action) => {
     state.sale.client = clientPicked;
 };
 
-const discardSale = (state, action) => {
-    // reset sale to initial state
-    if(!confirm('Really?')) return;
-    
+const cleanSale = (state) => {
     state.sale = {
         'client': null, 
         'products': [], 
         'sale_detail': {
+            'discount_total': 0,
             'gran_total': 0, 
             'sub_total': 0, 
             'sub_tax': 0
-        }
+        },
+        'user': current
     };
+}
+
+const discardSale = (state, action) => {
+    // reset sale to initial state
+    if(!confirm('Really?')) return;
+    
+   cleanSale(state);
+};
+
+const finishSale = (state, action) => {
+    cleanSale(state);
 };
 
 const refreshProductList = (state, action) => {
@@ -637,6 +647,7 @@ const productsSlice = createSlice({
         pickClientAction: pickClient,
         pickNewClientAction: pickNewClient,
         discardSaleAction: discardSale,
+        finishSaleAction: finishSale,
         refreshProductListAction: refreshProductList,
         cleanBulkOrders: (state, action) => {
             state.bulk_orders = [];
@@ -940,6 +951,7 @@ export const {
     pickClientAction, 
     pickNewClientAction,
     discardSaleAction,
+    finishSaleAction,
     refreshProductListAction,
     cleanBulkOrders
 } = productsSlice.actions;

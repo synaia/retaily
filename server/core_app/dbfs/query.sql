@@ -174,6 +174,7 @@ SELECT
     s.sale_type,
     s.date_create,
     s.login,
+    s.additional_info,
     cli.id as client_id,
     cli.name as client_name,
     cli.document_id,
@@ -235,6 +236,7 @@ SELECT
     s.sale_type,
     s.date_create,
     s.login,
+    s.additional_info,
     cli.id as client_id,
     cli.name as client_name,
     cli.document_id,
@@ -982,8 +984,8 @@ SELECT s.id AS store_id FROM app_store s WHERE s.name = %s;
 
 --INSERT_SALE
 INSERT INTO sale
-    (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ) ;
+    (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id, additional_info)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ) ;
 
 --INSERT_SALE_LINE
 INSERT INTO sale_line (amount, tax_amount, discount, quantity, total_amount, sale_id, product_id)

@@ -1,10 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "./Header";
 import { ProductPickedReadOnly } from "./ProductPickedReadOnly";
 import { F_ } from "../util/Utils";
 import { useSelector, useDispatch } from "react-redux";
 import { addSale } from "../redux/features/sale.feature.js";
+import { finishSaleAction } from "../redux/features/product.feature.js";
 import { useRef, useState } from "react";
 
 
@@ -13,10 +15,14 @@ export const Payment = () => {
     const sale = useSelector((store) => store.product.sale);
     const sequences = useSelector((store) => store.sale.sequences);
     const dispatch = useDispatch();
+    const navigator = useNavigate()
     const sale_detail = sale.sale_detail;
     const paidForm = useRef();
+    const divConfirmPaid = useRef();
+    const divConfirmPaidMsg = useRef();
     const amountCash = useRef();
     const amountCC = useRef();
+    const additionalInfo = useRef();
     const [status, setStatus] = useState('CASH');
     const [type, setType] = useState('IN_SHOP');
     const [seqType, setSeqType] = useState("DV");
@@ -26,19 +32,38 @@ export const Payment = () => {
 
     console.log('Payment: rendered.')
 
+    useEffect(() => {
+        const root = document.querySelector("#root");
+        root.classList.add('page-anim');
+        return () => {
+            root.classList.remove('page-anim');
+        }
+    }, []);
+
+    const callPrintAPI = (sx) => {
+
+    }
+
     const payButton = () => {
+        if (!showPaymentBtn) {
+            console.log('not ready')
+            return;
+        }
+
         const sx = {...sale};
 
         sx.sequence_type = seqType;
         sx.status = status;
         sx.sale_type = type;
+        sx.additional_info = additionalInfo.current.value;
+        const __amountCash = amountCash.current.value - amountDiff;
         let paids = [];
 
         if ("CREDIT" != status) {
             if (parseFloat(amountCash.current.value)) {
                 paids.push( 
                     {
-                        'amount': amountCash.current.value,
+                        'amount': __amountCash,
                         'type': 'CASH',
                     }
                 )
@@ -58,7 +83,15 @@ export const Payment = () => {
 
         console.log(sx);
 
-        // dispatch(addSale(sx));
+        dispatch(addSale(sx));
+
+        dispatch(finishSaleAction());
+        
+        if(confirm('Requiere Printing?')) {
+            callPrintAPI(sx);
+        }
+
+        navigator('/', {replace: false});
     }
 
     const onPaymentStatusChange = (event) => {
@@ -67,8 +100,19 @@ export const Payment = () => {
         setStatus(radio.value);
         if ("CREDIT" == radio.value) {
             paidForm.current.classList.add('hidde-paid-form');
+            divConfirmPaid.current.style.setProperty("--color-primary-payment", "#7380ec");
+            divConfirmPaidMsg.current.classList.add('pay-msg-anim');
+            setShowPaymentBtn(true);
+            amountCC.current.value = '';
+            amountCash.current.value = '';
+            setAmountTyped(0);
+            setAmountDiff(0);
         } else {
             paidForm.current.classList.remove('hidde-paid-form');
+            divConfirmPaid.current.style.setProperty("--color-primary-payment", "#7d8da1");
+            divConfirmPaidMsg.current.classList.remove('pay-msg-anim');
+            amountCC.current.focus();
+            setShowPaymentBtn(false);
         }
     }
 
@@ -91,17 +135,30 @@ export const Payment = () => {
         if ((cash + cc) >= total_amount) {
             console.log('Jepppppp!!!')
             setShowPaymentBtn(true);
+            divConfirmPaid.current.style.setProperty("--color-primary-payment", "#7380ec");
+            divConfirmPaidMsg.current.classList.add('pay-msg-anim');
             return;
         } 
 
         if ((cash + cc) < total_amount) {
             console.log('Not yet')
             setShowPaymentBtn(false);
+            divConfirmPaid.current.style.setProperty("--color-primary-payment", "#7d8da1");
+            divConfirmPaidMsg.current.classList.remove('pay-msg-anim');
             return;
         }
 
         if ((cash + cc) == total_amount) {
             
+        }
+    }
+
+    const onEnter = (event) => {
+        if (event.key == 'Enter') {
+            if (event.currentTarget.name == 'amountcash')
+                amountCC.current.focus();
+            else
+                amountCash.current.focus();
         }
     }
 
@@ -143,9 +200,13 @@ export const Payment = () => {
 
                     <div className="payment-btns">
                         <div className="switch-field">
-                            <input type="radio" id="switch_left" name="status" value="CASH" defaultChecked={true}  onChange={onPaymentStatusChange}/>
+                            <input type="radio" id="switch_left" name="status" value="CASH" 
+                                defaultChecked={true} 
+                                onChange={onPaymentStatusChange}/>
                             <label for="switch_left">CASH</label>
-                            <input type="radio" id="switch_right" name="status" value="CREDIT" onChange={onPaymentStatusChange} className="credit-radio"/>
+                            <input type="radio" id="switch_right" name="status" value="CREDIT" 
+                                onChange={onPaymentStatusChange} 
+                                className="credit-radio"/>
                             <label for="switch_right">CREDIT</label>
                         </div>
 
@@ -165,33 +226,46 @@ export const Payment = () => {
                         </div>
                     </div>
                     
-
                     <div className="sale-card-paid-form" ref={paidForm}> 
                         <div className="pay-input-frm">
-                            <span className="material-icons-sharp pay-input-i-frm"> price_check </span>
-                            <input  type="number"  className="pay-input-t-frm" ref={amountCash} onChange={() => onAmountChange(sale.sale_detail.gran_total)} />
+                            <span className="material-icons-sharp pay-input-i-frm"> credit_score </span>
+                            <input  type="number" name="amountcc"   className="pay-input-t-frm" ref={amountCC} 
+                            onChange={() => onAmountChange(sale.sale_detail.gran_total)} 
+                            onKeyDown={onEnter} 
+                            autoFocus placeholder="CREDIT CARD" /> 
                         </div>
                         <div className="pay-input-frm">
-                            <span className="material-icons-sharp pay-input-i-frm"> credit_score </span>
-                            <input  type="number" className="pay-input-t-frm" ref={amountCC} onChange={() => onAmountChange(sale.sale_detail.gran_total)} /> 
+                            <span className="material-icons-sharp pay-input-i-frm"> price_check </span>
+                            <input  type="number" name="amountcash" className="pay-input-t-frm" ref={amountCash}
+                                onChange={() => onAmountChange(sale.sale_detail.gran_total)} 
+                                onKeyDown={onEnter}
+                                placeholder="CASH"  />
                         </div>
+                       
                         <div className="pay-input-frm">
                             {showPaymentBtn &&
-                            <span className="material-icons-sharp pay-input-i-frm"> check </span>
+                            <span className="material-icons-sharp pay-input-i-frm success"> check </span>
                             }
-                            <span className="pay-input-t-typed">{amountTyped}</span>
+                            <span className="pay-input-t-typed">{F_(amountTyped)}</span>
                         </div>
                             
-                        <div className="info-pay">
-                                <h3>{amountDiff}</h3>
+                        <div className={`info-pay ${amountDiff < 0 ? 'danger': ''} ${amountDiff > 0 ? 'warning': ''}`}>
+                                <h3>{F_(amountDiff)}</h3>
                         </div>
                     </div>
 
                    
 
-                    <div className="middle-left-side-pay" onClick={payButton}>
+                    <div className="middle-left-side-pay" onClick={payButton} ref={divConfirmPaid}>
+
+                        <div className="pay-msg" ref={divConfirmPaidMsg}>
+                             <span className="material-icons-sharp pay-msg-i"> send </span>
+                        </div>
+                        
                         <div>
-                            <h3>DELIVERY</h3>
+                            <h2 className={`${showPaymentBtn ? 'success' : ''}`}>
+                                TOTAL: {F_(sale_detail.gran_total)}
+                            </h2>
                         </div>
                         <div>
                             <h3>DISCOUNTS: {F_(sale_detail.discount_total)}</h3>
@@ -202,10 +276,13 @@ export const Payment = () => {
                         <div>
                             <h3>ITBIS: {F_(sale_detail.sub_tax)}</h3>
                         </div>
-                        <div></div>
                         <div>
-                            <h2>TOTAL: {F_(sale_detail.gran_total)}</h2>
+                            <h3>DELIVERY {F_(0)}</h3>
                         </div>
+                    </div>
+
+                    <div>
+                        <textarea ref={additionalInfo} placeholder="Aditional Info" rows={3} wrap="soft" className="aditional-info" />
                     </div>
                 </div>
             </main>

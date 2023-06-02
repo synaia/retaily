@@ -82,7 +82,7 @@ export const Sales = () => {
             themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
             themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
         });
-    });
+    }, []);
 
 
     const _addPay = (sale_id) => {
@@ -305,6 +305,17 @@ export const Sales = () => {
                                     </tbody>
                                   </table>
                                 </div>
+                                {sale.additional_info &&
+                                <div>
+                                    <textarea placeholder="Aditional Info" 
+                                              rows={3} wrap="soft" 
+                                              className="aditional-info-r" 
+                                              defaultValue={sale.additional_info}
+                                              readOnly={true}
+                                              />
+                                </div>
+                                }
+
                                 <div className="sale-card-btns">
                                     <div>
                                         <button className="cbutton">

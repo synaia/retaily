@@ -31,6 +31,7 @@ class Sale(Base):
     total_paid = Column(Float)
     due_balance = Column(Float)
     invoice_status = Column(String)
+    additional_info = Column(String)
     client = relationship("Client", backref='sale', uselist=False)
     store = relationship("Store", backref='sale', uselist=False)
     sale_line = relationship("SaleLine", backref='sale', uselist=True)

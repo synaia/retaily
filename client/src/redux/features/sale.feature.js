@@ -7,6 +7,7 @@ const initialState = {
     loading: false,
     sales: [],
     sequences: [],
+    payment_redirect: true,
     errorMessage: null
 };
 
@@ -110,7 +111,11 @@ const updateSaleInList = (state, action, payload) => {
 const salesSlice = createSlice({
     name: 'sales',
     initialState: initialState,
-   
+    reducers: {
+        redirect_pass: (state, action) => {
+           state.payment_redirect = action.payload;
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(loadSales.pending, (state, action) => {
             state.loading = true
@@ -178,5 +183,5 @@ const salesSlice = createSlice({
     }
 });
 
-
+export const { redirect_pass } = salesSlice.actions;
 export default salesSlice.reducer;

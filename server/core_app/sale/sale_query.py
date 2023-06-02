@@ -50,6 +50,7 @@ def read_sales(init_date: str, end_date: str, store: str, store_s: str, invoice_
         sale.sale_type = rp['sale_type']
         sale.date_create = rp['date_create']
         sale.login = rp['login']
+        sale.additional_info = rp['additional_info']
         sale.total_paid = 0 if (rp['total_paid'] is None) else rp['total_paid']
         sale.due_balance = rp['amount'] - sale.total_paid
 
@@ -204,8 +205,9 @@ def add_sale(transaction: dict,  db: Session, query: Query):
     client_id: int = transaction['client']['id']
     store_name: str = transaction['user']['selectedStore']
     store_id: int = selected_store(store_name, db, query)
+    additional_info: str = transaction['additional_info']
 
-    data = (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id)
+    data = (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id, additional_info)
     cur.execute(sql_raw_insert_sale, data)
     cur.connection.commit()
     sale_id = cur.lastrowid
@@ -225,6 +227,8 @@ def add_sale(transaction: dict,  db: Session, query: Query):
         data = (amount, 0, discount, qty_for_sale, total_amount, sale_id, product_id)
         cur.execute(sql_raw_insert_sale_line, data)
         cur.connection.commit()
+
+        # TODO: discount product from inventory .... obvio.
 
     paids = []
     if status != "CREDIT":
