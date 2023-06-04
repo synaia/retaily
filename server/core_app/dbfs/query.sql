@@ -323,7 +323,11 @@ WHERE id = %s
 --SELECT_STORES
  SELECT
       s.id,
-      s.name
+      s.name,
+      s.company_id,
+      s.slogan,
+      s.logo,
+      s.address
 FROM app_store s
  ORDER BY s.id
 ;
@@ -934,7 +938,12 @@ WHERE
 
 --SELECT_USER_STORE
 SELECT
-      s.name as store_name
+      s.id,
+      s.name,
+      s.company_id,
+      s.slogan,
+      s.logo,
+      s.address
 FROM
      app_user_store x, app_store s
 WHERE

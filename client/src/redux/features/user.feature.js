@@ -125,7 +125,9 @@ const userSlice = createSlice({
             persistPreference('grid_theme', rdg);
         },
         changeStore: (state, action) => {
-            state.currentUser.selectedStore = action.payload; 
+            const store = action.payload; 
+            state.currentUser.selectedStore = store.name;
+            state.currentUser.store = store;
             persistUser(beauty(state.currentUser));
         }
     },
@@ -137,8 +139,9 @@ const userSlice = createSlice({
             const { data: user, status, detail } = action.payload
             if (status >= 200 && status <= 300) {
                 if (user?.stores.length > 0) {
-                    const store_default = (user?.stores.length == 1) ? user?.stores[0] : undefined;
+                    const store_default = (user?.stores.length == 1) ? user?.stores[0].name : undefined;
                     user.selectedStore = store_default;
+                    user.store = user?.stores[0];
                   }
                 persistUser(user);
                 state.currentUser = user;

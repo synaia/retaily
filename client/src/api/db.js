@@ -8,7 +8,7 @@ const VERSION = 1;
 //    table: users
 //-----------------------------
 db.version(VERSION).stores({
-  users: '++id, username, token, scopes, stores, pic, dateupdate, selectedStore',
+  users: '++id, username, token, scopes, stores, pic, dateupdate, selectedStore, store',
   preferences: '++id, preference_name, value'
 });
 
@@ -22,7 +22,8 @@ export const persistUser = async (user) => {
     'stores': user.stores,
     'pic': user.pic,
     'dateupdate': new Date(user.dateupdate),
-    'selectedStore': user.selectedStore
+    'selectedStore': user.selectedStore,
+    'store': user.store
 	};
 
   const count = await db.users.where({'username': user.username}).modify(freshuser);

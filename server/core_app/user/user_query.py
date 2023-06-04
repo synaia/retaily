@@ -48,7 +48,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     scopes: List[str] = []
-    stores: List[str] = []
+    stores: List[Store] = []
     pic: str | None = None
     dateupdate: str | None = None
 
@@ -157,7 +157,12 @@ def get_user(username: str, db: Session, query: Query):
         storlist = []
         for s in stor:
             store = Store()
-            store.name = s['store_name']
+            store.id = s['id']
+            store.name = s['name']
+            store.company_id = s['company_id']
+            store.slogan = s['slogan']
+            store.logo = s['logo']
+            store.address = s['address']
             storlist.append(store)
 
         data = (user.id,)

@@ -245,7 +245,7 @@ def add_sale(transaction: dict,  db: Session, query: Query):
 
         add_pay(paids, sale_id, db, query)
 
-    return True
+    return sequence
 
 
 def sequences(db:Session, query:Query):

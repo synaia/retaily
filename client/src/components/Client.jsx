@@ -18,6 +18,7 @@ import { Loading } from "./Loading.jsx";
 export const Client = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
     const payment_redirect = useSelector((state) => state.sale.payment_redirect);
+    const printer = useSelector((state) => state.sale.printer);
     const dispatch = useDispatch();
 
     const clientState = useSelector((state) => state.client);
@@ -214,7 +215,12 @@ export const Client = () => {
                                 </button>
                                 <div className="theme-toggler-variant">
                                     <span className="material-icons-sharp "> wifi </span>
-                                    <span className="material-icons-sharp"> print </span>
+                                    {printer.isrunning == true &&
+                                        <span className="material-icons-sharp"> print </span>
+                                    }
+                                    {printer.isrunning == false &&
+                                        <span className="material-icons-sharp danger"> print_disabled </span>
+                                    }
                                 </div>
                                 <div className="theme-toggler">
                                     <span className="material-icons-sharp "> light_mode </span>

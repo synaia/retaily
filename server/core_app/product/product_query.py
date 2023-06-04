@@ -379,6 +379,10 @@ def read_stores(db: Session, query: Query):
         store = Store()
         store.id = rp['id']
         store.name = rp['name']
+        store.company_id = rp['company_id']
+        store.slogan = rp['slogan']
+        store.logo = rp['logo']
+        store.address = rp['address']
         stores.append(store)
     return stores
 

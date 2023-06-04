@@ -1,8 +1,11 @@
 import React from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export const Header = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const printer = useSelector((state) => state.sale.printer);
+
 
     return (
         <div className="header-content">
@@ -17,7 +20,12 @@ export const Header = () => {
                     </button>
                     <div className="theme-toggler-variant">
                     <span className="material-icons-sharp "> wifi </span>
-                    <span className="material-icons-sharp"> print </span>
+                    {printer.isrunning == true &&
+                        <span className="material-icons-sharp"> print </span>
+                    }
+                    {printer.isrunning == false &&
+                        <span className="material-icons-sharp danger"> print_disabled </span>
+                    }
                     </div>
                     <div className="theme-toggler">
                     <span className="material-icons-sharp "> light_mode </span>

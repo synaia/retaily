@@ -50,7 +50,8 @@ export const Login = () => {
     }
 
     const onChangeStore = (event) => {
-        const store = event.target.value;
+        const store_id = event.target.value;
+        const store = currentUser.stores.find(s => s.id == store_id);
         console.log(store);
         dispatch(changeStore(store));
     }
@@ -89,7 +90,7 @@ export const Login = () => {
                  <select className="select-from-store" onChange={onChangeStore}>
                     <option disabled selected value> -- select your store -- </option>
                      { currentUser.stores.map((s, i) => (
-                         <option key={i} value={s}>{s}</option>
+                         <option key={i} value={s.id}>{s.name}</option>
                      ))}
                  </select>
                  </div>

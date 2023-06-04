@@ -34,6 +34,10 @@ class Store(BaseModel):
     id: int | None = None
     name: str | None = None
     date_create: datetime | None = None
+    company_id: str | None = None
+    slogan: str | None = None
+    logo: str | None = None
+    address: str | None = None
 
     class Config:
         orm_mode = True

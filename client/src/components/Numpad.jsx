@@ -1,13 +1,24 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { kickProductAction, reduceProductAction } from "../redux/features/product.feature.js";
-import { Client } from "./Client";
 import { discardSaleAction } from "../redux/features/product.feature.js";
 
+import { PrinterBasic } from "../api/printer.js";
+import { trouble } from "../redux/features/sale.feature.js";
+
+
 export const Numpad = () => {
+    const printer = useSelector((state) => state.sale.printer);
     console.log('Numpad: rendered.');
     const dispatch = useDispatch();
+
+    const printerBasic = new PrinterBasic();
+
+    useEffect(() => {
+        printerBasic.troubleshooting();
+    }, [printer.isrunning]);
+
 
     const setClient = () => {
         // const rdm = Math.floor(Math.random() * clients.length) + 1;
@@ -31,6 +42,7 @@ export const Numpad = () => {
         }
     };
 
+   
     return (
         <div className="bottom-left-side">
                 <div className="numpad-btn" onClick={reduceProductFromPicket}>
@@ -42,16 +54,23 @@ export const Numpad = () => {
                 <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
                     <span className="material-icons-sharp"> delete_sweep </span>
                 </div>
-                <Link to='/prods'>
-                    <div className="numpad-btn">
-                        <p>BTN 4</p>
-                    </div>
-                </Link>
-                <div className="numpad-btn">
-                    <p>BTN 5</p>
+                <div className="numpad-btn" onClick={() => printerBasic.connectToDevice()}>
+                    <p>SEARCH</p>
                 </div>
-                <div className="numpad-btn">
-                     <p>BTN 6</p>
+                <div className="numpad-btn" onClick={() => printerBasic.prepareDevice()}>
+                    <p>PREPARE</p>
+                </div>
+                <div className="numpad-btn" onClick={() => printerBasic.print()}>
+                     <p>PRINT</p>
+                </div>
+                <div className="numpad-btn" onClick={() => printerBasic.restart()}>
+                     <p>RESTART</p>
+                </div>
+                <div className="numpad-btn" onClick={() => printerBasic.voluntaryRevoke()}>
+                     <p>REVOKE</p>
+                </div>
+                <div className="numpad-btn" onClick={() => dispatch(trouble())}>
+                     <p>STATUS</p>
                 </div>
             </div>
     );

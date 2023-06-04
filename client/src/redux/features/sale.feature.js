@@ -3,13 +3,27 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BACKEND_HOST } from "../../util/constants";
 import { solveResponse } from "../../util/Utils";
 
+import { PrinterBasic } from "../../api/printer.js";
+
+const printerBasic = new PrinterBasic();
+
 const initialState = {
     loading: false,
     sales: [],
     sequences: [],
     payment_redirect: true,
-    errorMessage: null
+    errorMessage: null,
+    printer: {
+        'isrunning': false
+    },
+    sequence_str: null,
 };
+
+
+export const trouble = createAsyncThunk('printer/status', async (args, thunkAPI) => {
+    await printerBasic.troubleshooting();
+});
+
 
 export const loadSales = createAsyncThunk('products/loadSales', async ({data_range, abortInstance}) => {
     console.log('loadSales...');
@@ -155,6 +169,7 @@ const salesSlice = createSlice({
         }).addCase(addSale.fulfilled, (state, action) => {
             const { data, status, detail } = action.payload;
             if (status >= 200 && status <= 300) {
+                state.sequence_str = data
                 state.errorMessage = detail;
             } else {
                 state.errorMessage = detail;
@@ -179,6 +194,14 @@ const salesSlice = createSlice({
         }).addCase(sequences.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR sequences; ${action.error.message}`
+        });
+
+        builder.addCase(trouble.pending, (state, action) => {
+            // Pending....
+        }).addCase(trouble.fulfilled, (state, action) => {
+            state.printer.isrunning = printerBasic.running();
+        }).addCase(trouble.rejected, (state, action) => {
+            state.errorMessage = `ERROR ${action.error.message}`
         });
     }
 });

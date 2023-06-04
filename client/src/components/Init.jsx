@@ -26,6 +26,8 @@ import { getBulkOrder } from  "../redux/features/product.feature.js";
 import { sequences } from "../redux/features/sale.feature.js";
 import { Loading } from "./Loading.jsx";
 
+import { trouble } from "../redux/features/sale.feature.js";
+
 
 
 export const Init = () => {
@@ -35,6 +37,18 @@ export const Init = () => {
     const dispatch = useDispatch();
     // TODO: instance.interceptors.request.clear();
     dispatch(interceptor());
+
+    
+    //TODO: here background task printer-check-status.
+    useEffect(() => {
+        const printerCheckTask = () => {
+            setTimeout(printerCheckTask, 5000);
+            dispatch(trouble());
+        }
+        printerCheckTask();
+    }, []);
+
+
 
     useEffect(() => {
         if (currentUser && currentUser.is_logout == null) {

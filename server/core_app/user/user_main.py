@@ -91,7 +91,7 @@ async def login_for_access_token(username: str, password: str,  db: Session = De
             "access_token": access_token,
             "token_type": "bearer",
             "scopes": scopes,
-            "stores": stores,
+            "stores": user.stores,
             "pic": user.pic,
             'dateupdate': datetime.now().isoformat()
         }

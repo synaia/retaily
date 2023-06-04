@@ -9,11 +9,14 @@ import { addSale } from "../redux/features/sale.feature.js";
 import { finishSaleAction, lowOffProductQtyAction } from "../redux/features/product.feature.js";
 import { useRef, useState } from "react";
 
+import { PrinterBasic } from "../api/printer.js";
+
 
 
 export const Payment = () => {
     const sale = useSelector((store) => store.product.sale);
     const sequences = useSelector((store) => store.sale.sequences);
+    const sequence_str = useSelector((store) => store.sale.sequence_str);
     const dispatch = useDispatch();
     const navigator = useNavigate()
     const sale_detail = sale.sale_detail;
@@ -30,6 +33,19 @@ export const Payment = () => {
     const [amountTyped, setAmountTyped] = useState();
     const [amountDiff, setAmountDiff] = useState();
 
+    const printer = useSelector((state) => state.sale.printer);
+
+    const printerBasic = new PrinterBasic();
+
+    const transaction = useRef({...sale});
+
+
+    useEffect(() => {
+        printerBasic.troubleshooting();
+    }, [printer.isrunning]);
+
+
+
     console.log('Payment: rendered.')
 
     useEffect(() => {
@@ -40,22 +56,32 @@ export const Payment = () => {
         }
     }, []);
 
-    const callPrintAPI = (sx) => {
+    const callPrintAPI = (transaction) => {
 
     }
 
-    const payButton = () => {
+    useEffect(() => {
+        if (sequence_str != null) {
+            transaction.current.sequence_str = sequence_str;
+            printerBasic.prepareDevice()
+            .then(pre => {
+                printerBasic.print(transaction.current);
+            });
+        }
+
+    }, [sequence_str]);
+
+    const payButton = async () => {
         if (!showPaymentBtn) {
             console.log('not ready')
             return;
         }
 
-        const sx = {...sale};
-
-        sx.sequence_type = seqType;
-        sx.status = status;
-        sx.sale_type = type;
-        sx.additional_info = additionalInfo.current.value;
+        transaction.current.sequence_type = seqType;
+        transaction.current.sequence = sequences.find(sq => sq.code == seqType);
+        transaction.current.status = status;
+        transaction.current.sale_type = type;
+        transaction.current.additional_info = additionalInfo.current.value;
         const __amountCash = amountCash.current.value - amountDiff;
         let paids = [];
 
@@ -79,26 +105,29 @@ export const Payment = () => {
             }
         }
         
-        sx.paids = paids;
+        transaction.current.paids = paids;
 
-        console.log(sx);
+        console.log(transaction.current);
 
-        dispatch(addSale(sx));
+        dispatch(addSale(transaction.current));
+
+        // await printerBasic.prepareDevice();
 
         const args = {
             'productlist': sale.products,
             'selectedStore': sale.user.selectedStore
         }
 
-        dispatch(lowOffProductQtyAction(args));
+        // dispatch(lowOffProductQtyAction(args));
 
-        dispatch(finishSaleAction());
+        // dispatch(finishSaleAction());
+
         
         // if(confirm('Requiere Printing?')) {
-        //     callPrintAPI(sx);
+        //     callPrintAPI(transaction.current);
         // }
 
-        navigator('/', {replace: false});
+        // navigator('/', {replace: false});
     }
 
     const onPaymentStatusChange = (event) => {
