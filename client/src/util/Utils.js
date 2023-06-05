@@ -11,6 +11,16 @@ export const F_ = (number_value) => {
     return n;
 };
 
+export const T_ = (number_value) => {
+    number_value = (number_value == undefined) ? 0 : number_value;
+    const n = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+    }).format(number_value.toFixed(0));
+    return n;
+};
+
 
 
 export const uuid = () => { // Public Domain/MIT
