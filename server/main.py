@@ -61,13 +61,13 @@ async def root():
     return {'message': 'Message from root.'}
 
 
-@app.middleware("http")
-async def add_time_simulate_latency(request: Request, call_next):
-    secs = 0.1
-    print(f'### Wow Latency, Wait for {secs} secs ###')
-    response = await call_next(request)
-    time.sleep(secs)
-    return response
+# @app.middleware("http")
+# async def add_time_simulate_latency(request: Request, call_next):
+#     secs = 0.1
+#     print(f'### Wow Latency, Wait for {secs} secs ###')
+#     response = await call_next(request)
+#     time.sleep(secs)
+#     return response
 
 
 # debug mode :-)

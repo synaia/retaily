@@ -69,7 +69,7 @@ def read_all_products(token_info: dict, db: Session, query: Query, product_id: i
     resp = cur.fetchall()
 
     for rp in resp:
-        product = models.Product()
+        product = Product()
         product.id = rp['id']
         product.name = rp['name']
         product.cost = rp['cost'] if 'product.view.cost' in token_info['token_scopes'] else 0
@@ -85,8 +85,8 @@ def read_all_products(token_info: dict, db: Session, query: Query, product_id: i
         pricings = cur.fetchall()
         plist = []
         for l in pricings:
-            li = models.PricingList()
-            pri = models.Pricing()
+            li = PricingList()
+            pri = Pricing()
             li.id = l['id']
             li.price = l['price']
             li.user_modified = l['user_modified']
@@ -95,14 +95,15 @@ def read_all_products(token_info: dict, db: Session, query: Query, product_id: i
             pri.label = l['label']
             li.pricing = pri
             plist.append(li)
+
         product.pricinglist = plist
 
         cur.execute(sql_raw_invlist, (product.id,))
         inv = cur.fetchall()
         invlist = []
         for l in inv:
-            inventory = models.Inventory()
-            store = models.Store()
+            inventory = Inventory()
+            store = Store()
             inventory.id = l['id']
             inventory.prev_quantity = l['prev_quantity']
             inventory.quantity = l['quantity']

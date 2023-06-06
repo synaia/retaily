@@ -80,7 +80,11 @@ async def get_products(
         store: Optional[str] = Header(None),
         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    products = read_products(store, db, query)
+    try:
+        products = read_products(store, db, query)
+    except Exception as ex:
+        print(ex)
+
     return products
 
 
@@ -88,9 +92,13 @@ async def get_products(
 async def get_products(
         db: Session = Depends(get_db),
         store: Optional[str] = Header(None),
-        token_info: models.User = Security(dependency=validate_permissions, scopes=["product.view"])
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    products = read_all_products(token_info, db, query)
+    try:
+        products = read_all_products(token_info, db, query)
+    except Exception as ex:
+        print(ex)
+
     return products
 
 
@@ -102,7 +110,11 @@ async def get_all_inv_products(
         store: Optional[str] = Header(None),
         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    products = read_inv_products(store_name, db, query)
+    try:
+        products = read_inv_products(store_name, db, query)
+    except Exception as ex:
+        print(ex)
+
     return products
 
 
@@ -118,7 +130,6 @@ async def __all_inv_new_version(
         return products
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
-
 
 
 @router.get("/pricing_labels", response_model=list[schemas.Pricing])

@@ -8,8 +8,8 @@ from server.core_app.basemodeler.BaseModelExt import BaseModelExt
 
 class Pricing(BaseModel):
     id: int | None = None
-    label: str
-    price_key: str | None= None
+    label: str | None = None
+    price_key: str | None = None
     user_modified: str | None = None
     date_create: datetime | None = None
     status: int | None = None
@@ -19,7 +19,8 @@ class Pricing(BaseModel):
 
 
 class PricingList(BaseModel):
-    price: float
+    id: int | None = None
+    price: float | None = None
     user_modified: str | None = None
     date_create: datetime | None = None
     pricing: Pricing | None = None

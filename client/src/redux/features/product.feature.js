@@ -52,6 +52,11 @@ const initialState = {
 
 
 export const loadProducts = createAsyncThunk('products/loadProducts', async (args, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.product.products.length > 0) {
+        console.log('> state.products allready loaded.');    
+        return;
+    } 
     console.log('> loadProducts...');
     let response = await Axios.get(`${BACKEND_HOST}/products/`, {});
     return response.data;
