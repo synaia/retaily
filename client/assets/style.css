@@ -1060,7 +1060,7 @@ main .recent-orders a {
   width: 98%;
   margin: 0 auto;
   gap: 1.8rem;
-  grid-template-columns: 35rem auto;
+  grid-template-columns: 1fr;
 
 }
 
@@ -1083,24 +1083,30 @@ main .recent-orders a {
   grid-template-columns: repeat(2, 1fr); */
   height: calc(100vh - 350px);
   padding: 1rem;
+  padding-top: 2rem;
 
 }
 
 .center-left-side-client input[type="text"], textarea {
-  background: var(--color-light);
+  /* background: var(--color-light);
   color: var(--color-dark);
   font-size: 1.2rem;
   text-transform: uppercase;
   width: calc(35vh);
   border-bottom: 1px solid var(--color-dark-variant);
-  padding: 1rem 0.5rem 0.1rem 0.5rem;
+  padding: 1rem 0.5rem 0.1rem 0.5rem; */
 }
 
 
 .middle-left-side-client {
+  margin-top: 1rem !important;
   height: calc(8vh);
-  border: 1px dashed var(--color-primary); 
-  box-shadow: var(--box-shadow);
+  margin: 0.2rem;
+  border: 1px dashed var(--color-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .top-left-side-client {
   border-bottom: 1px dashed var(--color-primary); 
@@ -1121,7 +1127,8 @@ main .recent-orders a {
   transition: all 300ms ease;
 }
 .middle-left-side-client:active, .top-left-side-client:active {
-  transform: scale(0.8);
+  transform: translate(0, 1px) scale(.8);
+  transition: all 600ms ease;
 }
 
 main .search-client {
@@ -1334,7 +1341,7 @@ main .client-grid small {
 @media screen and (max-width: 1200px) {
   .container-client {
     width: 99%;
-    grid-template-columns: 20rem auto;
+    grid-template-columns: 1fr;
   }
   aside .logo h2 {
     display: none;

@@ -6,24 +6,34 @@
  */
 
 
-import React, { useState, createContext, forwardRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
+
+import DataGrid from 'react-data-grid';
+import { textEditor } from 'react-data-grid';
+
+
 import { pickClientAction, pickNewClientAction } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 
+import { F_, validateInputX } from "../util/Utils";
+
+
 export const Client = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const gridRef = useRef(null);
+    const theme = useSelector((state) => state.user.theme);
+    const [rows, setRows] = useState([]);
     const payment_redirect = useSelector((state) => state.sale.payment_redirect);
     const printer = useSelector((state) => state.sale.printer);
     const dispatch = useDispatch();
 
     const clientState = useSelector((state) => state.client);
     const {loading, errorMessage, clients } = clientState;
-    const [clients_partial, set_clients_partial] = useState([]);
     const [clientIdState, setClientIdState] = useState();
     const search = useRef();
 
@@ -32,28 +42,72 @@ export const Client = () => {
     const address = useRef()
     const celphone = useRef()
     const email = useRef()
+    const [erros, setErrors] = useState();
     const navigator = useNavigate()
 
     const params = useParams();
 
     document.querySelector('.search-bar').focus();
 
-    useEffect(() => {
-        console.log('payment_redirect', payment_redirect)
-        set_clients_partial(clients.slice(0, 20));
-        const gridObject = document.querySelector('.client-grid');
-        let c = 1;
-        const WINDOW = 200;
-        gridObject.addEventListener('scroll', (event) => {
-            const y = gridObject.scrollTop;
-            // console.log(y);
-            if (y > (200 * c)) {
-                console.log(`y : ${y}`);
-                c += 1;
-                set_clients_partial(...clients_partial, clients.slice(0, 10*c));
-            }
-        });
+    useEffect(()=> {
+        setRows(clients);
     }, [clients]);
+
+
+
+    const columns = useMemo( () => {
+        return [
+            { key: 'selection', name: '',  width: 50, formatter: ({ row }) => {
+                return (
+                    <div className="selection-client-check" onClick={() => pickClient(row.id)}>
+                        <span className="material-icons-sharp"> check </span>
+                    </div>
+                );
+            }},
+            { key: 'name', name: 'Name', resizable: true, width: 200, editor: textEditor},
+            { key: 'document_id', name: 'Document', width: 150, editor: textEditor },
+            { key: 'celphone', name: 'Phone', width: 150, editor: textEditor },
+            { key: 'address', name: 'Address', width: 450, editor: textEditor },
+          ];
+    }); 
+
+    const rowChange = (rows, changes) => {
+        const args = {
+            'field': changes.column.key,
+            'value': rows[changes.indexes[0]][changes.column.key],
+            'client_id': rows[changes.indexes[0]].id
+        };
+
+        console.log(args);
+       
+        // dispatch(updatePricing(args))
+    };
+
+     /**
+     @todo: return 0 its NOT a option.
+    **/
+     const rowKeyGetter = (row) => {
+        // console.log('aqqui: ', row);
+        if (row != undefined) {
+            return row.id;
+        } else {
+            console.log('WARNING rowKeyGetter row undefined')
+            return 0;
+        }
+    };
+
+    const highlightsted = [];
+    const highlightsrow = (v, n) => {
+        if (highlightsted.length == 1) {
+            highlightsted[0].classList.toggle('row-selected-bg');
+            highlightsted.pop();
+        }
+
+        const e = n.target.parentElement;
+        highlightsted.push(e);
+        e.classList.toggle('row-selected-bg');
+        
+    };
 
     useEffect(() => {
         const root = document.querySelector("#root");
@@ -73,15 +127,23 @@ export const Client = () => {
     }
 
     const createClient = () => {
+        if (!validateInputX(name, "str", setErrors)) {
+            return;
+        }
+
+        if (!validateInputX(celphone, "str", setErrors)) {
+            return;
+        }
+
         const new_client = {
            "document_id": documentId.current?.value, 
            "name": name.current?.value, 
            "address": address.current?.value, 
            "celphone": celphone.current?.value, 
            "email": email.current?.value,
-           "date_create": "2023-02-18T14:58:33",
-           "wholesaler": true,
+           "wholesaler": false,
         }
+
         dispatch(addClient(new_client));
         dispatch(pickNewClientAction(new_client));
         dispatch(putClientinListAction(new_client));
@@ -132,7 +194,7 @@ export const Client = () => {
                 }
             });
 
-            set_clients_partial(list_filtered, ...clients_partial);
+            setRows(list_filtered, ...clients);
         } else {
             return false;
         }
@@ -141,71 +203,14 @@ export const Client = () => {
    
     return (
         <div className="container-client">
-            <div className="left-side-client">
-                <Link to='/'>
-                    <div className="top-left-side-client">
-                        <span className="material-icons-sharp" >
-                        keyboard_return
-                    </span>
-                        <h2>return </h2>
-                    </div>
-                </Link>
-
-                <div className="center-left-side-client">
-                    <div className="client-field">
-                        <div>
-                            <h3>Document ID</h3>
-                        </div>
-                        <div>
-                            <input ref={documentId} type="text" />
-                        </div>
-                        <div>
-                            <h3>Name</h3>
-                        </div>
-                        <div>
-                            <input ref={name} type="text"/>
-                        </div>
-                        <div>
-                            <h3>Address</h3>
-                        </div>
-                        <div>
-                            <textarea ref={address} type="text"  />
-                        </div>
-                        <div>
-                            <h3>Telephone</h3>
-                        </div>
-                        <div>
-                             <input ref={celphone} type="text" />
-                        </div>
-                        <div>
-                             <h3>E-mail</h3>
-                        </div>
-                        <div>
-                            <input ref={email} type="text" />
-                        </div>
-                    </div>
-                </div>
-                {clientIdState == null &&
-                    <div className="middle-left-side-client" onClick={createClient}>
-                        <div>
-                            <h3>SAVE</h3>
-                        </div>
-                    </div>
-                }
-                {clientIdState != null &&
-                    <div className="middle-left-side-client" onClick={editClient}>
-                        <div>
-                            <h3>UPDATE</h3>
-                        </div>
-                    </div>
-                }
-            </div>
-
-
+            
             <main>
                 <div className="header-content">
                     <div>
                         <h1>POS:Client</h1>
+                        <a className="text-muted-m" href='/#'> 
+                            <span>return</span> 
+                        </a>
                     </div>
                     <div>
                         <div className="right">
@@ -223,8 +228,8 @@ export const Client = () => {
                                     }
                                 </div>
                                 <div className="theme-toggler">
-                                    <span className="material-icons-sharp "> light_mode </span>
-                                    <span className="material-icons-sharp active"> dark_mode </span>
+                                    <span className="">  </span>
+                                    <span className="">  </span>
                                 </div>
                                 <div className="profile">
                                     <div className="info">
@@ -248,42 +253,61 @@ export const Client = () => {
                     <div className="search-client">
                         <input ref={search} type="text" onKeyUp={filterClient} className="search-bar" />
                     </div>
+
+                    <DataGrid 
+                        ref={gridRef}
+                        columns={columns} 
+                        rows={rows} 
+                        onRowsChange={rowChange}
+                        rowKeyGetter={rowKeyGetter} 
+                        enableVirtualization={true}
+                        onCellClick={highlightsrow}
+                        className={`data-grid-client ${theme.grid_theme}`}
+                    />
                     
 
-                <div className="client-grid ">
-                    <div className="recent-orders">
-                        <table className="ctable">
-                         <thead>
-                            <tr>
-                                <th> </th>
-                                <th>Customer Name</th>
-                                <th>Phone</th>
-                            </tr>
-                         </thead>
-                         <tbody>
-                                {loading && <Loading Text="Fetch clients ...." />}
-                                {!loading && errorMessage &&  <tr><td> {errorMessage} </td></tr>}
-                                {!loading && (
-                                    clients_partial.map((client, i) => (
-                                        <tr key={i} >
-                                            <td onClick={() => getClient(client.id)} data-client-id={client.id}>
-                                                <span className="material-icons-sharp">
-                                                    west
-                                                </span>
-                                            </td>
-                                            <td onClick={() => pickClient(client.id)} data-client-id={client.id}>
-                                                {client.name}
-                                            </td>
-                                            <td onClick={() => pickClient(client.id)} data-client-id={client.id}>
-                                                {client.celphone}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                         </tbody>
-                        </table>
+
+                        <div className="center-left-side-client">
+                            {erros &&
+                            <h2 className="danger">Please, review the client name and celphone.</h2>
+                            }
+                            <div className="client-field">
+                                <div>
+                                    <input className="text" placeholder="Document ID" ref={documentId} type="text" />
+                                </div>
+
+                                <div>
+                                    <input className="text" placeholder="Names"  ref={name} type="text"/>
+                                </div>
+                                
+                                <div className="address-client-d">
+                                    <textarea className="address-client" placeholder="address" ref={address} type="text"  />
+                                </div>
+                               
+                                <div>
+                                    <input className="text" placeholder="Movil"  ref={celphone} type="text" />
+                                </div>
+                               
+                                <div>
+                                    <input className="text" placeholder="eMail"  ref={email} type="text" />
+                                </div>
+                            </div>
+
+                        {clientIdState == null &&
+                            <div className="middle-left-side-client" onClick={createClient}>
+                                <div>
+                                    <h3>SAVE NEW</h3>
+                                </div>
+                            </div>
+                        }
+                        {clientIdState != null &&
+                            <div className="middle-left-side-client" onClick={editClient}>
+                                <div>
+                                    <h3>UPDATE</h3>
+                                </div>
+                            </div>
+                        }
                     </div>
-                </div>
       </main>
 
 

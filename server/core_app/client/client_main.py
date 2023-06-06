@@ -32,7 +32,6 @@ async def add_client(
         "address": client.address,
         "celphone": client.celphone,
         "email": client.email,
-        "date_create": client.date_create,
         "wholesaler": True
     })
 
