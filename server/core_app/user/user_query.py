@@ -11,6 +11,7 @@ from server.core_app.database import get_db
 
 from server.core_app.database import get_cursor
 from server.core_app.user.user_schema import User, Store, Scope
+from server.core_app.sale.sale_query import selected_store
 
 from server.core_app.dbfs.Query import Query
 
@@ -140,7 +141,8 @@ def create_user(user: User, db: Session, query: Query):
         cur.connection.commit()
 
     for t in user.stores:
-        data = (user_id, t.id)
+        store_id: int = selected_store(t.name, db, query)
+        data = (user_id, store_id)
         cur.execute(sql_raw_insert_u_stores, data)
         cur.connection.commit()
 
@@ -162,7 +164,8 @@ def add_stores_to_user(user: User, db: Session, query: Query):
     sql_raw_insert_u_stores = query.INSERT_USER_STORES
     cur = get_cursor(db)
     for t in user.stores:
-        data = (user.id, t.id)
+        store_id: int = selected_store(t.name, db, query)
+        data = (user.id, store_id)
         cur.execute(sql_raw_insert_u_stores, data)
         cur.connection.commit()
 
@@ -184,11 +187,30 @@ def delete_stores_from_user(user: User, db: Session, query: Query):
     sql_raw_delete_u_stores = query.DELETE_USER_STORES
     cur = get_cursor(db)
     for t in user.stores:
-        data = (user.id, t.id)
+        store_id: int = selected_store(t.name, db, query)
+        data = (user.id, store_id)
         cur.execute(sql_raw_delete_u_stores, data)
         cur.connection.commit()
 
     return True
+
+
+def get_scopes(db: Session, query: Query):
+    sql_raw_scopes = query.SELECT_SCOPES
+
+    cur = get_cursor(db)
+    cur.execute(sql_raw_scopes)
+    resp = cur.fetchall()
+
+    listscope = []
+    for r in resp:
+        scope = Scope()
+        scope.id = r['id']
+        scope.name = r['name']
+        scope.check = 0
+        listscope.append(scope)
+
+    return listscope
 
 
 def get_user(username: str, db: Session, query: Query):

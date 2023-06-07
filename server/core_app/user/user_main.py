@@ -69,6 +69,15 @@ async def delete_stores(user: schemas.User, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
+@router.get("/scopes", response_model=list[schemas.Scope])
+async def get(
+        db: Session = Depends(get_db),
+        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales.view"])
+):
+    scopes = user_query.get_scopes(db, query)
+    return scopes
+
+
 @router.get("/", response_model=list[schemas.User])
 async def get(
         db: Session = Depends(get_db),

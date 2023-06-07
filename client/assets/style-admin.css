@@ -5,6 +5,8 @@
 /* ROOT VARIABLES */
 :root {
   --color-primary: #7380ec;
+  --color-primary-u: #737fecb0;
+  --color-primary-d: #737fec35;
   --color-danger: #ff7782;
   --color-success: #41f1b6;
   --color-warning: #ffbb55;
@@ -2407,4 +2409,63 @@ input::placeholder, textarea::placeholder {
   background: var(--color-success);
   cursor:pointer;
   transition:.25s all ease;
+}
+
+.user-scopes { 
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  /* justify-content: space-between; */
+  transition: all 300ms ease;
+  height: calc(20vh) !important;
+}
+
+.rdg-cell  {
+
+}
+
+.l-scope {
+  padding: 4px 6px;
+  /* line-height: 190%; */
+  outline-style: none;
+  transition: all .3s;
+  color: var(--color-dark-variant);
+}
+.user-scope-div h2 {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+.user-scope-div div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.user-scope-div input[type="checkbox"],
+.user-scope-div input[type="radio"] {
+  display: none;
+  
+}
+
+.user-scope-div label {
+  cursor: pointer;
+}
+
+.user-scope-div input[type="checkbox"]+label:hover{
+  background: var(--color-primary);
+}
+
+.user-scope-div input[type="checkbox"]:checked+label {
+  background: var(--color-primary-d);
+}
+
+.user-scope-div input[type="checkbox"]:checked+label:hover{
+  background: var(--color-primary-u);
+}
+
+.user-btn {
+  padding-top: 6px;
 }

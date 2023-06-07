@@ -5,8 +5,10 @@ from server.core_app.product.product_schemas import Store
 
 
 class Scope(BaseModel):
+    id: int | None = None
     user_id: int | None = None
     name: str | None = None
+    check: int | None = None
 
     class Config:
         orm_mode = True

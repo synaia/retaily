@@ -1039,3 +1039,10 @@ DELETE FROM app_user_store
   WHERE user_id = %s
     AND store_id = %s
 ;
+
+--SELECT_SCOPES
+SELECT
+        s.id,
+        s.name
+FROM scope_list s
+;

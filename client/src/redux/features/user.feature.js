@@ -27,7 +27,8 @@ const initialState = {
         'grid_theme': grid_theme,
         dark_theme_base: 'dark-theme-variables',
     },
-    users: []
+    users: [],
+    scopes: [],
 };
 
 export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
@@ -120,6 +121,72 @@ export const addUser = createAsyncThunk('users/add', async (args) => {
     });
 });
 
+export const scopes = createAsyncThunk('users/scopes', async () => {
+    return await Axios.get(
+        `${BACKEND_HOST}/users/scopes`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
+export const addScope = createAsyncThunk('users/add_scope', async (args) => {
+    return await Axios.post(
+        `${BACKEND_HOST}/users/add_scope`, args, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
+export const deleteScope = createAsyncThunk('users/delete_scope', async (args) => {
+    return await Axios.post(
+        `${BACKEND_HOST}/users/delete_scope`, args, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
+export const addStores = createAsyncThunk('users/add_stores', async (args) => {
+    return await Axios.post(
+        `${BACKEND_HOST}/users/add_stores`, args, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
+export const deleteStores = createAsyncThunk('users/add_stores', async (args) => {
+    return await Axios.post(
+        `${BACKEND_HOST}/users/delete_stores`, args, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
+
 const userSlice = createSlice({
     name: 'user',
     initialState: initialState,
@@ -199,6 +266,22 @@ const userSlice = createSlice({
             }
             state.loading = false;
         }).addCase(users.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = action.error.message;
+        });
+
+        builder.addCase(scopes.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(scopes.fulfilled, (state, action) => {
+            const { data, status, detail } = action.payload
+            if (status >= 200 && status <= 300) {
+                state.scopes = data;
+                state.errorMessage = '';
+            } else {
+                state.errorMessage = detail;
+            }
+            state.loading = false;
+        }).addCase(scopes.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = action.error.message;
         });
