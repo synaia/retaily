@@ -33,7 +33,7 @@ export const Products = () => {
         const _text_Editor = (currentUser.scopes.includes(SCOPES.PRODUCT.EDIT)) ? textEditor :  () => true;
         const price_columns = [];
         pricing_labels.forEach( label => {
-            price_columns.push({ key: label.price_key, name: label.label, editor: _text_Editor, width: 200, pricing_id: label.id});
+            price_columns.push({ key: label.price_key, name: label.label, editor: _text_Editor, width: 110, pricing_id: label.id});
             // return true;
         });
 
@@ -49,14 +49,14 @@ export const Products = () => {
 
         if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEWCOST)) {
             first_columns = [
-                { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400, editor: _text_Editor},
-                { key: 'cost', name: 'Cost', editor: textEditor, width: 80 },
+                { key: 'id', name: 'ID', width: 10, frozen: true },
+                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: true},
+                { key: 'cost', name: 'Cost', editor: textEditor, width: 110 },
             ];
         } else {
             first_columns = [
-                { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400, editor: _text_Editor},
+                { key: 'id', name: 'ID', width: 10 , frozen: true},
+                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: true},
             ];
         }
 
@@ -65,6 +65,7 @@ export const Products = () => {
                 key: 'active', 
                 name: 'Active', 
                 width: 10, 
+                frozen: true,
                 formatter({ row, onRowChange, isCellSelected }) {
                     if(row == undefined) {
                         console.log('undefined row')
