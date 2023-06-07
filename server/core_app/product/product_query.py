@@ -93,6 +93,10 @@ def read_all_products(token_info: dict, db: Session, query: Query, product_id: i
             li.date_create = l['date_create']
             pri.price_key = l['price_key']
             pri.label = l['label']
+
+            if pri.price_key == "DEFAULT":
+                product.price = li.price
+
             li.pricing = pri
             plist.append(li)
 

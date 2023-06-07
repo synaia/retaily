@@ -3,7 +3,7 @@ SELECT
     p.id,
     p.name,
     p.cost,
-    p.price,
+    pl.price,
     p.margin,
     p.code,
     p.img_path,
@@ -12,11 +12,14 @@ SELECT
     p.image_raw,
     i.quantity,
     s.name as store_name
-  FROM product  p, app_inventory i, app_store s
+  FROM product  p, app_inventory i, app_store s, pricing_list pl, pricing pc
 WHERE
       p.id = i.product_id
   AND s.id = i.store_id
+  AND pl.pricing_id = pc.id
+  AND pl.product_id  = i.product_id
   AND s.name = %s
+  AND pc.price_key = 'DEFAULT'
   AND p.active = 1
   ;
 
@@ -1008,4 +1011,31 @@ UPDATE app_inventory i
 WHERE
       i.product_id = %s
   AND i.store_id = %s
+;
+
+--INSERT_USER
+INSERT INTO app_users (username, password, first_name, last_name, is_active, date_joined, pic)
+ VALUES(%s, %s, %s, %s, 1, NOW(), %s)
+ ;
+
+--INSERT_SCOPES
+INSERT INTO scopes (name, user_id)
+  VALUES(%s, %s)
+;
+
+--INSERT_USER_STORES
+INSERT INTO app_user_store (user_id, store_id)
+  VALUES (%s, %s)
+;
+
+--DELETE_SCOPES
+DELETE FROM scopes
+ WHERE name = %s
+   AND user_id = %s
+;
+
+--DELETE_USER_STORES
+DELETE FROM app_user_store
+  WHERE user_id = %s
+    AND store_id = %s
 ;

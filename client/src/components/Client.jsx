@@ -206,11 +206,11 @@ export const Client = () => {
             
             <main>
                 <div className="header-content">
-                    <div>
+                    <div className="pos-client">
+                        <Link to="/#">
+                         <span className="material-icons-sharp"> arrow_back_ios </span>
+                        </Link>
                         <h1>POS:Client</h1>
-                        <a className="text-muted-m" href='/#'> 
-                            <span>return</span> 
-                        </a>
                     </div>
                     <div>
                         <div className="right">

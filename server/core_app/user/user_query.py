@@ -122,12 +122,73 @@ async def validate_permissions(token_info: models.User = Security(validate_user)
     return token_info
 
 
-def create_user(user: models.User, db: Session):
+def create_user(user: User, db: Session, query: Query):
     user.password = get_password_hash(user.password)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    sql_raw_insert_user = query.INSERT_USER
+    sql_raw_insert_scopes = query.INSERT_SCOPES
+    sql_raw_insert_u_stores = query.INSERT_USER_STORES
+    cur = get_cursor(db)
+    data = (user.username, user.password, user.first_name, user.last_name, user.pic)
+    cur.execute(sql_raw_insert_user, data)
+    cur.connection.commit()
+    user_id = cur.lastrowid
+    user.id = user_id
+
+    for s in user.scope:
+        data = (s.name, user_id)
+        cur.execute(sql_raw_insert_scopes, data)
+        cur.connection.commit()
+
+    for t in user.stores:
+        data = (user_id, t.id)
+        cur.execute(sql_raw_insert_u_stores, data)
+        cur.connection.commit()
+
     return user
+
+
+def add_scopes_to_user(user: User, db: Session, query: Query):
+    sql_raw_insert_scopes = query.INSERT_SCOPES
+    cur = get_cursor(db)
+    for s in user.scope:
+        data = (s.name, user.id)
+        cur.execute(sql_raw_insert_scopes, data)
+        cur.connection.commit()
+
+    return True
+
+
+def add_stores_to_user(user: User, db: Session, query: Query):
+    sql_raw_insert_u_stores = query.INSERT_USER_STORES
+    cur = get_cursor(db)
+    for t in user.stores:
+        data = (user.id, t.id)
+        cur.execute(sql_raw_insert_u_stores, data)
+        cur.connection.commit()
+
+    return True
+
+
+def delete_scopes_from_user(user: User, db: Session, query: Query):
+    sql_raw_delete_scopes = query.DELETE_SCOPES
+    cur = get_cursor(db)
+    for s in user.scope:
+        data = (s.name, user.id)
+        cur.execute(sql_raw_delete_scopes, data)
+        cur.connection.commit()
+
+    return True
+
+
+def delete_stores_from_user(user: User, db: Session, query: Query):
+    sql_raw_delete_u_stores = query.DELETE_USER_STORES
+    cur = get_cursor(db)
+    for t in user.stores:
+        data = (user.id, t.id)
+        cur.execute(sql_raw_delete_u_stores, data)
+        cur.connection.commit()
+
+    return True
 
 
 def get_user(username: str, db: Session, query: Query):

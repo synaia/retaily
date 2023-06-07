@@ -136,7 +136,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.USER.VIEW) &&
-                <a href="/#/admin/users/login">
+                <a href="/#/admin/users">
                   <span className="material-icons-sharp"> person_outline </span>
                   <h3>Users</h3>
                 </a>

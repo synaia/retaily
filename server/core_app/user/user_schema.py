@@ -5,6 +5,7 @@ from server.core_app.product.product_schemas import Store
 
 
 class Scope(BaseModel):
+    user_id: int | None = None
     name: str | None = None
 
     class Config:

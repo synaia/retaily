@@ -107,6 +107,19 @@ export const logout = createAsyncThunk('users/logout', async (args) => {
 });
 
 
+export const addUser = createAsyncThunk('users/add', async (args) => {
+    return await Axios.post(
+        `${BACKEND_HOST}/users/add`, args, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then( resp => {
+        return solveResponse(resp);
+    }).catch( err => {
+        return solveResponse(err);
+    });
+});
+
 const userSlice = createSlice({
     name: 'user',
     initialState: initialState,

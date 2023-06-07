@@ -31,22 +31,40 @@ query = Query(path)
 
 @router.post("/add", response_model=schemas.User)
 async def create(user: schemas.User, db: Session = Depends(get_db)):
-    new_user = models.User(**{
-        'username': user.username,
-        'password': user.password,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'is_active': user.is_active,
-        'date_joined': user.date_joined,
-        'last_login': user.last_login,
-    })
-    for sco in user.scope:
-        new_user.scope.append(models.Scope(**sco.dict()))
-
-    # also append Stores :-)
-
     try:
-        return user_query.create_user(new_user, db)
+        return user_query.create_user(user, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/add_scope", response_model=schemas.User)
+async def add_scope(user: schemas.User, db: Session = Depends(get_db)):
+    try:
+        return user_query.add_scopes_to_user(user, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/add_stores", response_model=schemas.User)
+async def add_stores(user: schemas.User, db: Session = Depends(get_db)):
+    try:
+        return user_query.add_stores_to_user(user, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/delete_scope", response_model=schemas.User)
+async def delete_scope(user: schemas.User, db: Session = Depends(get_db)):
+    try:
+        return user_query.delete_scopes_from_user(user, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/delete_stores", response_model=schemas.User)
+async def delete_stores(user: schemas.User, db: Session = Depends(get_db)):
+    try:
+        return user_query.delete_stores_from_user(user, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
