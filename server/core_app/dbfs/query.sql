@@ -197,12 +197,13 @@ SELECT
 
 	(CASE
       WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
+      WHEN (s.amount - IFNULL((SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
 						  WHERE  paid.sale_id = s.id
 						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
+						), 0)
+		   ) > 0 THEN 'open'
       ELSE 'close'
 	 END) as invoice_status
  FROM sale s,  app_store store, client cli
@@ -212,12 +213,13 @@ WHERE s.client_id = cli.id
   AND s.date_create BETWEEN %s AND %s
   AND (CASE
       WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
+      WHEN (s.amount - IFNULL((SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
 						  WHERE  paid.sale_id = s.id
 						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
+						), 0)
+		   ) > 0 THEN 'open'
       ELSE 'close'
 	 END) in %s
   AND cli.id = %s
@@ -259,12 +261,13 @@ SELECT
 
 	(CASE
       WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
+      WHEN (s.amount - IFNULL((SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
 						  WHERE  paid.sale_id = s.id
 						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
+						), 0)
+		   ) > 0 THEN 'open'
       ELSE 'close'
 	 END) as invoice_status
  FROM sale s,  app_store store, client cli
@@ -274,12 +277,13 @@ WHERE s.client_id = cli.id
    AND s.date_create BETWEEN %s AND %s
   AND (CASE
       WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
+      WHEN (s.amount - IFNULL((SELECT
 							SUM(paid.amount)
 						   FROM sale_paid paid
 						  WHERE  paid.sale_id = s.id
 						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
+						), 0)
+		   ) > 0 THEN 'open'
       ELSE 'close'
 	 END) in %s
   AND s.login REGEXP %s

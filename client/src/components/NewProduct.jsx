@@ -14,6 +14,7 @@ import { Inventory } from "./Inventory.jsx";
 
 
 export const NewProduct = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const pricing = useSelector((state) => state.product.pricing);
     const stores = useSelector((state) => state.product.stores);
     const loading = useSelector((state) => state.product.loading);
@@ -56,7 +57,7 @@ export const NewProduct = () => {
             let price = {
                 pricing_id: p.id,
                 price: pricingRef[p.id].current?.value,
-                user_modified: 'user1'
+                user_modified: currentUser.username
             };
             pricinglist.push(price);
         });
@@ -65,7 +66,7 @@ export const NewProduct = () => {
             name: product_name.current?.value,
             cost: product_cost.current?.value,
             code: product_code.current?.value,
-            user_modified: 'user1',
+            user_modified: currentUser.username,
             img_path: v_uuid,
             inventory: inventory,
             pricinglist: pricinglist

@@ -13,6 +13,8 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const PurchaseOrderResponse = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+
     const params = useParams();
     const dispatch = useDispatch();
     const orders = useSelector((state) => state.product.purchase_orders);
@@ -186,7 +188,7 @@ export const PurchaseOrderResponse = () => {
             "product_id": product_id,
             "quantity": __quantity,
             "quantity_observed": qty,
-            "user_receiver": "USERRESPONSER",
+            "user_receiver": currentUser.username,
             "receiver_memo": "some memo here",
             "product_order_id": product_order_id,
             "order_type": order_type
@@ -280,7 +282,7 @@ export const PurchaseOrderResponse = () => {
     const __processOrder = () => {
         const args = {
             'id': order.id,
-            'user_receiver': 'USERLOGUED',
+            'user_receiver': currentUser.username,
             "order_type": order_type
         }
         dispatch(processOrder(args));

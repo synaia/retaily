@@ -9,6 +9,8 @@ import { addProductOrder, getInventoryHeadByStoreId, getPurchaseProductOrders, c
 
 
 export const PurchaseList = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+
     const navigator = useNavigate();
     const params = useParams();
     const order_type = 'purchase';
@@ -51,7 +53,7 @@ export const PurchaseList = () => {
             "name": `PO-${from_origin.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
             "memo": memo.current?.value,
             "order_type": order_type,
-            "user_requester": "userloged",
+            "user_requester": currentUser.username,
             "from_store": { "id": from_origin.current.value },
             "to_store": { "id": to_store.current.value }
         }

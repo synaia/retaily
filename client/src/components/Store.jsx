@@ -17,6 +17,8 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const Store = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+
     const params = useParams();
     const dispatch = useDispatch();
     const navigator = useNavigate()
@@ -331,7 +333,7 @@ export const Store = () => {
             'field': changes.column.key,
             'prev_quantity': prod.inventory[0].quantity,
             'next_quantity': rows[changes.indexes[0]][changes.column.key],
-            'user_updated': 'user#1',
+            'user_updated': currentUser.username,
             'product_id': product_id,
             'store_id': products_inv[0].inventory[0].store.id
         };

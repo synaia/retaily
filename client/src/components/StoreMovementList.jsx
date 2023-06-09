@@ -9,6 +9,8 @@ import { addProductOrder, getInventoryHeadByStoreId } from "../redux/features/pr
 
 
 export const StoreMovementList = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+
     const navigator = useNavigate();
     const params = useParams();
     const order_type = 'movement';
@@ -56,7 +58,7 @@ export const StoreMovementList = () => {
             "name": `MOV-${from_store.current.value}-${(new Date()).toISOString().substring(0, 10)}`,
             "memo": memo.current?.value,
             "order_type": order_type,
-            "user_requester": "userloged",
+            "user_requester": currentUser.username,
             "from_store": { "id": from_store.current.value },
             "to_store": { "id": to_store.current.value }
         }

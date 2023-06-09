@@ -15,7 +15,7 @@ import { F_, validateInputX } from "../util/Utils";
 
 
 export const Users = () => {
-    const currentUser = useSelector((state) => state.user.currentUser);
+        
     const scopes = useSelector((state) => state.user.scopes);
     const gridRef = useRef(null);
     const theme = useSelector((state) => state.user.theme);

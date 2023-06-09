@@ -13,6 +13,7 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const OrderBulkResponse = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const params = useParams();
     const dispatch = useDispatch();
     const bulk_orders = useSelector((state) => state.product.bulk_orders);
@@ -164,7 +165,7 @@ export const OrderBulkResponse = () => {
             interval = null;
         }
 
-    }, [bulk_orders]);
+    }, []);
 
     const lookupProduct = (barcode, __bulk_orders, ref, fillinputs = true) => {
         if (ref !== undefined && ref.current !== null) {
@@ -353,7 +354,7 @@ export const OrderBulkResponse = () => {
             "product_id": __product.product.id,
             "quantity": __product.quantity,
             "quantity_observed": __product.quantity_observed,
-            "user_receiver": "USERSCANN",
+            "user_receiver": currentUser.username,
             "receiver_memo": "A GREAT BARCODE SCANNER MESSAGE",
             "product_order_id": __product.product_order_id,
             "order_type": order_type
@@ -391,7 +392,7 @@ export const OrderBulkResponse = () => {
             "product_id": product_id,
             "quantity": __quantity,
             "quantity_observed": qty,
-            "user_receiver": "USERRESPONSER",
+            "user_receiver": currentUser.username,
             "receiver_memo": "some memo here",
             "product_order_id": product_order_id,
             "order_type": order_type
@@ -485,7 +486,7 @@ export const OrderBulkResponse = () => {
     const __processOrder = () => {
         const args = {
             'id': bulk.id,
-            'user_receiver': 'USERLOGUED'
+            'user_receiver': currentUser.username
         }
         dispatch(processOrder(args));
     };

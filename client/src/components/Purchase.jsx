@@ -15,6 +15,7 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const Purchase = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const params = useParams();
     const dispatch = useDispatch();
     const navigator = useNavigate()
@@ -290,7 +291,7 @@ export const Purchase = () => {
             "product_id": product_id,
             "quantity_observed": __quantity,
             "quantity": qty,
-            "user_receiver": "USERHERE",
+            "user_receiver": currentUser.username,
             "from_store": {
               "id": from_origin_id
             },
@@ -363,7 +364,7 @@ export const Purchase = () => {
     const __rollbackOrder = () => {
         const args = {
             'id': order.id,
-            'user_receiver': 'USERLOGUED',
+            'user_receiver': currentUser.username,
             "order_type": order_type,
             'memo': 'comment here ...'
         }

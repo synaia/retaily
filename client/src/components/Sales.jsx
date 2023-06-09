@@ -37,7 +37,7 @@ export const Sales = () => {
         paycc[s.id] = React.createRef();
         showpayments[s.id] = false;
         paytext[s.id] = React.createRef();
-        p_texts[s.id] = 'PAY';
+        p_texts[s.id] = '';
         i_texts[s.id] = '';
     });
 

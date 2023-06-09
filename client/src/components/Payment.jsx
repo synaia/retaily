@@ -61,14 +61,17 @@ export const Payment = () => {
     }
 
     useEffect(() => {
-        if (sequence_str != null) {
-            transaction.current.sequence_str = sequence_str;
-            printerBasic.prepareDevice()
-            .then(pre => {
-                printerBasic.print(transaction.current);
-            });
-        }
+        if (sequence_str != null ) {
+            if (confirm('Requiere Printing?')) {
+                transaction.current.sequence_str = sequence_str;
+                printerBasic.prepareDevice()
+                .then(pre => {
+                    printerBasic.print(transaction.current);
+                });
+            }
 
+            navigator('/', {replace: false});
+        }
     }, [sequence_str]);
 
     const payButton = async () => {
@@ -111,23 +114,14 @@ export const Payment = () => {
 
         dispatch(addSale(transaction.current));
 
-        // await printerBasic.prepareDevice();
-
         const args = {
             'productlist': sale.products,
             'selectedStore': sale.user.selectedStore
         }
 
-        // dispatch(lowOffProductQtyAction(args));
+        dispatch(lowOffProductQtyAction(args));
 
-        // dispatch(finishSaleAction());
-
-        
-        // if(confirm('Requiere Printing?')) {
-        //     callPrintAPI(transaction.current);
-        // }
-
-        // navigator('/', {replace: false});
+        dispatch(finishSaleAction());
     }
 
     const onPaymentStatusChange = (event) => {

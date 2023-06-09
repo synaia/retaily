@@ -448,6 +448,11 @@ CREATE TABLE `scopes` (
 INSERT INTO scopes
 SELECT * FROM evofit_sambil.scopes;
 
+CREATE TABLE `retaily_db`.`scope_list` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NULL,
+  PRIMARY KEY (`id`));
+
 
 -- select * from app_inventory where product_id = 9052;
 
@@ -869,8 +874,25 @@ WHERE
   AND s.id = i.store_id
   AND pl.pricing_id = pc.id
   AND pl.product_id  = i.product_id
-  AND s.name = %s
+  AND s.name = 'SAMBIL'
   AND pc.price_key = 'DEFAULT'
   AND p.active = 1
   ;
 
+
+SELECT * FROM app_users;
+delete from app_users where id = 10;
+INSERT INTO app_users (username, password, first_name, last_name, is_active, date_joined, pic)
+ VALUES('yojo', 'yokohamma', 'Yojo', 'Hokmbuma', 1, now(), 'xxxx0000xxpp')
+ ;
+
+
+
+ INSERT INTO scope_list (name)
+ SELECT DISTINCT name FROM scopes;
+
+ SELECT * FROM app_user_store;
+
+ INSERT INTO app_user_store (user_id, store_id)
+  VALUES (%s, %s)
+  ;

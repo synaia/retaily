@@ -9,6 +9,7 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const BulkLabelList = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const bulk_labels = useSelector((state) => state.product.bulk_labels);
     const loading = useSelector((state) => state.product.loading);
     const theme = useSelector((state) => state.user.theme);
@@ -44,7 +45,7 @@ export const BulkLabelList = () => {
         const args = {
             'name': name.current?.value,
             'memo': memo.current?.value,
-            'user_create': 'USERLOGGUED'
+            'user_create': currentUser.username
         };
 
         dispatch(addBulkOrder(args));

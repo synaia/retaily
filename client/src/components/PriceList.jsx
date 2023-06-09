@@ -10,6 +10,7 @@ import 'react-data-grid/lib/styles.css';
 
 
 export const PriceList = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const pricing = useSelector((state) => state.product.pricing);
     const loading = useSelector((state) => state.product.loading);
     const theme = useSelector((state) => state.user.theme);
@@ -54,7 +55,7 @@ export const PriceList = () => {
         const pricing = {
             'label': label.current?.value,
             'price_key': price_key.current?.value,
-            'user_modified': 'user_dummy'
+            'user_modified': currentUser.username
         };
 
         const args = {
