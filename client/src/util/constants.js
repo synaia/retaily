@@ -46,5 +46,6 @@ export const SCOPES = {
     EDIT: 'product.edit',
     PRICELIST: 'product.pricelist',
     VIEWCOST: 'product.view.cost',
+    VIEW_ACTIVE_COLUMN: 'product.view.active_column',
    }
 }

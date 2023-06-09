@@ -25,6 +25,7 @@ export const PurchaseOrderListResponse = () => {
     useEffect(() => {
         dispatch(getPurchaseProductOrders());
         return () => { 
+            console.log('PurchaseOrderListResponse: cleanBulkOrders')
             dispatch(cleanBulkOrders());
         }
     }, []);

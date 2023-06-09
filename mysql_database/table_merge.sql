@@ -1,4 +1,3 @@
--- APP_SEQUENCE EN QUE SECUENCIA ESTA??????
 USE retaily_db;
 
 CREATE TABLE sambil_db__client AS
@@ -448,10 +447,16 @@ CREATE TABLE `scopes` (
 INSERT INTO scopes
 SELECT * FROM evofit_sambil.scopes;
 
+
 CREATE TABLE `retaily_db`.`scope_list` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NULL,
   PRIMARY KEY (`id`));
+--
+-- Dumping data for table `scope_list`
+--
+
+INSERT INTO `scope_list` VALUES (1,'cx'),(2,'sales'),(3,'human'),(4,'dashboard.view'),(5,'sales.pos'),(6,'sales.view'),(7,'inventory.view'),(8,'inventory.stores'),(9,'inventory.bulk'),(10,'inventory.movement.request'),(11,'inventory.movement.response'),(12,'inventory.purchase.request'),(13,'inventory.purchase.response'),(14,'user.view'),(15,'user.setting'),(16,'report.view'),(17,'analityc.view'),(18,'product.add'),(19,'product.view'),(20,'product.pricelist'),(21,'product.view.cost'),(22,'sales.filter.user'),(23,'sales.filter.store'),(24,'product.view.edit'),(25,'product.edit'),(27,'product.view.active_column');
 
 
 -- select * from app_inventory where product_id = 9052;
@@ -507,7 +512,7 @@ DELETE FROM app_inventory WHERE id IN (4321, 4480, 4481, 4482, 4169, 4477, 4468)
 INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
  SELECT 0, 0, p.id, 3 FROM product p ;
 
-INSERT INTO bulk_order (name, memo, user_create) VALUES ('IMPORACION', 'DEMO DEBUG', 'SYS');
+--INSERT INTO bulk_order (name, memo, user_create) VALUES ('IMPORACION', 'DEMO DEBUG', 'SYS');
 
 ALTER TABLE `retaily_db`.`product`
 ADD COLUMN `user_modified` VARCHAR(45) NULL AFTER `active`;
@@ -586,313 +591,35 @@ SELECT p.id, count(*) FROM product p, app_inventory i
 --
 --   select *  from product where id = 7342;
 
-select * from app_users;
-COMMIT;
 
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', 8);
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', 8);
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', 8);
 
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.user', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.store', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.bulk', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.request', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.response', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.request', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.response', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.setting', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('report.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('analityc.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.add', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.edit', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.pricelist', '7');
-INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view.cost', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('dashboard.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.pos', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.user', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('sales.filter.store', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.stores', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.bulk', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.request', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.movement.response', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.request', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('inventory.purchase.response', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('user.setting', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('report.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('analityc.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.add', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.edit', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.pricelist', '7');
+-- INSERT INTO `retaily_db`.`scopes` (`name`, `user_id`) VALUES ('product.view.cost', '7');
 
 
-
-
-SELECT
-      u.id,
-      u.username,
-      u.password,
-      u.first_name,
-      u.last_name,
-      u.is_active,
-      u.date_joined,
-      u.last_login,
-      u.pic
-FROM
-     app_users u
-WHERE
-    u.username = 'luis'
- ;
-
-SELECT
-      s.name as scope
-FROM
-     scopes s
-WHERE
-     s.user_id = 7
-;
-
-
-
-
-SELECT
-    p.id,
-    p.name,
-    p.cost,
-    p.price,
-    p.margin,
-    p.code,
-    p.img_path,
-    p.date_create,
-    p.active,
-    p.image_raw,
-    i.quantity,
-    s.name as store_name
-  FROM product  p, app_inventory i, app_store s
-WHERE
-      p.id = i.product_id
-  and s.id = i.store_id
-  and s.name = 'MADELTA'
-  ;
-
-
- SELECT
-       i.*
-FROM app_inventory i
-;
-
-UPDATE app_inventory i
-  SET  i.prev_quantity = i.quantity ,
-       i.quantity = i.quantity - %s
-WHERE
-      i.product_id = %s
-  AND i.store_id = %s
-;
-SELECT * FROM sale_line;
-
-
-
-
--- SELECT_SALES_BY_INVOICE_STATUS
-SELECT
-	s.id,
-    s.amount,
-    s.sub,
-    s.discount,
-    s.tax_amount,
-    s.delivery_charge,
-    s.sequence,
-    s.sequence_type,
-    s.status,
-    s.sale_type,
-    s.date_create,
-    s.login,
-    cli.id as client_id,
-    cli.name as client_name,
-    cli.document_id,
-    cli.celphone,
-    (SELECT
-        SUM(paid.amount)
-	   FROM sale_paid paid
-      WHERE  paid.sale_id = s.id
-      GROUP BY paid.sale_id
-	) as total_paid,
-    (SELECT
-         COUNT(*)
-	  FROM sale_line line
-     WHERE line.sale_id = s.id
-     GROUP BY line.sale_id
-    ) as total_line,
-
-	(CASE
-      WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
-							SUM(paid.amount)
-						   FROM sale_paid paid
-						  WHERE  paid.sale_id = s.id
-						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
-      ELSE 'close'
-	 END) as invoice_status
- FROM sale s,  app_store store, client cli
-WHERE s.client_id = cli.id
-  AND s.store_id = store.id
-  AND store.name = 'MADELTA'
- --  AND s.date_create BETWEEN %s AND %s
-  AND (CASE
-      WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
-							SUM(paid.amount)
-						   FROM sale_paid paid
-						  WHERE  paid.sale_id = s.id
-						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
-      ELSE 'close'
-	 END) in ('open', 'cancelled', 'close')
-  AND s.login REGEXP '^(wilton|danny)$'
-
--- ORDER BY s.id DESC
-;
--- DANNY  14630
--- WILTON  8070
---        22700
--- select 14630 + 8070;
-select COUNT(*) from sale s where s.login regexp '^(.+)$';
-
-select COUNT(*) as g from sale s;
-
-select * from app_users;
-
-
-
-SELECT
-	s.id,
-    s.amount,
-    s.sub,
-    s.discount,
-    s.tax_amount,
-    s.delivery_charge,
-    s.sequence,
-    s.sequence_type,
-    s.status,
-    s.sale_type,
-    s.date_create,
-    s.login,
-    cli.id as client_id,
-    cli.name as client_name,
-    cli.document_id,
-    cli.celphone,
-    (SELECT
-        SUM(paid.amount)
-	   FROM sale_paid paid
-      WHERE  paid.sale_id = s.id
-      GROUP BY paid.sale_id
-	) as total_paid,
-    (SELECT
-         COUNT(*)
-	  FROM sale_line line
-     WHERE line.sale_id = s.id
-     GROUP BY line.sale_id
-    ) as total_line,
-
-	(CASE
-      WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
-							SUM(paid.amount)
-						   FROM sale_paid paid
-						  WHERE  paid.sale_id = s.id
-						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
-      ELSE 'close'
-	 END) as invoice_status
- FROM sale s,  app_store store, client cli
-WHERE s.client_id = cli.id
-  AND s.store_id = store.id
-  AND store.name = 'SAMBIL'
-  -- AND s.date_create BETWEEN %s AND %s
-  AND (CASE
-      WHEN s.status = 'RETURN' THEN 'cancelled'
-      WHEN (s.amount - (SELECT
-							SUM(paid.amount)
-						   FROM sale_paid paid
-						  WHERE  paid.sale_id = s.id
-						  GROUP BY paid.sale_id
-						)) > 0 THEN 'open'
-      ELSE 'close'
-	 END) in ('open', 'cancelled', 'close')
-  AND cli.id = 22756
-  -- AND s.login REGEXP 'massiel'
-ORDER BY s.id DESC
-;
-
-select * from sale where sequence = 'B020000009434';
-select * from client where id = 19067;
-
-select * from product where length(trim(name)) > 50;
-
-
-select MAX(id) from sale  ;
-SELECT s.id FROM app_store s WHERE s.name = 'SAMBIL';
-
-select * from sale  order by id desc ;
-
-select * from app_sequence;
--- UPDATE app_sequence SET current_seq = current_seq + increment_by WHERE code = '%s';
-select * from sale_line order by id DESC  limit 10; -- get sale_id
-
-select * from sale_paid order by id desc limit 10; -- get sale_id
-
-
-DELETE from sale where id = 300869;
-DELETE from sale_line where sale_id = 300869 and id > 0;
-DELETE from sale_paid where sale_id = 300869 and id > 0;
-
-
-SELECT
-      s.id,
-      s.name,
-      s.company_id,
-      s.slogan,
-      s.logo,
-      s.address
-FROM app_store s
- ORDER BY s.id
-;
-
-select * from client where id = 23063;
-
-SELECT
-    p.id,
-    p.name,
-    p.cost,
-    pl.price,
-    p.margin,
-    p.code,
-    p.img_path,
-    p.date_create,
-    p.active,
-    p.image_raw,
-    i.quantity,
-    s.name as store_name
-  FROM product  p, app_inventory i, app_store s, pricing_list pl, pricing pc
-WHERE
-      p.id = i.product_id
-  AND s.id = i.store_id
-  AND pl.pricing_id = pc.id
-  AND pl.product_id  = i.product_id
-  AND s.name = 'SAMBIL'
-  AND pc.price_key = 'DEFAULT'
-  AND p.active = 1
-  ;
-
-
-SELECT * FROM app_users;
-delete from app_users where id = 10;
-INSERT INTO app_users (username, password, first_name, last_name, is_active, date_joined, pic)
- VALUES('yojo', 'yokohamma', 'Yojo', 'Hokmbuma', 1, now(), 'xxxx0000xxpp')
- ;
-
-
-
- INSERT INTO scope_list (name)
- SELECT DISTINCT name FROM scopes;
-
- SELECT * FROM app_user_store;
-
- INSERT INTO app_user_store (user_id, store_id)
-  VALUES (%s, %s)
-  ;

@@ -60,8 +60,9 @@ export const Products = () => {
             ];
         }
 
-        return [
-            {
+        let active_column = [];
+        if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEW_ACTIVE_COLUMN)) {
+            active_column = [{
                 key: 'active', 
                 name: 'Active', 
                 width: 10, 
@@ -79,7 +80,11 @@ export const Products = () => {
                     isCellSelected={isCellSelected}
                   />
                 ); },
-            },
+            }];
+        }
+
+        return [
+            ...active_column,
             ...first_columns,
             ...price_columns,
             ...store_columns,

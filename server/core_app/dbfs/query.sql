@@ -103,8 +103,8 @@ SELECT
 ;
 
 --INSERT_PRODUCT
-INSERT INTO product (name, cost, code, date_create, user_modified, image_raw)
- VALUES (%s, %s, %s, NOW(), %s, %s)
+INSERT INTO product (name, cost, code, date_create, user_modified, image_raw, active)
+ VALUES (%s, %s, %s, NOW(), %s, %s, 1)
 ;
 
 --INSERT_PRODUCT_INVENTORY

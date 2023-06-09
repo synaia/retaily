@@ -68,6 +68,7 @@ export const PurchaseList = () => {
     useEffect(() => {
         dispatch(getPurchaseProductOrders());
         return () => { 
+            console.log('PurchaseList: cleanBulkOrders')
             dispatch(cleanBulkOrders());
         }
     }, []);

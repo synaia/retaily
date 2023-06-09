@@ -574,6 +574,7 @@ const refreshBulkyList = (state, action) => {
         return bulk.bulk_order_id  == order.bulk_order_id
     });
     //TODO: bug bug here .lines <<< not defined on udpdate qty Movement Response.
+   if (idxorder != -1) {
     const __orderlines = [...__bulk_orders[idxorder].lines];
     const m2 = beauty(__orderlines);
     const idxline = __orderlines.findIndex(ln => ln.product.id == line.product_id);
@@ -587,6 +588,7 @@ const refreshBulkyList = (state, action) => {
     const m3 = beauty(__orderlines);
     const m4 = beauty(__bulk_orders);
     state.bulk_orders = __bulk_orders;
+   }
 
     // const purchases = [...state.purchase_orders];
     // const index  = purchases.findIndex(pur => pur.id == order.id);

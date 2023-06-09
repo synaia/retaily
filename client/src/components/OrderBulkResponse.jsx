@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { issueProductOrderLine, processOrder, getPurchaseProductOrders } from "../redux/features/product.feature.js";
+import { issueProductOrderLine, processOrder, getPurchaseProductOrders, cleanBulkOrders } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, beep } from "../util/Utils.js";
 
@@ -139,6 +139,13 @@ export const OrderBulkResponse = () => {
             }
         }
      }
+
+     useEffect(() => {
+        dispatch(getPurchaseProductOrders());
+        return () => { 
+            dispatch(cleanBulkOrders());
+        }
+    }, []);
 
     useEffect(() => {
         let interval;
