@@ -40,7 +40,8 @@ from server.core_app.product.product_query import (
     rollback_order,
     assign_order_to_bulk,
     read_bulk_order,
-    add_bulk_order
+    add_bulk_order,
+    approbal_issue_order_line
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -337,6 +338,19 @@ async def __issue_order_line(
         return issue_order_line(line, db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.post("/approbal_issue")
+async def __approbal_issue_order_line(
+                        line: schemas.ProductOrderLine,
+                        db: Session = Depends(get_db),
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return approbal_issue_order_line(line, db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
 
 
 @router.get("/product_order", response_model=list[schemas.ProductOrder])

@@ -1,3 +1,8 @@
+"""
+    @Author: Wilton Beltré
+    @License: MIT
+"""
+
 
 class Query(object):
     def __init__(self, SQL_FILE):

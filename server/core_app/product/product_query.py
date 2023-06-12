@@ -892,6 +892,21 @@ def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
     return response
 
 
+def approbal_issue_order_line(line: ProductOrderLine, db: Session, query: Query):
+    sql_raw_approbal = query.UPDATE_APPROBAL_ISSUE_ORDER_LINE
+    cur = get_cursor(db)
+    data = (line.product_order_id, line.product_id)
+    cur.execute(sql_raw_approbal, data)
+    cur.connection.commit()
+
+    response = {
+        'order': read_product_order_by_id(line, db, query),
+        'line': line
+    }
+
+    return response
+
+
 def assign_order_to_bulk(line: BulkOrderLine, db: Session, query: Query):
     sql_raw_check = query.CHECK_FOR_ORDER_IN_BULK
     sql_raw_update_bol = query.UPDATE_BULK_ORDER_LINE

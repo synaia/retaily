@@ -49,14 +49,14 @@ export const Products = () => {
 
         if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEWCOST)) {
             first_columns = [
-                { key: 'id', name: 'ID', width: 10, frozen: true },
-                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: true},
+                { key: 'id', name: 'ID', width: 10, frozen: false },
+                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: false},
                 { key: 'cost', name: 'Cost', editor: textEditor, width: 110 },
             ];
         } else {
             first_columns = [
-                { key: 'id', name: 'ID', width: 10 , frozen: true},
-                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: true},
+                { key: 'id', name: 'ID', width: 10 , frozen: false},
+                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: false},
             ];
         }
 
@@ -66,20 +66,35 @@ export const Products = () => {
                 key: 'active', 
                 name: 'Active', 
                 width: 10, 
-                frozen: true,
+                frozen: false,
                 formatter({ row, onRowChange, isCellSelected }) {
                     if(row == undefined) {
                         console.log('undefined row')
                     }
-                return (
-                  <SelectCellFormatter
-                    value={row.active}
-                    onChange={() => {
-                      onRowChange({ ...row, active: !row.active });
-                    }}
-                    isCellSelected={isCellSelected}
-                  />
-                ); },
+                    return (
+                    <SelectCellFormatter
+                        value={row.active}
+                        onChange={() => {
+                        onRowChange({ ...row, active: !row.active });
+                        }}
+                        isCellSelected={isCellSelected}
+                    />
+                    ); 
+                },
+            }];   
+        } else {
+            active_column = [{
+                key: 'active', 
+                name: 'Active', 
+                width: 10,
+                frozen: false,
+                formatter: ({ row }) => {
+                    return (
+                        <div className="selection-product-check" >
+                            <span className="material-icons-sharp"> {row.active == 1 ? 'visibility' : 'visibility_off'} </span>
+                        </div>
+                    );
+                }
             }];
         }
 

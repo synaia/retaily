@@ -729,6 +729,16 @@ WHERE
 AND product_id = %s
 ;
 
+--UPDATE_APPROBAL_ISSUE_ORDER_LINE
+UPDATE product_order_line
+  SET
+      quantity = quantity_observed,
+      status = 'pending'
+WHERE
+	product_order_id = %s
+AND product_id = %s
+;
+
 --DELETE_PRODUCT_ORDER_LINE
 DELETE FROM product_order_line
 WHERE

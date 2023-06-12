@@ -264,12 +264,14 @@ export const StoreMovementResponse = () => {
     let receive_button = '';
     if (order != undefined) {
         if (order.status == "opened" || order.status == "inprogress" ) {
-            receive_button =  <div>
-                                <button className="fbutton fbutton-price-list" onClick={() => __processOrder()}>
-                                    <span className="material-icons-sharp"> verified </span>
-                                    <span>RECEIVE THE ORDER</span>
-                                </button>
-                            </div>;
+            if (order.products_in_order_issue == 0) {
+                receive_button =  <div>
+                    <button className="fbutton fbutton-price-list" onClick={() => __processOrder()}>
+                        <span className="material-icons-sharp"> verified </span>
+                        <span>RECEIVE THE ORDER</span>
+                    </button>
+                </div>;
+            }
         }
     }
     

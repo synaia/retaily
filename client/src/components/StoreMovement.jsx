@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
 
-import { getProductsAllInventory } from "../redux/features/product.feature.js";
+import { getProductsAllInventory, approbalIssueOrderLine } from "../redux/features/product.feature.js";
 import { addProductOrderLine, rollbackOrder } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
@@ -146,6 +146,20 @@ export const StoreMovement = () => {
         }
     }, [orders, products_all_inv]);
 
+    const approbalMethod = (row, _order) => {
+        const product_order_id = _order.id;
+
+        const args = {
+            "product_id": row.id,
+            "product_order_id": product_order_id,
+            "order_type": order_type
+          }
+
+        console.log(args);
+
+        dispatch(approbalIssueOrderLine(args))
+    }
+
 
     const columns = useMemo( () => {
         return [
@@ -161,14 +175,25 @@ export const StoreMovement = () => {
             { key: 'quantity_to_move', name: 'Move Quantity', editor: textEditor, width: 100, formatter: ({ row }) => {
                 const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
                 return <div className={row_bg_issue}>{row.quantity_to_move}</div>;
-            }}
+            }},
+            { key: 'approbal', name: 'Approbal?',  width: 50, formatter: ({ row }) => {
+                if (row.linestatus == "issue") {
+                    return (
+                        <div className="selection-client-check" onClick={() => approbalMethod(row, order)}>
+                            <span className="material-icons-sharp"> check </span>
+                        </div>
+                     );
+                } else {
+                    return (<></>);
+                }
+            }},
           ];
     }); 
 
 
     const columns_order = useMemo( () => {
         return [
-            { key: 'id', name: 'ID', width: 10 },
+            // { key: 'id', name: 'ID', width: 10 },
             { key: 'name', name: 'Product', resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
             { key: 'quantity', name: 'Quantity',  editor: textEditor, width: 100, formatter: ({ row }) => {

@@ -53,10 +53,11 @@ const initialState = {
 
 export const loadProducts = createAsyncThunk('products/loadProducts', async (args, thunkAPI) => {
     const state = thunkAPI.getState();
-    if (state.product.products.length > 0) {
-        console.log('> state.products allready loaded.');    
-        return;
-    } 
+    // console.log('from loadProducts/ ', state.product);
+    // if (state.product.products.length > 0) {
+    //     console.log('> state.products allready loaded.');    
+    //     return;
+    // } 
     console.log('> loadProducts...');
     let response = await Axios.get(`${BACKEND_HOST}/products/`, {});
     return response.data;
@@ -251,6 +252,11 @@ export const addProductOrderLine = createAsyncThunk('product/add_product_order_l
 
 export const issueProductOrderLine = createAsyncThunk('product/issue_order_line', async (line, ) => {
     let response = await Axios.post(`${BACKEND_HOST}/products/issue_order_line`, line,  {});
+    return response.data;
+});
+
+export const approbalIssueOrderLine = createAsyncThunk('product/approbal_issue', async (line, ) => {
+    let response = await Axios.post(`${BACKEND_HOST}/products/approbal_issue`, line,  {});
     return response.data;
 });
 
@@ -950,6 +956,17 @@ const productsSlice = createSlice({
         }).addCase(issueProductOrderLine.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`
+        });
+
+        builder.addCase(approbalIssueOrderLine.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(approbalIssueOrderLine.fulfilled, (state, action) => {
+            state.loading = false;
+            refreshOnProductOrder(state, action);
+            refreshBulkyList(state, action);
+        }).addCase(approbalIssueOrderLine.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR approbalIssueOrderLine() ; ${action.error.message}`
         });
 
         builder.addCase(getBulkOrder.pending, (state, action) => {
