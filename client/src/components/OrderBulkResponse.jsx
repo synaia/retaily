@@ -12,6 +12,9 @@ import { F_, beep } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 
+import { lang } from "../common/spa.lang.js";
+
+
 export const OrderBulkResponse = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
     const params = useParams();
@@ -289,13 +292,13 @@ export const OrderBulkResponse = () => {
 
     const columns_order = useMemo( () => {
         return [
-            { key: 'name', name: 'Product', resizable: true, width: 200},
+            { key: 'name', name: lang.products.name, resizable: true, width: 200},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Qty',  width: 100, formatter: ({ row }) => {
+            { key: 'quantity', name: lang.products.quantity_abbr,  width: 100, formatter: ({ row }) => {
                 
                 return <div className={rowbgClz(row)}>{row.quantity}</div>;
             }},
-            { key: 'quantity_observed', name: 'Qty. Received', width: 100, formatter: ({ row }) => {
+            { key: 'quantity_observed', name: lang.products.quantity_rec_abbr, width: 100, formatter: ({ row }) => {
                 return <div className={rowbgClz(row)}>{row.quantity_observed}</div>;
             }},
           ];
@@ -376,6 +379,7 @@ export const OrderBulkResponse = () => {
     const rowChange = (rows, changes) => {
         if (bulk.status == "closed") {
             console.log('order closed bye.');
+            alert(lang.purchase.order_not_editable);
             return;
         }
         const product_id = rows[changes.indexes[0]].id;
@@ -563,11 +567,11 @@ export const OrderBulkResponse = () => {
                     <div className="resume-bulk">
                         <div className="info">
                             <h3>{productCount} / {issueCount}</h3>
-                            <small className="text-muted"> Products / Issue </small>
+                            <small className="text-muted"> {lang.storemov.product_in_order} / {lang.storemov.issues} </small>
                         </div>
                         <div className="info">
                             <h3>{F_(valueCost)}</h3>
-                            <small className="text-muted"> Valuable Cost </small>
+                            <small className="text-muted"> {lang.storemov.value_mov}</small>
                         </div>
                         <div className="info">
                             <div className="info-qty-ob">

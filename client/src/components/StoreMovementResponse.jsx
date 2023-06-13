@@ -11,6 +11,8 @@ import { F_ } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const StoreMovementResponse = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -95,13 +97,13 @@ export const StoreMovementResponse = () => {
        
         return [
             { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 300},
+            { key: 'name', name: lang.products.name, resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Quantity',  width: 100, formatter: ({ row }) => {
+            { key: 'quantity', name: lang.products.quantity,  width: 100, formatter: ({ row }) => {
                 const row_bg_issue = (row.status === "issue") ? 'row-bg-issue' : 'row-bg-no-changed'
                 return <div className={row_bg_issue}>{row.quantity}</div>;
             }},
-            { key: 'quantity_observed', name: 'Quantity Received',  editor: textEditor, width: 200, formatter: ({ row }) => {
+            { key: 'quantity_observed', name: lang.products.received_quantity,  editor: textEditor, width: 200, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity_observed}</div>;
             }},
           ];
@@ -163,6 +165,7 @@ export const StoreMovementResponse = () => {
     const rowChange = (rows, changes) => {
         if (order.status == "closed") {
             console.log('order closed bye.');
+            alert(lang.purchase.order_not_editable);
             return;
         }
         const product_id = rows[changes.indexes[0]].id;
@@ -284,39 +287,39 @@ export const StoreMovementResponse = () => {
                 <div className="movement-c">
                     <div className="info">
                         <h3>{order.from_store.name}</h3>
-                        <small className="text-muted"> From Store </small>
+                        <small className="text-muted"> {lang.storemov.from_store} </small>
                     </div>
                     <div className="info">
                         <h3>{order.to_store.name}</h3>
-                        <small className="text-muted"> To Store </small>
+                        <small className="text-muted"> {lang.storemov.to_store}  </small>
                     </div>
                     <div className="info">
                         <h3>{order.status}</h3>
-                        <small className="text-muted"> Order Status </small>
+                        <small className="text-muted"> {lang.storemov.status}  </small>
                     </div>
                     <div className="info">
                         <h3>{order.memo}</h3>
-                        <small className="text-muted"> Memo</small>
+                        <small className="text-muted"> Memo </small>
                     </div>
                     <div className="info">
                         <h3 className="name-inv">{order.name}</h3>
-                        <small className="text-muted"> Name </small>
+                        <small className="text-muted"> {lang.storemov.name}  </small>
                     </div>
                     <div className="info">
                         <h3>{F_(order.value_in_order)}</h3>
-                        <small className="text-muted"> Value In Movement</small>
+                        <small className="text-muted"> {lang.store.value_inventory} </small>
                     </div>
                     <div className="info">
                         <h3>{order.products_in_order} / {order.products_in_order_issue}</h3>
-                        <small className="text-muted"> Products In Order / Issues</small>
+                        <small className="text-muted"> {lang.storemov.product_in_order} / {lang.storemov.issues}</small>
                     </div>
                     <div className="info">
                         <h3>{order.date_opened} / {order.date_closed}</h3>
-                        <small className="text-muted"> Date Open / Close</small>
+                        <small className="text-muted"> {lang.storemov.date_open} / {lang.storemov.date_close}</small>
                     </div>
                     <div className="info">
                         <h3>{order.user_requester} / {order.user_receiver}</h3>
-                        <small className="text-muted">User Opener / Close</small>
+                        <small className="text-muted">{lang.storemov.user_open}/ {lang.storemov.user_close} </small>
                     </div>
                 </div>
                 {receive_button}

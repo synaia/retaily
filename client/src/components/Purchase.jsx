@@ -13,6 +13,9 @@ import { F_, validateInputX } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
+import { lang } from "../common/spa.lang.js";
+
+
 
 export const Purchase = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -144,12 +147,12 @@ export const Purchase = () => {
     const columns = useMemo( () => {
         return [
             { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 300},
+            { key: 'name', name: lang.products.name, resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+            { key: 'quantity', name: lang.products.quantity, width: 100, formatter: ({ row }) => {
                 return <div className="row-bg-no-changed">{row.quantity}</div>;
             }},
-            { key: 'quantity_to_move', name: 'Purchase Qty', editor: textEditor, width: 100, formatter: ({ row }) => {
+            { key: 'quantity_to_move', name: lang.purchase.purchase_quantity, editor: textEditor, width: 100, formatter: ({ row }) => {
                 const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
                 return <div className={row_bg_issue}>{row.quantity_to_move}</div>;
             }}
@@ -160,9 +163,9 @@ export const Purchase = () => {
     const columns_order = useMemo( () => {
         return [
             { key: 'id', name: 'ID', width: 10 },
-            { key: 'name', name: 'Product', resizable: true, width: 300},
+            { key: 'name', name: lang.products.name, resizable: true, width: 300},
             { key: 'code', name: 'SKU', width: 100 },
-            { key: 'quantity', name: 'Quantity',  editor: textEditor, width: 100, formatter: ({ row }) => {
+            { key: 'quantity', name: lang.products.quantity,  editor: textEditor, width: 100, formatter: ({ row }) => {
                 const row_bg_issue = (row.linestatus === "issue") ? 'row-bg-issue' : 'row-bg-no-changed';
                 return <div className={row_bg_issue}>{row.quantity_observed}</div>;
             }},
@@ -265,6 +268,7 @@ export const Purchase = () => {
     const rowChange = (rows, changes, side = 'left') => {
         if (order.status == "closed" || order.status == "cancelled" ) {
             console.log('Order status Not editable bye.')
+            alert(lang.purchase.order_not_editable);
             return;
         }
         // console.log(changes);
@@ -391,7 +395,7 @@ export const Purchase = () => {
             rollback_button =  <div>
                                 <button className="fbutton fbutton-price-list" onClick={() => __rollbackOrder()}>
                                     <span className="material-icons-sharp"> cancel </span>
-                                    <span>CANCEL & ROLLBACK THE ORDER</span>
+                                    <span>{lang.storemov.cancel_rollback}</span>
                                 </button>
                             </div>;
         }
@@ -406,38 +410,38 @@ export const Purchase = () => {
                 <div className="movement-c">
                     <div className="info">
                         <h3>{order.from_store.name}</h3>
-                        <small className="text-muted"> From Provider </small>
+                        <small className="text-muted"> {lang.purchase.from_provider} </small>
                     </div>
                     <div className="info">
                         <h3>{order.to_store.name}</h3>
-                        <small className="text-muted"> To Store </small>
+                        <small className="text-muted"> {lang.purchase.to_store} </small>
                     </div>
                     <div className="info">
                         <h3>{order.status}</h3>
-                        <small className="text-muted"> Order Status </small>
+                        <small className="text-muted"> {lang.store.status} </small>
                     </div>
                     <div className="info">
                         <h3>{order.memo}</h3>
-                        <small className="text-muted"> Memo</small>
+                        <small className="text-muted"> Memo </small>
                     </div>
                     <div className="info">
                         <h3 className="name-inv">{order.bulk_order_name} /{order.name}</h3>
-                        <small className="text-muted"> Bulk / Name  </small>
+                        <small className="text-muted"> {lang.purchase.bulk_name} / {lang.purchase.name}  </small>
                     </div>
                     <div className="info">
                         <h3>{F_(order.value_in_order)}</h3>
-                        <small className="text-muted"> Value In Movement</small>
+                        <small className="text-muted"> {lang.storemov.value_mov} </small>
                     </div>
                     <div className="info">
                         <h3>{order.products_in_order} / {order.products_in_order_issue}</h3>
-                        <small className="text-muted"> Products In Order / Issues</small>
+                        <small className="text-muted"> {lang.storemov.product_in_order}  / {lang.storemov.issues} </small>
                     </div>
                     <div className="info">
                         <h3>{order.date_opened} / {order.date_closed} / {order.user_requester} / {order.user_receiver}</h3>
-                        <small className="text-muted"> Date Open / Close / User Opener / Close</small>
+                        <small className="text-muted"> {lang.storemov.date_open}  / {lang.storemov.date_close}  / {lang.storemov.user_open}  / {lang.storemov.user_close} </small>
                     </div>
                     <select onChange={__assignOrderToBulk}>
-                        <option disabled selected value> -- select a bulk batch -- </option>
+                        <option disabled selected value> -- {lang.purchase.select_bulk}  -- </option>
                     {bulk_labels.map((o, i) => (
                         <option key={i} value={o.id} onChange={() => __assignOrderToBulk}>{o.name}</option>
                     ))}

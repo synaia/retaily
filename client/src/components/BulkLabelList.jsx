@@ -7,6 +7,8 @@ import { validateInput } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const BulkLabelList = () => {
     const currentUser = useSelector((state) => state.user.currentUser);

@@ -146,7 +146,7 @@ export const Inventory = () => {
                 {currentUser.scopes.includes(SCOPES.INVENTORY.BULK) &&
                 <div className="inventory-resume" onClick={() => navigator(`bulklist/`, {replace: false})}  >
                     <div className="icon">
-                        <span className="material-icons-sharp"> layers </span>
+                        <span className="material-icons-sharp inv-in-progress"> layers </span>
                     </div>
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
@@ -160,7 +160,7 @@ export const Inventory = () => {
                 {currentUser.scopes.includes(SCOPES.INVENTORY.PURCHASE.REQUEST) &&
                 <div className="inventory-resume" onClick={() => navigator(`purchase/`, {replace: false})}  >
                     <div className="icon">
-                        <span className="material-icons-sharp"> layers </span>
+                        <span className="material-icons-sharp inv-in-progress"> layers </span>
                     </div>
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
@@ -174,7 +174,7 @@ export const Inventory = () => {
                 {currentUser.scopes.includes(SCOPES.INVENTORY.PURCHASE.RESPONSE) &&
                 <div className="inventory-resume" onClick={() => navigator(`purchaseresp/`, {replace: false})}  >
                     <div className="icon">
-                        <span className="material-icons-sharp"> layers </span>
+                        <span className="material-icons-sharp inv-in-progress"> layers </span>
                     </div>
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">

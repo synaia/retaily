@@ -186,7 +186,7 @@ export const Store = () => {
                 { key: 'name', name: lang.products.name, resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
                 { key: 'cost', name: lang.products.cost, width: 100 },
-                { key: 'quantity', name: lang.products.quantity, width: 100, formatter: ({ row }) => {
+                { key: 'quantity', name: lang.products.quantity_in_store, width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
                 }},
                 next_quantity

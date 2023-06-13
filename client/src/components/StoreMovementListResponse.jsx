@@ -7,6 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { F_ } from "../util/Utils";
 
 
+import { lang } from "../common/spa.lang.js";
+
+
+
 export const StoreMovementListResponse = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
     const navigator = useNavigate();
@@ -36,15 +40,15 @@ export const StoreMovementListResponse = () => {
                             <div className="movement-c">
                                 <div className="info">
                                     <h3>{order.from_store.name}</h3>
-                                    <small className="text-muted"> From Store </small>
+                                    <small className="text-muted"> {lang.storemov.from_store} </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.to_store.name}</h3>
-                                    <small className="text-muted"> To Store </small>
+                                    <small className="text-muted"> {lang.storemov.to_store}  </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.status}</h3>
-                                    <small className="text-muted"> Order Status </small>
+                                    <small className="text-muted"> {lang.storemov.status}  </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.memo}</h3>
@@ -52,23 +56,23 @@ export const StoreMovementListResponse = () => {
                                 </div>
                                 <div className="info">
                                     <h3 className="name-inv">{order.name}</h3>
-                                    <small className="text-muted"> Name </small>
+                                    <small className="text-muted"> {lang.storemov.name}  </small>
                                 </div>
                                 <div className="info">
                                     <h3>{F_(order.value_in_order)}</h3>
-                                    <small className="text-muted"> Value In Movement</small>
+                                    <small className="text-muted"> {lang.store.value_inventory} </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.products_in_order} / {order.products_in_order_issue}</h3>
-                                    <small className="text-muted"> Products In Order / Issues</small>
+                                    <small className="text-muted"> {lang.storemov.product_in_order} / {lang.storemov.issues} </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.date_opened} / {order.date_closed}</h3>
-                                    <small className="text-muted"> Date Open / Close</small>
+                                    <small className="text-muted"> {lang.storemov.date_open}  / {lang.storemov.date_close} </small>
                                 </div>
                                 <div className="info">
                                     <h3>{order.user_requester} / {order.user_receiver}</h3>
-                                    <small className="text-muted">User Opener / Close</small>
+                                    <small className="text-muted">{lang.storemov.user_open} / {lang.storemov.user_close} </small>
                                 </div>
                             </div>
                         </div>
