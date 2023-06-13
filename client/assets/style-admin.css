@@ -2469,3 +2469,9 @@ input::placeholder, textarea::placeholder {
 .user-btn {
   padding-top: 6px;
 }
+
+.product-card-top-l {
+  background-color: var(--color-price-tag);
+  float: right;
+  padding-left: 10px;
+}

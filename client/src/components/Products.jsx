@@ -9,6 +9,8 @@ import { SCOPES } from "../util/constants";
 
 import 'react-data-grid/lib/styles.css';
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const Products = () => {
     const products = useSelector((state) => state.product.all_products);
@@ -50,13 +52,13 @@ export const Products = () => {
         if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEWCOST)) {
             first_columns = [
                 { key: 'id', name: 'ID', width: 10, frozen: false },
-                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: false},
-                { key: 'cost', name: 'Cost', editor: textEditor, width: 110 },
+                { key: 'name', name: lang.products.name, resizable: true, width: 380, editor: _text_Editor, frozen: false},
+                { key: 'cost', name: lang.products.cost, editor: textEditor, width: 110 },
             ];
         } else {
             first_columns = [
                 { key: 'id', name: 'ID', width: 10 , frozen: false},
-                { key: 'name', name: 'Product', resizable: true, width: 380, editor: _text_Editor, frozen: false},
+                { key: 'name', name: lang.products.name, resizable: true, width: 380, editor: _text_Editor, frozen: false},
             ];
         }
 
@@ -64,7 +66,7 @@ export const Products = () => {
         if (currentUser.scopes.includes(SCOPES.PRODUCT.VIEW_ACTIVE_COLUMN)) {
             active_column = [{
                 key: 'active', 
-                name: 'Active', 
+                name: lang.products.active, 
                 width: 10, 
                 frozen: false,
                 formatter({ row, onRowChange, isCellSelected }) {
@@ -85,7 +87,7 @@ export const Products = () => {
         } else {
             active_column = [{
                 key: 'active', 
-                name: 'Active', 
+                name: lang.products.active, 
                 width: 10,
                 frozen: false,
                 formatter: ({ row }) => {

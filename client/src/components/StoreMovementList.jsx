@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { F_, validateInputX } from "../util/Utils";
 import { addProductOrder, getInventoryHeadByStoreId } from "../redux/features/product.feature.js";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const StoreMovementList = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -94,10 +96,10 @@ export const StoreMovementList = () => {
                     <span className="error-msg">{errorMemo}</span>
                 </div>
                 <div>
-                    <span>From Store</span>
+                    <span>{lang.storemov.from_store}</span>
                     <div className="select-div">
                         <select className="select-from-store" ref={from_store} onChange={OnChangeStore}>
-                        <option disabled selected value> -- select a store -- </option>
+                        <option disabled selected value> -- {lang.storemov.select_store} -- </option>
                             { stores.map((s, i) => (
                                 <option key={s.id} value={s.id}>{s.name}</option>
                             ))}
@@ -106,10 +108,10 @@ export const StoreMovementList = () => {
                     <span className="error-msg">{errorFromStore}</span>
                 </div>
                 <div>
-                    <span>To Store</span>
+                    <span>{lang.storemov.to_store}</span>
                     <div className="select-div">
                         <select className="select-from-store" ref={to_store}>
-                        <option disabled selected value> -- select a store -- </option>
+                        <option disabled selected value> -- {lang.storemov.select_store} -- </option>
                             { toStores.map((s, i) => (
                                 <option key={s.id} value={s.id}>{s.name}</option>
                             ))}
@@ -120,7 +122,7 @@ export const StoreMovementList = () => {
                 <div>
                     <button className="fbutton fbutton-price-list" onClick={() => __addProductOrder()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
-                        <span>OPEN NEW MOVEMENT</span>
+                        <span>{lang.storemov.open_mov} </span>
                     </button>
                 </div>
             </div>
@@ -131,15 +133,15 @@ export const StoreMovementList = () => {
                         <div className="movement-c">
                             <div className="info">
                                 <h3>{order.from_store.name}</h3>
-                                <small className="text-muted"> From Store </small>
+                                <small className="text-muted"> {lang.storemov.from_store}  </small>
                             </div>
                             <div className="info">
                                 <h3>{order.to_store.name}</h3>
-                                <small className="text-muted"> To Store </small>
+                                <small className="text-muted"> {lang.storemov.to_store}  </small>
                             </div>
                             <div className="info">
                                 <h3>{order.status}</h3>
-                                <small className="text-muted"> Order Status </small>
+                                <small className="text-muted"> {lang.storemov.status}  </small>
                             </div>
                             <div className="info">
                                 <h3>{order.memo}</h3>
@@ -147,23 +149,23 @@ export const StoreMovementList = () => {
                             </div>
                             <div className="info">
                                 <h3 className="name-inv">{order.name}</h3>
-                                <small className="text-muted"> Name </small>
+                                <small className="text-muted"> {lang.storemov.name}  </small>
                             </div>
                             <div className="info">
                                 <h3>{F_(order.value_in_order)}</h3>
-                                <small className="text-muted"> Value In Movement</small>
+                                <small className="text-muted"> {lang.storemov.value_mov} </small>
                             </div>
                             <div className="info">
                                 <h3>{order.products_in_order} / {order.products_in_order_issue}</h3>
-                                <small className="text-muted"> Products In Order / Issues</small>
+                                <small className="text-muted"> {lang.storemov.product_in_order}  / {lang.storemov.issues} </small>
                             </div>
                             <div className="info">
                                 <h3>{order.date_opened} / {order.date_closed}</h3>
-                                <small className="text-muted"> Date Open / Close</small>
+                                <small className="text-muted"> {lang.storemov.date_open}  / {lang.storemov.date_close} </small>
                             </div>
                             <div className="info">
                                 <h3>{order.user_requester} / {order.user_receiver}</h3>
-                                <small className="text-muted">User Opener / Close</small>
+                                <small className="text-muted">{lang.storemov.user_open}  / {lang.storemov.user_close} </small>
                             </div>
                         </div>
                     </div>

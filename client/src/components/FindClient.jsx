@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { lang } from "../common/spa.lang.js";
 
 
 
@@ -14,7 +15,7 @@ export const FindClient = () => {
                     face
                 </span>
                 <Link to="/client">
-                {client == null  && <h2>find a client ...</h2>}
+                {client == null  && <h2>{lang.pos.find_client}</h2>}
                 {client != null  && <h2>{client.name}</h2>}
                 </Link>
             </div>

@@ -5,6 +5,8 @@ import { addPay, cancelSale } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
 import {Loading } from "./Loading";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const Sales = () => {
     const dispatch = useDispatch();
@@ -253,9 +255,9 @@ export const Sales = () => {
                                   <table className="sale-card-table">
                                     <thead>
                                         <tr>
-                                            <th>PRODUCT</th>
+                                            <th>{lang.sale.product}</th>
                                             <th></th>
-                                            <th>SUB TOTAL</th>
+                                            <th>{lang.sale.sub}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -279,10 +281,10 @@ export const Sales = () => {
                                   <table className="sale-card-table">
                                     <thead>
                                         <tr>
-                                            <th>AMOUNT</th>
-                                            <th>TYPE</th>
-                                            <th>DATE</th>
-                                            <th>USER</th>
+                                            <th>{lang.sale.amount}</th>
+                                            <th>{lang.sale.type}</th>
+                                            <th>{lang.sale.in_date}</th>
+                                            <th>{lang.sale.user}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -320,14 +322,14 @@ export const Sales = () => {
                                     <div>
                                         <button className="cbutton">
                                             <span className="material-icons-sharp"> print </span>
-                                            <span>RE-PRINT</span>
+                                            <span>{lang.sale.re_print}</span>
                                         </button>
                                     </div>
                                     {sale.invoice_status != 'cancelled' &&
                                     <div>
                                         <button className="cbutton cbutton-red" onClick={() => _cancelSale(sale.id)}>
                                             <span className="material-icons-sharp"> delete_forever </span>
-                                            <span>CANCEL</span>
+                                            <span>{lang.sale.cancel}</span>
                                         </button>
                                     </div>
                                     }
@@ -340,19 +342,19 @@ export const Sales = () => {
         <div className="">
 
             <div className="sales-analytics">
-                <h2>Sales Analytics</h2>
+                <h2>{lang.sale.sales_analytics}</h2>
                 <div className="sales-resume">
                     <div className="info">
                         <h3>{countOpen}</h3>
-                        <small className="text-muted"> OPEN </small>
+                        <small className="text-muted"> {lang.sale.open} </small>
                     </div>
                     <div className="info">
                         <h3>{countClose}</h3>
-                        <small className="text-muted"> CLOSE </small>
+                        <small className="text-muted"> {lang.sale.close} </small>
                     </div>
                     <div className="info">
                         <h3>{countCancelled}</h3>
-                        <small className="text-muted"> CANCELLED </small>
+                        <small className="text-muted"> {lang.sale.cancelled}  </small>
                     </div>
                 </div>
                 <div id="analytics">
@@ -362,8 +364,8 @@ export const Sales = () => {
                         </div>
                         <div className="right">
                             <div className="info">
-                            <h3>TOTAL SALES</h3>
-                            <small className="text-muted"> Last 24 Hours </small>
+                            <h3>{lang.sale.total_sales}</h3>
+                            <small className="text-muted">  </small>
                             </div>
                             
                             <h3>{F_(sumSales)}</h3>
@@ -374,8 +376,8 @@ export const Sales = () => {
                         </div>
                         <div className="right">
                             <div className="info">
-                            <h3>CLOSE INVOICES</h3>
-                            <small className="text-muted"> Last 24 Hours </small>
+                            <h3>{lang.sale.close_invoices}</h3>
+                            <small className="text-muted">  </small>
                             </div>
                             <h5 className="">{Math.round((sumNetSales/sumSales) * 100)}%</h5>
                             <h3>{F_(sumNetSales)}</h3>
@@ -386,8 +388,8 @@ export const Sales = () => {
                         </div>
                         <div className="right">
                             <div className="info">
-                            <h3>DUE BALANCES</h3>
-                            <small className="text-muted"> Last 24 Hours </small>
+                            <h3>{lang.sale.due_balances}</h3>
+                            <small className="text-muted">  </small>
                             </div>
                             <h5 className="danger">{Math.round((sumDueBalances/sumSales) * 100)}%</h5>
                             <h3>{F_(sumDueBalances)}</h3>

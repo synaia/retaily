@@ -12,6 +12,8 @@ import { uuid } from "../util/Utils.js";
 import 'react-html5-camera-photo/build/css/index.css';
 import { Inventory } from "./Inventory.jsx";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const NewProduct = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -197,7 +199,7 @@ export const NewProduct = () => {
             <div className="new-product">
                 <div className="new-product-p">
                     <div>
-                        <span>Name</span>
+                        <span>{lang.newproduct.name}</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> edit_note </span>
                             <input type="text" className="price-list-t" ref={product_name} onKeyUp={() => SetErrorLabel(null)} />
@@ -206,7 +208,7 @@ export const NewProduct = () => {
                         <span className="error-msg">{errorLabel}</span>
                     </div>
                     <div>
-                        <span>Cost</span>
+                        <span>{lang.newproduct.cost}</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> attach_money </span>
                             <input type="text" className="price-list-t" ref={product_cost} onKeyUp={() => SetErrorPriceKey(null)} />
@@ -215,7 +217,7 @@ export const NewProduct = () => {
                         <span className="error-msg">{errorPriceKey}</span>
                     </div>
                     <div>
-                        <span>SKU (code)</span>
+                        <span>SKU ({lang.newproduct.code})</span>
                         <div className="price-list-b">
                             <span className="material-icons-sharp price-list-i"> numbers </span>
                             <input type="number" className="price-list-t" ref={product_code} onKeyUp={() => SetErrorPercent(null)} />
@@ -227,7 +229,7 @@ export const NewProduct = () => {
 
                 <div className="new-product-x">
                     <div>
-                        <h3 className="new-product-st">Inventory</h3>
+                        <h3 className="new-product-st">{lang.newproduct.inventory}</h3>
                         <div className="new-product-i">
                         { stores.map((st, i) => (
                             <React.Fragment key={i}>
@@ -245,7 +247,7 @@ export const NewProduct = () => {
                         }
                         </div>
 
-                        <h3 className="new-product-st">Pricing</h3>
+                        <h3 className="new-product-st">{lang.newproduct.pricing}</h3>
                         <div className="new-product-i">
                         { pricing.map((pr, i) => (
                             <React.Fragment key={i}>
@@ -281,19 +283,19 @@ export const NewProduct = () => {
                 <div className="new-product-but">
                     <button className="fbutton fbutton-price-list" onClick={() => __addProduct()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
-                        <span>CREATE PRODUCT</span>
+                        <span>{lang.newproduct.create}</span>
                     </button>
                     <div></div>
                     <input type="file"  accept="image/png, image/jpg" onChange={fireImage} className="fbutton" />
 
                     <button className="fbutton fbutton-price-list" onClick={() => SetImageURL(null)}>
                         <span className="material-icons-sharp"> add_a_photo </span>
-                        <span>Take Photo</span>
+                        <span>{lang.newproduct.take}</span>
                     </button>
 
                     <button className="fbutton fbutton-price-list" onClick={() => generateQR(v_uuid)}>
                          <span className="material-icons-sharp"> settings_remote </span>
-                        <span>Connect Remote</span>
+                        <span>{lang.newproduct.connect}</span>
                     </button>
 
                 </div>

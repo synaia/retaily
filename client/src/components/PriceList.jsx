@@ -8,6 +8,8 @@ import { validateInput } from "../util/Utils.js";
 
 import 'react-data-grid/lib/styles.css';
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const PriceList = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -72,9 +74,9 @@ export const PriceList = () => {
     const columns = useMemo( () => {
         return [
             { key: 'id', name: 'ID', width: 10 },
-            { key: 'label', name: 'Label', resizable: true, width: 200, editor: textEditor},
-            { key: 'price_key', name: 'KEY', editor: textEditor, width: 200 },
-            { key: 'date_create', name: 'Date', width: 150 },
+            { key: 'label', name: lang.pricelist.label, resizable: true, width: 200, editor: textEditor},
+            { key: 'price_key', name: lang.pricelist.key, editor: textEditor, width: 200 },
+            { key: 'date_create', name: lang.pricelist._date, width: 150 },
             {
                 key: 'status', 
                 name: 'Status', 
@@ -146,7 +148,7 @@ export const PriceList = () => {
             {!loading && errorMessage &&  <div className="danger">{errorMessage} </div>}
             <div className="price-list">
                 <div>
-                    <span>Label</span>
+                    <span>{lang.pricelist.label}</span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> edit_note </span>
                         <input type="text" className="price-list-t" ref={label} onKeyUp={() => SetErrorLabel(null)} />
@@ -155,7 +157,7 @@ export const PriceList = () => {
                     <span className="error-msg">{errorLabel}</span>
                 </div>
                 <div>
-                    <span>KEY</span>
+                    <span>{lang.pricelist.key}</span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> vpn_key </span>
                         <input type="text" className="price-list-t" ref={price_key} onKeyUp={() => SetErrorPriceKey(null)} />
@@ -164,7 +166,7 @@ export const PriceList = () => {
                     <span className="error-msg">{errorPriceKey}</span>
                 </div>
                 <div>
-                    <span>Percent</span>
+                    <span>{lang.pricelist.percent}</span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> percent </span>
                         <input type="number" className="price-list-t" ref={percent}  onKeyUp={() => SetErrorPercent(null)} />
@@ -175,7 +177,7 @@ export const PriceList = () => {
                 <div>
                 <button className="fbutton fbutton-price-list" onClick={() => __addPricing()}>
                     <span className="material-icons-sharp"> rocket_launch </span>
-                    <span>CREATE PRICE LIST</span>
+                    <span>{lang.pricelist.create}</span>
                 </button>
                 </div>
             </div>

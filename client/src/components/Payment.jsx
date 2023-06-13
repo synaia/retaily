@@ -11,6 +11,8 @@ import { useRef, useState } from "react";
 
 import { PrinterBasic } from "../api/printer.js";
 
+import { lang } from "../common/spa.lang.js";
+
 
 
 export const Payment = () => {
@@ -201,7 +203,7 @@ export const Payment = () => {
                         <span className="material-icons-sharp" >
                         keyboard_return
                     </span>
-                        <h2>return </h2>
+                        <h2>{lang.pos.payment._return} </h2>
                     </div>
                 </Link>
                 
@@ -219,13 +221,13 @@ export const Payment = () => {
                 <div className="product-grid-frm ">
                     <div className="invoice-to">
                         {sale.client == null  && <h1>YOU SUPPOSED TO PICK A CLIENT BEFORE ...</h1>}
-                        {sale.client != null  && <h1>Invoiced to: {sale.client.name}</h1>}
+                        {sale.client != null  && <h1>{lang.pos.payment.invoice_to} {sale.client.name}</h1>}
                     </div>
                     <div>
-                         {sale.client != null  && <h2>Address: {sale.client?.address}</h2>}
+                         {sale.client != null  && <h2>{lang.pos.client.address} {sale.client?.address}</h2>}
                     </div>
                     <div>
-                         {sale.client != null  && <h2>Phone: {sale.client?.celphone}</h2>}
+                         {sale.client != null  && <h2>{lang.pos.client.phone}  {sale.client?.celphone}</h2>}
                     </div>
 
                     <div className="payment-btns">
@@ -233,18 +235,18 @@ export const Payment = () => {
                             <input type="radio" id="switch_left" name="status" value="CASH" 
                                 defaultChecked={true} 
                                 onChange={onPaymentStatusChange}/>
-                            <label for="switch_left">CASH</label>
+                            <label for="switch_left">{lang.pos.payment.cash}</label>
                             <input type="radio" id="switch_right" name="status" value="CREDIT" 
                                 onChange={onPaymentStatusChange} 
                                 className="credit-radio"/>
-                            <label for="switch_right">CREDIT</label>
+                            <label for="switch_right">{lang.pos.payment.credit}</label>
                         </div>
 
                         <div className="switch-field">
                             <input type="radio" id="switch_left_d" name="sale_type" value="IN_SHOP"  defaultChecked={true}  onChange={onPaymentTypeChange} />
-                            <label for="switch_left_d">IN STORE</label>
+                            <label for="switch_left_d">{lang.pos.payment.in_store}</label>
                             <input type="radio" id="switch_right_l" name="sale_type" value="FOR_DELIVER" className="credit-radio" onChange={onPaymentTypeChange}/>
-                            <label for="switch_right_l">FOR DELIVERY</label>
+                            <label for="switch_right_l">{lang.pos.payment.for_deliver}</label>
                         </div>
 
                         <div className="select-div select-seq">
@@ -262,14 +264,14 @@ export const Payment = () => {
                             <input  type="number" name="amountcc"   className="pay-input-t-frm" ref={amountCC} 
                             onChange={() => onAmountChange(sale.sale_detail.gran_total)} 
                             onKeyDown={onEnter} 
-                            autoFocus placeholder="CREDIT CARD" /> 
+                            autoFocus placeholder={lang.pos.payment.cc} /> 
                         </div>
                         <div className="pay-input-frm">
                             <span className="material-icons-sharp pay-input-i-frm"> price_check </span>
                             <input  type="number" name="amountcash" className="pay-input-t-frm" ref={amountCash}
                                 onChange={() => onAmountChange(sale.sale_detail.gran_total)} 
                                 onKeyDown={onEnter}
-                                placeholder="CASH"  />
+                                placeholder={lang.pos.payment.cash}  />
                         </div>
                        
                         <div className="pay-input-frm">
@@ -294,25 +296,25 @@ export const Payment = () => {
                         
                         <div>
                             <h2 className={`${showPaymentBtn ? 'success' : ''}`}>
-                                TOTAL: {F_(sale_detail.gran_total)}
+                                {lang.pos.total} {F_(sale_detail.gran_total)}
                             </h2>
                         </div>
                         <div>
-                            <h3>DISCOUNTS: {F_(sale_detail.discount_total)}</h3>
+                            <h3>{lang.pos.discount}  {F_(sale_detail.discount_total)}</h3>
                         </div>
                         <div>
-                            <h3>SUB: {F_(sale_detail.sub_total)}</h3>
+                            <h3>{lang.pos.sub}  {F_(sale_detail.sub_total)}</h3>
                         </div>
                         <div>
-                            <h3>ITBIS: {F_(sale_detail.sub_tax)}</h3>
+                            <h3>{lang.pos.tax}  {F_(sale_detail.sub_tax)}</h3>
                         </div>
                         <div>
-                            <h3>DELIVERY {F_(0)}</h3>
+                            <h3>{lang.pos.delivery}  {F_(0)}</h3>
                         </div>
                     </div>
 
                     <div>
-                        <textarea ref={additionalInfo} placeholder="Aditional Info" rows={3} wrap="soft" className="aditional-info" />
+                        <textarea ref={additionalInfo} placeholder={lang.pos.payment.add_info}  rows={3} wrap="soft" className="aditional-info" />
                     </div>
                 </div>
             </main>

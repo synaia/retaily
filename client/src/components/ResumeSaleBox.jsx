@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { F_ } from "../util/Utils";
 import { redirect_pass } from "../redux/features/sale.feature.js";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const ResumeSaleBox = () => {
     const navigator = useNavigate();
@@ -28,19 +30,19 @@ export const ResumeSaleBox = () => {
     return (
         <div className="middle-left-side-terminal" onClick={onClickToPay}>
                 <div>
-                    <h3>SUB: {F_(sale_detail.sub_total)}</h3>
+                    <h3>{lang.pos.sub} {F_(sale_detail.sub_total)}</h3>
                 </div>
                 <div>
-                     <h2>TOTAL: {F_(sale_detail.gran_total)}</h2>
+                     <h2>{lang.pos.total} {F_(sale_detail.gran_total)}</h2>
                 </div>
                 <div>
-                    <h3>DELIVERY {F_(0)}</h3>
+                    <h3>{lang.pos.delivery} {F_(0)}</h3>
                 </div>
                 <div>
-                    <h3>DISCOUNTS: {F_(sale_detail.discount_total)}</h3>
+                    <h3>{lang.pos.discount} {F_(sale_detail.discount_total)}</h3>
                 </div>
                 <div>
-                    <h3>ITBIS: {F_(sale_detail.sub_tax)}</h3>
+                    <h3>{lang.pos.tax} {F_(sale_detail.sub_tax)}</h3>
                 </div>
             </div>
     );

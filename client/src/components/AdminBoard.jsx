@@ -15,6 +15,8 @@ import EventBus from "../common/EventBus"
 import package_file from "../../package.json";
 import { SCOPES } from "../util/constants";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const AdminBoard = ({Content, Title, Search}) => {
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -114,67 +116,67 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 {currentUser.scopes.includes(SCOPES.DASHBOARD.VIEW) &&
                 <a href="/#/admin/" key={1}>
                   <span className="material-icons-sharp"> dashboard </span>
-                  <h3>Dashboard</h3>
+                  <h3>{lang.menu.dashboard}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.SALES.POS) &&
                 <a href="/" key={2}>
                   <span className="material-icons-sharp"> point_of_sale </span>
-                  <h3>POS</h3>
+                  <h3>{lang.menu.pos}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.SALES.VIEW) &&
                 <a href="/#/admin/sales" key={3}>
                   <span className="material-icons-sharp"> receipt_long </span>
-                  <h3>Sales</h3>
+                  <h3>{lang.menu.sales}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.INVENTORY.VIEW) &&
                 <a href="/#/admin/inventory" key={4}>
                   <span className="material-icons-sharp"> inventory </span>
-                  <h3>Inventory</h3>
+                  <h3>{lang.menu.inventory}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.USER.VIEW) &&
                 <a href="/#/admin/users">
                   <span className="material-icons-sharp"> person_outline </span>
-                  <h3>Users</h3>
+                  <h3>{lang.menu.users}</h3>
                 </a>
                 }
-                {currentUser.scopes.includes(SCOPES.ADMIN) &&
+                {currentUser.scopes.includes(SCOPES.REPORT.VIEW) &&
                 <a href="#" key={6}>
                   <span className="material-icons-sharp"> report_gmailerrorred </span>
-                  <h3>Reports</h3>
+                  <h3>{lang.menu.reports}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.ANALYTIC.VIEW) &&
                 <a href="#" key={7}>
                   <span className="material-icons-sharp"> insights </span>
-                  <h3>Analytics</h3>
+                  <h3>{lang.menu.analytics}</h3>
                 </a>
                 }
 
                 <a href="#" key={8}>
                   <span className="material-icons-sharp"> mail_outline </span>
-                  <h3>Messages</h3>
+                  <h3>{lang.menu.messages}</h3>
                   <span className="message-count">26</span>
                 </a>
 
                 {currentUser.scopes.includes(SCOPES.USER.SETTING) &&
                 <a href="#" key={9}>
                   <span className="material-icons-sharp"> settings </span>
-                  <h3>Settings</h3>
+                  <h3>{lang.menu.settings}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.PRODUCT.ADD) &&
                 <a href="/#/admin/inventory/newproduct" key={10}>
                   <span className="material-icons-sharp"> add </span>
-                  <h3>Add Product</h3>
+                  <h3>{lang.menu.add_product}</h3>
                 </a>
                 }
                 <a href="#" key={11} onClick={(e) => onLogout(e)}>
                   <span className="material-icons-sharp"> logout </span>
-                  <h3>Logout</h3>
+                  <h3>{lang.menu.logout}</h3>
                 </a>
               </div>
               }

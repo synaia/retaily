@@ -11,9 +11,10 @@ import { getProductsByInventory, openInventory, closeInventory, cancelInventory,
 import { Loading } from "./Loading.jsx";
 import { F_, validateInputX } from "../util/Utils.js";
 
-
-
 import 'react-data-grid/lib/styles.css';
+
+import { lang } from "../common/spa.lang.js";
+
 
 
 export const Store = () => {
@@ -168,8 +169,8 @@ export const Store = () => {
 
         const next_quantity = { 
             key: 'next_quantity', 
-            name: 'New Quantity', 
-            width: 100, 
+            name: lang.products.new_quantity, 
+            width: 150, 
             editor: textEditor, 
             formatter: ({ row }) => {
                 if (row.status == "changed") {
@@ -182,10 +183,10 @@ export const Store = () => {
         if (is_inventory_open) {
             return [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400},
+                { key: 'name', name: lang.products.name, resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
-                { key: 'cost', name: 'Cost', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                { key: 'cost', name: lang.products.cost, width: 100 },
+                { key: 'quantity', name: lang.products.quantity, width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
                 }},
                 next_quantity
@@ -193,10 +194,10 @@ export const Store = () => {
         } else {
             return [
                 { key: 'id', name: 'ID', width: 10 },
-                { key: 'name', name: 'Product', resizable: true, width: 400},
+                { key: 'name', name: lang.products.name, resizable: true, width: 400},
                 { key: 'code', name: 'SKU', width: 100 },
-                { key: 'cost', name: 'Cost', width: 100 },
-                { key: 'quantity', name: 'Quantity', width: 100, formatter: ({ row }) => {
+                { key: 'cost', name: lang.products.cost, width: 100 },
+                { key: 'quantity', name: lang.products.quantity, width: 100, formatter: ({ row }) => {
                     return <div className="row-bg-no-changed">{row.quantity}</div>;
                 }},
               ];
@@ -463,23 +464,23 @@ export const Store = () => {
             <div className="store-header">
                 <div className="info">
                 <h2>{params.store_name}</h2>
-                    <small className="text-muted"> Store </small>
+                    <small className="text-muted"> {lang.store.name} </small>
                 </div>
                 <div className="info">
                     <h2>{F_(valuation)}</h2>
-                    <small className="text-muted"> Value Inventory </small>
+                    <small className="text-muted"> {lang.store.value_inventory} </small>
                 </div>
                 <div className="info">
                     <h2>{F_(valuationChanged)}</h2>
-                    <small className="text-muted"> Value Inventory Changed</small>
+                    <small className="text-muted"> {lang.store.value_changed}</small>
                 </div>
                 <div className="info">
                     <h2>{changedCount}</h2>
-                    <small className="text-muted"> Changed Count</small>
+                    <small className="text-muted"> {lang.store.changed_count} </small>
                 </div>
                 <div className="info">
                     <h2>{daysBack}</h2>
-                    <small className="text-muted">Days Open</small>
+                    <small className="text-muted"> {lang.store.days} </small>
                 </div>
                 <div className="info">
                     <span className="material-icons-sharp"> {daysBackIcon} </span>
@@ -488,7 +489,7 @@ export const Store = () => {
             </div>
             <div className="price-list">
                 <div>
-                    <span>Name</span>
+                    <span> {lang.store.inventory_name} </span>
                     <div className="price-list-b">
                         <span className="material-icons-sharp price-list-i"> more_vert </span>
                         {/* {!loading && */}
@@ -523,13 +524,13 @@ export const Store = () => {
                 {!loading && !is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __openInventory()}>
                         <span className="material-icons-sharp"> build </span>
-                        <span>OPEN INVENTORY</span>
+                        <span> {lang.store.open_inventory} </span>
                     </button>
                 }
                 {!loading && is_inventory_open &&
                     <button className="fbutton fbutton-price-list" onClick={() => __closeinventory()}>
                         <span className="material-icons-sharp"> verified </span>
-                        <span>CLOSE INVENTORY IN PROGRESS</span>
+                        <span> {lang.store.close_inventory} </span>
                     </button>
                 }
                 </div>
@@ -537,7 +538,7 @@ export const Store = () => {
                 <div>
                     <button className="fbutton fbutton-price-list" onClick={() => __cancelInventory()}>
                         <span className="material-icons-sharp"> waving_hand </span>
-                        <span>CANCEL THIS INVENTORY</span>
+                        <span> {lang.store.cancel_inventory} </span>
                     </button>
                 </div>
                 }

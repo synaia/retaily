@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { lang } from "../common/spa.lang.js";
 
 export const Header = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -10,7 +11,7 @@ export const Header = () => {
     return (
         <div className="header-content">
             <div>
-                <h1>POS</h1>
+                <h1>{lang.pos.pos}</h1>
             </div>
             <div>
                 <div className="right">

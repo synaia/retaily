@@ -5,6 +5,9 @@ import { SCOPES } from "../util/constants";
 import { abortController } from "../api/abort.js";
 
 
+import { lang } from "../common/spa.lang.js";
+
+
 
 const SuggestionsList = props => {
     const {
@@ -283,19 +286,19 @@ export const SearchBar = () => {
         }
         <button className="fbutton fbutton-green fbutton-green-active" data-invoice-status="all" disabled={loading ? 'disabled' : ''} >
             <span className="material-icons-sharp"> all_inclusive </span>
-            <span>ALL</span>
+            <span>{lang.sale.all}</span>
         </button>
         <button className="fbutton fbutton-orange" data-invoice-status="open" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> lock_open </span>
-            <span>OPEN</span>
+            <span>{lang.sale.open}</span>
         </button>
         <button className="fbutton fbutton-purple" data-invoice-status="close" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> lock </span>
-            <span>CLOSE</span>
+            <span>{lang.sale.close}</span>
         </button>
         <button className="fbutton fbutton-red" data-invoice-status="cancelled" disabled={loading ? 'disabled' : ''}>
             <span className="material-icons-sharp"> auto_delete </span>
-            <span>CANCELLED</span>
+            <span>{lang.sale.cancelled}</span>
         </button>
         <div className="search-wrap">
             <input type="text" 

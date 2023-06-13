@@ -12,6 +12,8 @@ import { storeInfo } from "../../common/store-info";
 import { beauty } from "../../util/Utils.js";
 import { getLastLoggedUser } from "../../api/db";
 
+import { lang } from "../../common/spa.lang.js";
+
 let current = await getLastLoggedUser('url:product.feature.js');
 
 const initialState = {
@@ -471,7 +473,7 @@ const cleanSale = (state) => {
 
 const discardSale = (state, action) => {
     // reset sale to initial state
-    if(!confirm('Really?')) return;
+    if(!confirm(lang.pos.discardsale)) return;
     
    cleanSale(state);
 };

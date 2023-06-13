@@ -22,6 +22,8 @@ import { Loading } from "./Loading.jsx";
 
 import { F_, validateInputX } from "../util/Utils";
 
+import { lang } from "../common/spa.lang.js";
+
 
 export const Client = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -64,10 +66,10 @@ export const Client = () => {
                     </div>
                 );
             }},
-            { key: 'name', name: 'Name', resizable: true, width: 200, editor: textEditor},
-            { key: 'document_id', name: 'Document', width: 150, editor: textEditor },
-            { key: 'celphone', name: 'Phone', width: 150, editor: textEditor },
-            { key: 'address', name: 'Address', width: 450, editor: textEditor },
+            { key: 'name', name: lang.pos.client.name, resizable: true, width: 200, editor: textEditor},
+            { key: 'document_id', name: lang.pos.client.doc, width: 150, editor: textEditor },
+            { key: 'celphone', name: lang.pos.client.phone, width: 150, editor: textEditor },
+            { key: 'address', name: lang.pos.client.address, width: 450, editor: textEditor },
           ];
     }); 
 
@@ -210,7 +212,7 @@ export const Client = () => {
                         <Link to="/#">
                          <span className="material-icons-sharp"> arrow_back_ios </span>
                         </Link>
-                        <h1>POS:Client</h1>
+                        <h1>{lang.pos.client.header}</h1>
                     </div>
                     <div>
                         <div className="right">
@@ -273,37 +275,37 @@ export const Client = () => {
                             }
                             <div className="client-field">
                                 <div>
-                                    <input className="text" placeholder="Document ID" ref={documentId} type="text" />
+                                    <input className="text" placeholder={lang.pos.client.doc} ref={documentId} type="text" />
                                 </div>
 
                                 <div>
-                                    <input className="text" placeholder="Names"  ref={name} type="text"/>
+                                    <input className="text" placeholder={lang.pos.client.name}  ref={name} type="text"/>
                                 </div>
                                 
                                 <div className="address-client-d">
-                                    <textarea className="address-client" placeholder="address" ref={address} type="text"  />
+                                    <textarea className="address-client" placeholder={lang.pos.client.address} ref={address} type="text"  />
                                 </div>
                                
                                 <div>
-                                    <input className="text" placeholder="Movil"  ref={celphone} type="text" />
+                                    <input className="text" placeholder={lang.pos.client.phone} ref={celphone} type="text" />
                                 </div>
                                
                                 <div>
-                                    <input className="text" placeholder="eMail"  ref={email} type="text" />
+                                    <input className="text" placeholder={lang.pos.client.email}  ref={email} type="text" />
                                 </div>
                             </div>
 
                         {clientIdState == null &&
                             <div className="middle-left-side-client" onClick={createClient}>
                                 <div>
-                                    <h3>SAVE NEW</h3>
+                                    <h3>{lang.pos.client.save}</h3>
                                 </div>
                             </div>
                         }
                         {clientIdState != null &&
                             <div className="middle-left-side-client" onClick={editClient}>
                                 <div>
-                                    <h3>UPDATE</h3>
+                                    <h3>{lang.pos.client.update}</h3>
                                 </div>
                             </div>
                         }

@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
-import { F_ } from "../util/Utils";
+import { F_, R_ } from "../util/Utils";
 
 export const ProductPickedReadOnly = () => {
     console.log('ProductPickedReadOnly: rendered.')
@@ -16,7 +16,7 @@ export const ProductPickedReadOnly = () => {
                     <h3>{product.name}</h3>
                 </div>
                 <div className="dicount">
-                    {(product.discount != undefined && product.discount > 0) && <h3>  (-{F_((product.inventory[0].quantity_for_sale * product.price)  -  (product.inventory[0].quantity_for_sale * product.price_for_sale))}) or -{F_(product.discount_percent)}%  </h3>}
+                    {(product.discount != undefined && product.discount > 0) && <> <h3 className="product-card-top-l">-{R_(product.discount_percent)}%</h3> <h3>  (-{F_((product.inventory[0].quantity_for_sale * product.price)  -  (product.inventory[0].quantity_for_sale * product.price_for_sale))}) </h3> </>}
                 </div>
                 <div className="original-price">
                     {(product.discount != undefined && product.discount > 0) && <h3>{F_(product.inventory[0].quantity_for_sale * product.price)}</h3>}

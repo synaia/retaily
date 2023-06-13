@@ -6,6 +6,9 @@ import { getStoresInv, addStore } from "../redux/features/product.feature.js";
 import { F_, validateInputX } from "../util/Utils";
 import { SCOPES } from "../util/constants";
 
+import { lang } from "../common/spa.lang.js";
+
+
 export const Inventory = () => {
     const count_resume = useSelector((state) => state.product.count_resume);
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -64,7 +67,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Products</h3>
+                                <h3>{lang.menu.products}</h3>
                             </div>
                         </div>
                     </div>
@@ -78,7 +81,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Price List</h3>
+                                <h3>{lang.menu.pricelist}</h3>
                             </div>
                         </div>
                     </div>
@@ -92,7 +95,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>New Product</h3>
+                                <h3>{lang.menu.add_product}</h3>
                             </div>
                         </div>
                     </div>
@@ -106,7 +109,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Store List</h3>
+                                <h3>{lang.menu.storelist}</h3>
                             </div>
                         </div>
                     </div>
@@ -120,7 +123,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Request: Inventory Mov</h3>
+                                <h3>{lang.menu.request_store_mov_list}</h3>
                             </div>
                         </div>
                     </div>
@@ -134,7 +137,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Response: Inventory Mov.</h3>
+                                <h3>{lang.menu.response_store_mov_list}</h3>
                             </div>
                         </div>
                     </div>
@@ -148,7 +151,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Bulk New</h3>
+                                <h3>{lang.menu.bulk_order_new}</h3>
                             </div>
                         </div>
                     </div>
@@ -162,7 +165,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Purchases Orders</h3>
+                                <h3>{lang.menu.request_purchase_list}</h3>
                             </div>
                         </div>
                     </div>
@@ -176,7 +179,7 @@ export const Inventory = () => {
                     <div className="inventory-resume-r">
                         <div className="inventory-resume-c">
                             <div className="info">
-                                <h3>Receive: Purchases Orders</h3>
+                                <h3>{lang.menu.response_purchase_list}</h3>
                             </div>
                         </div>
                     </div>

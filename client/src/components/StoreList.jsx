@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getStoresInv, addStore } from "../redux/features/product.feature.js";
 import { F_, validateInputX } from "../util/Utils";
+import { lang } from "../common/spa.lang.js";
 
 export const StoreList = () => {
     const inventory_head_list = useSelector((state) => state.product.inventory_head_list);
@@ -53,7 +54,7 @@ export const StoreList = () => {
             <div className="insights">
                 <div className="wide-box">
                     <div>
-                        <p>STORE NAME</p>
+                        <p>{lang.store.name}</p>
                         <div className="price-list-b">
                             <p className="material-icons-sharp price-list-i"> edit_note </p>
                             <input ref={store_name} type="text" className="price-list-t" />
@@ -63,7 +64,7 @@ export const StoreList = () => {
                         </div>
                     <button className="fbutton fbutton-price-list" onClick={() => __addStore()}>
                         <p className="material-icons-sharp"> add_business </p>
-                        <h3>CREATE STORE</h3>
+                        <h3>{lang.store.create}</h3>
                     </button>
                 </div>
 
@@ -86,22 +87,22 @@ export const StoreList = () => {
                             <div className="inventory-resume-c">
                                 <div className="info">
                                     <h3>{head.store.name}</h3>
-                                    <small className="text-muted"> Store </small>
+                                    <small className="text-muted"> {lang.store.name} </small>
                                 </div>
                                 <div className="info">
                                     <h3>{F_(resume_inv[head.store.name].inv_valuation)}</h3>
-                                    <small className="text-muted"> Value Inventory </small>
+                                    <small className="text-muted"> {lang.store.value_inventory} </small>
                                 </div>
                             </div>
                             {head.name != undefined &&
                                 <div className="inventory-resume-c">
                                     <div className="info">
-                                        <h3>In Progress</h3>
-                                        <small className="text-muted"> Status </small>
+                                        <h3>{lang.store.in_progress}</h3>
+                                        <small className="text-muted"> {lang.store.status} </small>
                                     </div>
                                     <div className="info">
                                         <h3>{resume_inv[head.store.name].changed_count}</h3>
-                                        <small className="text-muted"> Products Changed </small>
+                                        <small className="text-muted"> {lang.store.product_changed}</small>
                                     </div>
                                 </div>
                             }
@@ -109,11 +110,11 @@ export const StoreList = () => {
                                 <div className="inventory-resume-c">
                                     <div className="info">
                                         <h3 className="name-inv">{head.name}</h3>
-                                        <small className="text-muted"> Name </small>
+                                        <small className="text-muted"> {lang.store.inventory_name} </small>
                                     </div>
                                     <div className="info">
                                         <h3>{F_(resume_inv[head.store.name].inv_valuation_changed)}</h3>
-                                        <small className="text-muted"> Value Changed </small>
+                                        <small className="text-muted"> {lang.store.value_changed} </small>
                                     </div>
                                 </div>
                             }

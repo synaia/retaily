@@ -21,6 +21,11 @@ export const T_ = (number_value) => {
     return n;
 };
 
+export const R_ = (number_value) => {
+    number_value = (number_value == undefined) ? 0 : number_value;
+    return Math.round((number_value + Number.EPSILON) * 100) / 100;
+};
+
 
 
 export const uuid = () => { // Public Domain/MIT
