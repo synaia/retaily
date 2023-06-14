@@ -1060,3 +1060,12 @@ SELECT
         s.name
 FROM scope_list s
 ;
+
+--SELECT_DELIVERY
+SELECT
+    d.id,
+    d.name,
+    d.value
+FROM delivery d
+ORDER BY d.id
+;

@@ -8,7 +8,7 @@ from server.core_app.product.product_schemas import Inventory
 from server.core_app.product.product_schemas import InventoryHead
 from server.core_app.product.product_schemas import Store
 from server.core_app.product.product_schemas import ProductOrder, ProductOrderLine
-from server.core_app.product.product_schemas import BulkOrderLine, BulkOrder
+from server.core_app.product.product_schemas import BulkOrderLine, BulkOrder, Delivery
 from server.core_app.dbfs.Query import Query
 from server.core_app.database import get_cursor
 from server.core_app.ext.remove_bg import image_to_base64
@@ -955,3 +955,20 @@ def add_bulk_order(bulk: BulkOrder, db: Session, query: Query):
     cur.connection.commit()
 
     return read_bulk_order(db, query)
+
+
+def delivery(db: Session, query: Query):
+    sql_raw = query.SELECT_DELIVERY
+    delivers = []
+    cur = get_cursor(db)
+    cur.execute(sql_raw)
+    resp = cur.fetchall()
+
+    for rp in resp:
+        de = Delivery()
+        de.id = rp['id']
+        de.name = rp['name']
+        de.value = rp['value']
+        delivers.append(de)
+
+    return delivers

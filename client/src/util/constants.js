@@ -11,6 +11,7 @@ export const SCOPES = {
    },
    SALES: {
     POS: 'sales.pos',
+    POS_VELIVERY: 'pos.delivery',
     VIEW: 'sales.view',
     FILTER: {
         USER: 'sales.filter.user',

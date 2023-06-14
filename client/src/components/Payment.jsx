@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addSale } from "../redux/features/sale.feature.js";
 import { finishSaleAction, lowOffProductQtyAction } from "../redux/features/product.feature.js";
 import { useRef, useState } from "react";
+import { SCOPES } from "../util/constants.js";
 
 import { PrinterBasic } from "../api/printer.js";
 
@@ -16,6 +17,7 @@ import { lang } from "../common/spa.lang.js";
 
 
 export const Payment = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
     const sale = useSelector((store) => store.product.sale);
     const sequences = useSelector((store) => store.sale.sequences);
     const sequence_str = useSelector((store) => store.sale.sequence_str);
@@ -245,8 +247,12 @@ export const Payment = () => {
                         <div className="switch-field">
                             <input type="radio" id="switch_left_d" name="sale_type" value="IN_SHOP"  defaultChecked={true}  onChange={onPaymentTypeChange} />
                             <label for="switch_left_d">{lang.pos.payment.in_store}</label>
+                            { currentUser.scopes.includes(SCOPES.SALES.POS_VELIVERY) && 
+                            <>
                             <input type="radio" id="switch_right_l" name="sale_type" value="FOR_DELIVER" className="credit-radio" onChange={onPaymentTypeChange}/>
                             <label for="switch_right_l">{lang.pos.payment.for_deliver}</label>
+                            </>
+                            }
                         </div>
 
                         <div className="select-div select-seq">
@@ -309,7 +315,7 @@ export const Payment = () => {
                             <h3>{lang.pos.tax}  {F_(sale_detail.sub_tax)}</h3>
                         </div>
                         <div>
-                            <h3>{lang.pos.delivery}  {F_(0)}</h3>
+                            <h3>{lang.pos.delivery}  {F_(sale_detail.delivery)}</h3>
                         </div>
                     </div>
 

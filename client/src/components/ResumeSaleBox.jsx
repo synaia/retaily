@@ -36,7 +36,7 @@ export const ResumeSaleBox = () => {
                      <h2>{lang.pos.total} {F_(sale_detail.gran_total)}</h2>
                 </div>
                 <div>
-                    <h3>{lang.pos.delivery} {F_(0)}</h3>
+                    <h3>{lang.pos.delivery} {F_(sale_detail.delivery)}</h3>
                 </div>
                 <div>
                     <h3>{lang.pos.discount} {F_(sale_detail.discount_total)}</h3>

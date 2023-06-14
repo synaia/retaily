@@ -371,7 +371,7 @@ aside .sidebar .message-count {
   margin-top: 0.5rem;
 }
 .numpad-btn {
-  height: calc(8vh);
+  height: calc(6vh);
   margin: 0.2rem;
   border: 1px dashed var(--color-dark); 
   cursor: pointer;

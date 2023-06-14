@@ -41,7 +41,8 @@ from server.core_app.product.product_query import (
     assign_order_to_bulk,
     read_bulk_order,
     add_bulk_order,
-    approbal_issue_order_line
+    approbal_issue_order_line,
+    delivery
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -451,6 +452,21 @@ async def __add_bulk_order(
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
+
+@router.get("/delivery", response_model=list[schemas.Delivery])
+async def __delivery(
+                        db: Session = Depends(get_db),
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return delivery(db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+###################################################
+#  Web Socket Part
+###################################################
 
 @router.post("/uploadfilelocal/{client_uuid}",)
 async def uploadfilelocal(file: UploadFile, client_uuid: str):

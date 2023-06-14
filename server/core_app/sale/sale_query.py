@@ -193,7 +193,7 @@ def add_sale(transaction: dict,  db: Session, query: Query):
     sub: float = round(transaction['sale_detail']['sub_total'], TWO_DECIMAL)
     discount: float = round(transaction['sale_detail']['discount_total'], TWO_DECIMAL)
     tax_amount: float = round(transaction['sale_detail']['sub_tax'], TWO_DECIMAL)
-    delivery_charge: float = 0.0
+    delivery_charge: float = round(transaction['sale_detail']['delivery'], TWO_DECIMAL)
 
     sequence_type: str = transaction['sequence_type']
     status: str = transaction['status']

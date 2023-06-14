@@ -98,6 +98,7 @@ export class PrinterBasic {
         const total_discount = transaction.sale_detail.discount_total;
         const sub_total = transaction.sale_detail.sub_total;
         const total = transaction.sale_detail.gran_total;
+        const delivery = transaction.sale_detail.delivery;
 
         logo.onload = () => {
             const algorithm = 'threshold';
@@ -169,7 +170,7 @@ export class PrinterBasic {
                     { width: 10, align: 'right' }
                 ], 
                 [
-                    [ 'Delivery', (encoder) => encoder.bold().text(`0`).bold() ],
+                    [ 'Delivery', (encoder) => encoder.bold().text(delivery).bold() ],
                     [ 'Sub Total', (encoder) => encoder.bold().text(`${T_(sub_total)}`).bold() ],
                     [ 'Total Descuentos', (encoder) => encoder.bold().text(`${T_(total_discount)}`).bold() ],
                     [ 'Total', (encoder) => encoder.bold().text(`${T_(total)}`).bold() ]

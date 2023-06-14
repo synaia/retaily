@@ -45,10 +45,12 @@ const initialState = {
             'discount_total': 0,
             'gran_total': 0, 
             'sub_total': 0, 
-            'sub_tax': 0
+            'sub_tax': 0,
+            'delivery': 0,
         },
         'user': current
     },
+    delivers: [],
     errorMessage: null
 };
 
@@ -296,9 +298,14 @@ export const addBulkOrder = createAsyncThunk('product/add_bulk_order', async (li
     return response.data;
 });
 
+export const getDelivery = createAsyncThunk('product/delivery', async () => {
+    let response = await Axios.get(`${BACKEND_HOST}/products/delivery`,   {});
+    return response.data;
+});
 
-const updateSaleDetail = (productPickedList) => {
-    const gran_total = productPickedList.reduce((x, p) => {
+
+const updateSaleDetail = (productPickedList, delivery_value) => {
+    let gran_total = productPickedList.reduce((x, p) => {
         return (x + (p.price_for_sale * p.inventory[0].quantity_for_sale));
     }, 0);
 
@@ -309,10 +316,22 @@ const updateSaleDetail = (productPickedList) => {
         return (p.discount) ? x + p.discount : x;
     }, 0)
 
+    const delivery = delivery_value;
 
-    const sale_detail = {'discount_total': discount_total, 'gran_total': gran_total, 'sub_total': sub_total, 'sub_tax': sub_tax};
+    gran_total = gran_total + delivery;
+
+    const sale_detail = {'discount_total': discount_total, 'gran_total': gran_total, 'sub_total': sub_total, 'sub_tax': sub_tax, 'delivery': delivery};
     return sale_detail;
 };
+
+const updateDeliveryValue = (state, action) => {
+    const value = action.payload;
+    console.log(beauty(state.sale.sale_detail))
+
+    const productPickedList = [...state.sale.products];
+    const sale_detail = updateSaleDetail(productPickedList, value);
+    state.sale.sale_detail = sale_detail;
+}
 
 const pickProduct = (state, action) => {
     const productId = action.payload;
@@ -332,7 +351,7 @@ const pickProduct = (state, action) => {
         productPickedList.push(productPicked);
     }
 
-    const sale_detail = updateSaleDetail(productPickedList);
+    const sale_detail = updateSaleDetail(productPickedList, state.sale.sale_detail.delivery);
     state.sale.products = productPickedList;
     state.sale.sale_detail = sale_detail;
 };
@@ -342,7 +361,7 @@ const kickProduct = (state, action) => {
     const products = [...state.sale.products];
     const index = products.findIndex(prod => prod.id == productId);
     products.splice(index, 1);
-    const sale_detail = updateSaleDetail(products);
+    const sale_detail = updateSaleDetail(products, state.sale.sale_detail.delivery);
     state.sale.products = products;
     state.sale.sale_detail = sale_detail;
 };
@@ -357,7 +376,7 @@ const reduceProduct = (state, action) => {
     } else {
         products[index].inventory[0].quantity_for_sale -= 1;
         products[index].is_selected = 1;
-        const sale_detail = updateSaleDetail(products);
+        const sale_detail = updateSaleDetail(products, state.sale.sale_detail.delivery);
         state.sale.products = products;
         state.sale.sale_detail = sale_detail;
     }
@@ -435,7 +454,7 @@ const discountTrigger = (state, action) => {
 
     products[current_index].discount_percent = discount_percent;
 
-    const sale_detail = updateSaleDetail(products);
+    const sale_detail = updateSaleDetail(products, state.sale.sale_detail.delivery);
     state.sale.products = products;
     state.sale.sale_detail = sale_detail;
 
@@ -465,7 +484,8 @@ const cleanSale = (state) => {
             'discount_total': 0,
             'gran_total': 0, 
             'sub_total': 0, 
-            'sub_tax': 0
+            'sub_tax': 0,
+            'delivery': 0,
         },
         'user': current
     };
@@ -687,6 +707,7 @@ const productsSlice = createSlice({
         finishSaleAction: finishSale,
         refreshProductListAction: refreshProductList,
         lowOffProductQtyAction: lowOffProductQty,
+        updateDeliveryValueAction: updateDeliveryValue,
         cleanBulkOrders: (state, action) => {
             state.bulk_orders = [];
         },
@@ -990,6 +1011,16 @@ const productsSlice = createSlice({
             state.loading = false;
             state.errorMessage = `ERROR getBulkOrder() ; ${action.error.message}`
         });
+
+        builder.addCase(getDelivery.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(getDelivery.fulfilled, (state, action) => {
+            state.loading = false;
+            state.delivers = action.payload;
+        }).addCase(getDelivery.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR getDelivery() ; ${action.error.message}`
+        });
         
     }
 });
@@ -1006,7 +1037,8 @@ export const {
     finishSaleAction,
     refreshProductListAction,
     cleanBulkOrders,
-    lowOffProductQtyAction
+    lowOffProductQtyAction,
+    updateDeliveryValueAction
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

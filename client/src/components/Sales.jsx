@@ -270,6 +270,13 @@ export const Sales = () => {
                                         </tr>
                                     ))
                                     }
+                                    { sale.delivery_charge > 0 &&
+                                        <tr>
+                                            <td></td>
+                                            <td>Delivery</td>
+                                            <td>{F_(sale.delivery_charge)}</td>
+                                        </tr>
+                                    }
                                         <tr>
                                             <td></td>
                                             <td></td>

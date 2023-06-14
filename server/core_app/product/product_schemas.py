@@ -155,3 +155,12 @@ class BulkOrderLine(BaseModelExt):
 
     class Config:
         orm_mode = True
+
+
+class Delivery(BaseModelExt):
+    id: int | None = None
+    name: str | None = None
+    value: float | None = None
+
+    class Config:
+        orm_mode = True

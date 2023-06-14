@@ -2,13 +2,17 @@ import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { kickProductAction, reduceProductAction } from "../redux/features/product.feature.js";
-import { discardSaleAction } from "../redux/features/product.feature.js";
+import { discardSaleAction, updateDeliveryValueAction } from "../redux/features/product.feature.js";
 
 import { PrinterBasic } from "../api/printer.js";
 import { trouble } from "../redux/features/sale.feature.js";
+import { SCOPES } from "../util/constants.js";
+import { F_ } from "../util/Utils.js";
 
 
 export const Numpad = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+    const delivers = useSelector((state) => state.product.delivers);
     const printer = useSelector((state) => state.sale.printer);
     console.log('Numpad: rendered.');
     const dispatch = useDispatch();
@@ -42,38 +46,45 @@ export const Numpad = () => {
         }
     };
 
-   
-    return (
-        <div className="bottom-left-side">
-                <div className="numpad-btn" onClick={reduceProductFromPicket}>
-                    <span className="material-icons-sharp"> remove </span>
+    const addDeliver = (value) => {
+        dispatch(updateDeliveryValueAction(value));
+    }
+
+    if (currentUser.scopes.includes(SCOPES.SALES.POS_VELIVERY)) {
+        return (
+            <div className="bottom-left-side">
+                    <div className="numpad-btn" onClick={reduceProductFromPicket}>
+                        <span className="material-icons-sharp"> remove </span>
+                    </div>
+                    <div className="numpad-btn" onClick={removeProductFromPicket}>
+                        <span className="material-icons-sharp"> delete </span>
+                    </div>
+                    <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
+                        <span className="material-icons-sharp"> delete_sweep </span>
+                    </div>
+                    {delivers.map((d, i) => (
+                            <div key={i} className="numpad-btn" onClick={() => addDeliver(d.value)}>
+                                <p>{F_(d.value)}</p>
+                            </div>
+                     ))
+                     }
                 </div>
-                <div className="numpad-btn" onClick={removeProductFromPicket}>
-                    <span className="material-icons-sharp"> delete </span>
+        );
+    } else {
+        return (
+            <div className="bottom-left-side">
+                    <div className="numpad-btn" onClick={reduceProductFromPicket}>
+                        <span className="material-icons-sharp"> remove </span>
+                    </div>
+                    <div className="numpad-btn" onClick={removeProductFromPicket}>
+                        <span className="material-icons-sharp"> delete </span>
+                    </div>
+                    <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
+                        <span className="material-icons-sharp"> delete_sweep </span>
+                    </div>
                 </div>
-                <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
-                    <span className="material-icons-sharp"> delete_sweep </span>
-                </div>
-                <div className="numpad-btn" onClick={() => printerBasic.connectToDevice()}>
-                    <p>SEARCH</p>
-                </div>
-                <div className="numpad-btn" onClick={() => printerBasic.prepareDevice()}>
-                    <p>PREPARE</p>
-                </div>
-                <div className="numpad-btn" onClick={() => printerBasic.print()}>
-                     <p>PRINT</p>
-                </div>
-                <div className="numpad-btn" onClick={() => printerBasic.restart()}>
-                     <p>RESTART</p>
-                </div>
-                <div className="numpad-btn" onClick={() => printerBasic.voluntaryRevoke()}>
-                     <p>REVOKE</p>
-                </div>
-                <div className="numpad-btn" onClick={() => dispatch(trouble())}>
-                     <p>STATUS</p>
-                </div>
-            </div>
-    );
+        );
+    }
 }
 
             
