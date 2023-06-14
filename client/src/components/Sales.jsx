@@ -4,11 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPay, cancelSale } from "../redux/features/sale.feature.js";
 import { F_ } from "../util/Utils.js";
 import {Loading } from "./Loading";
+import { PrinterBasic } from "../api/printer.js";
 
 import { lang } from "../common/spa.lang.js";
+import { storeInfo } from "../common/store-info.js";
 
 
 export const Sales = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+    const sequences = useSelector((store) => store.sale.sequences);
     const dispatch = useDispatch();
     const sales = useSelector((state) => state.sale.sales);
     const [sales_partial, set_sales_partial] = useState([]);
@@ -30,6 +34,67 @@ export const Sales = () => {
     const [showpaymentbutton, setshowpaymentbutton] = useState([]);
     const [paymenttext, setpaymenttext] = useState([]);
     const [infotextamount, setinfotextamount] = useState([]);
+
+    const printer = useSelector((state) => state.sale.printer);
+    const printerBasic = new PrinterBasic();
+
+    useEffect(() => {
+        printerBasic.troubleshooting();
+    }, [printer.isrunning]);
+
+
+    const onRePrint = (sale, currentUser, sequences) => {
+        const transaction = {}
+        transaction['sequence_str'] = sale.sequence;
+        transaction['user'] = currentUser;
+        transaction['client'] = sale.client;
+        transaction['sequence_type'] = sale.sequence_type;
+        transaction['sequence'] = sequences.find(sq => sq.code == transaction.sequence_type);
+        transaction['status'] = sale.status;
+        transaction['sale_type'] = sale.sale_type;
+        transaction['paids'] = sale.sale_paid;
+        const products = [];
+        sale.sale_line.forEach(p => {
+            let product = {}
+            product['discount'] = p.discount;
+            product['inventory'] = [{'quantity_for_sale': p.quantity}]
+            product['price'] = p.amount;
+            product['price_for_sale'] = p.total_amount;
+            product['quantity_for_sale'] = p.quantity;
+            products.push(product);
+        })
+        transaction['products'] = products;
+
+
+        let gran_total = products.reduce((x, p) => {
+            return (x + (p.price_for_sale * p.inventory[0].quantity_for_sale));
+        }, 0);
+    
+        const sub_total = gran_total / (1 + storeInfo.tax);
+        const sub_tax = sub_total * storeInfo.tax;
+    
+        const discount_total = products.reduce((x, p) => {
+            return (p.discount) ? x + p.discount : x;
+        }, 0)
+    
+        const delivery = sale.delivery_charge;
+    
+        gran_total = gran_total + delivery;
+
+        transaction['sale_detail'] = {
+            'discount_total': discount_total,
+            'sub_total': sub_total,
+            'gran_total': gran_total,
+            'delivery': delivery
+        }
+
+        console.log(transaction)
+        
+        // printerBasic.prepareDevice()
+        //         .then(pre => {
+        //             printerBasic.print(transaction);
+        //         });
+    }
 
     const p_texts = []
     const showpayments = [];
@@ -327,7 +392,7 @@ export const Sales = () => {
 
                                 <div className="sale-card-btns">
                                     <div>
-                                        <button className="cbutton">
+                                        <button className="cbutton" onClick={() => onRePrint(sale, currentUser, sequences)}>
                                             <span className="material-icons-sharp"> print </span>
                                             <span>{lang.sale.re_print}</span>
                                         </button>
