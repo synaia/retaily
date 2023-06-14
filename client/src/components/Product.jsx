@@ -17,11 +17,15 @@ export const Product = ({product, func}) => {
 
     return (
         <div className="product-card" style={productImgStyle} onClick={() => func(product.id)} data-product-id={product.id}>
+            <div className={`product-qty-bubble ${product.inventory[0].quantity > 0 ? 'product-qty-bubble-s' : 'product-qty-bubble-r'}`}>
+                    {product.inventory[0].quantity}
+            </div>
             <div className="product-card-top">
                 <h3>{F_(product.price)}</h3>
             </div>
             <div className="product-card-bottom">
-            <div className="description">{product.inventory[0].quantity} - {product.name}</div>
+                <div className="description-code">{product.code}</div>
+                <div className="description">{product.name}</div>
             </div>
         </div>
     );

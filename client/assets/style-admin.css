@@ -2357,6 +2357,20 @@ input::placeholder, textarea::placeholder {
   grid-template-columns: 1fr 1fr;
   transition: all 300ms ease !important;
 }
+.foto-area {
+  grid-row: span 5;
+}
+.foto-area img {
+  max-height: calc(40vh);
+  max-width: calc(40vh);
+}
+
+.product-field {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: 1fr 1fr;
+  transition: all 300ms ease !important;
+}
 
 .address-client {
   font-family: poppins, sans-serif;
@@ -2474,4 +2488,11 @@ input::placeholder, textarea::placeholder {
   background-color: var(--color-price-tag);
   float: right;
   padding-left: 10px;
+}
+
+.new-product-sub {
+  grid-column: span 2;
+}
+.new-product-sub  span {
+  font-size: 1.3rem;
 }

@@ -1,5 +1,7 @@
 // Generate With Python :)
-export const BACKEND_HOST = 'https://localhost:8500';
+export const BACKEND_HOST = 'https://10.0.0.6:8500';
+export const BACKEND_HOST_WWS = 'wss://10.0.0.6:8500';
+export const SELF_HOST = window.location.origin;
 
 // constants for test pupuses
 // export const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsdWlzIiwic2NvcGVzIjpbInNhbGVzIiwiZGFzaGJvYXJkLnZpZXciLCJzYWxlcy5wb3MiLCJzYWxlcy52aWV3IiwiaW52ZW50b3J5LnZpZXciLCJpbnZlbnRvcnkuc3RvcmVzIiwiaW52ZW50b3J5LmJ1bGsiLCJpbnZlbnRvcnkubW92ZW1lbnQucmVxdWVzdCIsImludmVudG9yeS5tb3ZlbWVudC5yZXNwb25zZSIsImludmVudG9yeS5wdXJjaGFzZS5yZXF1ZXN0IiwiaW52ZW50b3J5LnB1cmNoYXNlLnJlc3BvbnNlIiwidXNlci52aWV3IiwidXNlci5zZXR0aW5nIiwicmVwb3J0LnZpZXciLCJhbmFsaXR5Yy52aWV3IiwicHJvZHVjdC5hZGQiLCJwcm9kdWN0LnZpZXciLCJwcm9kdWN0LnByaWNlbGlzdCIsInByb2R1Y3Qudmlldy5jb3N0Il0sInN0b3JlcyI6WyJNQURFTFRBIiwiU0FNQklMIl0sImlzX2FjdGl2ZSI6MSwiZXhwIjoxNjg1MDI1MjA3fQ.MAUrmV7R4XN1wwVlaD_spAHTdeixydKrE-OnjKQyCdk';

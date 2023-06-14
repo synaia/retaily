@@ -39,6 +39,15 @@ export const interceptor = createAsyncThunk('interceptor/util', async (args, thu
             if (config.url.includes('/users/token')) {
                 return config;
             }
+            if (config.url.includes('/products/uploadfile')) {
+                return config;
+            }
+            if (config.url.includes('/products/uploadfilelocal')) { 
+                return config;
+            }
+            if (config.url.includes('inventory/takephoto')) { 
+                return config;
+            }
             const U = await getLastLoggedUser(config.url);
             config.headers = {
                 'Authorization': `bearer ${U.token}`,

@@ -799,6 +799,11 @@ main .recent-orders a {
   /* box-shadow: 0 0 1rem #ffc600; */
 }
 
+.product-top-h {
+  display: flex;
+  justify-content: space-between;
+}
+
 .product-card {
   /* display: grid;
   grid-template-rows: 0.05fr auto 0.3fr;
@@ -810,6 +815,31 @@ main .recent-orders a {
   background-size: contain;
   background-position: center;
   height: calc(25vh);
+}
+
+.product-qty-bubble {
+  position: absolute;
+  float: left;
+  margin-top: -20px;
+  margin-left: -10px;
+  text-align: center;
+  padding-top: 8px;
+  width: 35px;
+  height: 35px;
+  border-radius:50%;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 1.2rem;
+  font-weight: 500;
+  /* box-shadow: 3px 1px 3px var(--color-primary-payment) */
+}
+
+.product-qty-bubble-s {
+  background: var(--color-success);
+  color: var(--color-info-dark);
+}
+.product-qty-bubble-r {
+  background: var(--color-danger);
+  color: var(--color-info);
 }
 .product-card-top {
   background-color: var(--color-price-tag);
@@ -847,6 +877,14 @@ main .recent-orders a {
   font-size: var(--font-size-pos);
   text-transform: uppercase;
   color: var(--color-description);
+}
+
+.description-code {
+  font-weight: 700;
+  font-size: var(--font-size-pos);
+  text-transform: uppercase;
+  color: var(--color-description);
+  font-family: "Lucida Console", "Courier New", monospace;
 }
 
 

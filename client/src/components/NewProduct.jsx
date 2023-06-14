@@ -7,6 +7,7 @@ import Camera, { FACING_MODES, IMAGE_TYPES } from "react-html5-camera-photo";
 
 import { refreshProductListAction, addProduct } from "../redux/features/product.feature.js";
 import { uuid } from "../util/Utils.js";
+import { BACKEND_HOST, BACKEND_HOST_WWS, SELF_HOST } from "../util/constants.js";
 
 
 import 'react-html5-camera-photo/build/css/index.css';
@@ -96,6 +97,10 @@ export const NewProduct = () => {
         }
     }, [pricing, pricingRef]);
 
+    useEffect(() => {
+        console.log(imageURL);
+    }, [imageURL]);
+
     const validateInput = (element, type) => {
         if (element == undefined) {
             return {'return': false, 'msg': 'Is undefined.'};
@@ -122,7 +127,7 @@ export const NewProduct = () => {
       
         const options = {
             method: 'POST',
-            url: `https://localhost:8500/products/uploadfilelocal/${v_uuid}`,
+            url: `${BACKEND_HOST}/products/uploadfilelocal/${v_uuid}`,
             headers: {
                 'Content-Type': 'multipart/form-data;',
             },
@@ -166,7 +171,7 @@ export const NewProduct = () => {
     useEffect(() => {
         const client_uuid = uuid();
         Set_v_uuid(client_uuid);
-        var ws = new WebSocket(`wss://10.0.0.62:8500/products/ws/${client_uuid}`);
+        var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/ws/${client_uuid}`);
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);
             if (data.sharable != undefined) {
@@ -179,7 +184,7 @@ export const NewProduct = () => {
     }, []);
 
     const generateQR = async (__uuid) => {
-        const url = `https://10.0.0.62:9080/#/admin/inventory/takephoto?q=${__uuid}`;
+        const url = `${SELF_HOST}/#/admin/inventory/takephoto?q=${__uuid}`;
         console.log(url);
         Set_v_uuid(__uuid);
         try {
@@ -189,97 +194,71 @@ export const NewProduct = () => {
           console.error(err)
         }
     };
-
-   
    
 
     return (
         <React.Fragment>
             {!loading && errorMessage &&  <div className="danger">{errorMessage} </div>}
-            <div className="new-product">
-                <div className="new-product-p">
-                    <div>
-                        <span>{lang.newproduct.name}</span>
-                        <div className="price-list-b">
-                            <span className="material-icons-sharp price-list-i"> edit_note </span>
-                            <input type="text" className="price-list-t" ref={product_name} onKeyUp={() => SetErrorLabel(null)} />
-                            <span className="underline-animation"></span>
+
+            <div className="product-field">
+                <div>
+                    <input type="text" className="text" placeholder={lang.products.name}  ref={product_name} onKeyUp={() => SetErrorLabel(null)} />
+                </div>
+
+                <div className="foto-area">
+                    {v_uuid != null && <span>{v_uuid}</span>}
+                    {
+                        (imageURL != null)
+                        && <img className="new-product-pic" src={imageURL} />
+                        // <Camera 
+                        //     onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
+                        //     imageType = {IMAGE_TYPES.PNG}
+                        //     idealFacingMode = {FACING_MODES.ENVIRONMENT}
+                        // />
+                    }
+                </div> 
+
+                <div>
+                    <input type="number" className="text" placeholder={lang.products.cost}  ref={product_cost} onKeyUp={() => SetErrorPriceKey(null)} />
+                </div>            
+                <div>
+                    <input type="text" className="text" placeholder={lang.newproduct.code}  ref={product_code} onKeyUp={() => SetErrorPercent(null)} />
+                </div>
+
+                <div className="new-product-sub">
+                    <span >
+                        {lang.menu.storelist}
+                    </span>
+                </div>
+                
+                { stores.map((st, i) => (
+                    <React.Fragment key={i}>
+                        <div>
+                            <input type="number" className="text" placeholder={st.name}  ref={storesRef[st.id]} onKeyUp={() => SetErrorPriceKey(null)} />
+                            <span className="error-msg">{errorPriceKey}</span>
                         </div>
-                        <span className="error-msg">{errorLabel}</span>
-                    </div>
+                    </React.Fragment>
+                    ))
+                }
+
+                <div className="new-product-sub">
+                    <span >
+                        {lang.menu.pricelist}
+                    </span>
+                </div>
+
+                { pricing.map((pr, i) => (
+                    <React.Fragment key={i}>
                     <div>
-                        <span>{lang.newproduct.cost}</span>
-                        <div className="price-list-b">
-                            <span className="material-icons-sharp price-list-i"> attach_money </span>
-                            <input type="text" className="price-list-t" ref={product_cost} onKeyUp={() => SetErrorPriceKey(null)} />
-                            <span className="underline-animation"></span>
-                        </div>
+                        <input type="number" className="text" placeholder={pr.label}  ref={pricingRef[pr.id]}  />
                         <span className="error-msg">{errorPriceKey}</span>
                     </div>
-                    <div>
-                        <span>SKU ({lang.newproduct.code})</span>
-                        <div className="price-list-b">
-                            <span className="material-icons-sharp price-list-i"> numbers </span>
-                            <input type="number" className="price-list-t" ref={product_code} onKeyUp={() => SetErrorPercent(null)} />
-                            <span className="underline-animation"></span>
-                        </div>
-                        <span className="error-msg">{errorPercent}</span>
-                    </div>
-                </div>
+                    </React.Fragment>
+                    ))
+                }
 
-                <div className="new-product-x">
-                    <div>
-                        <h3 className="new-product-st">{lang.newproduct.inventory}</h3>
-                        <div className="new-product-i">
-                        { stores.map((st, i) => (
-                            <React.Fragment key={i}>
-                                <div>
-                                    <span>{st.name}</span>
-                                    <div className="price-list-b">
-                                        <span className="material-icons-sharp price-list-i"> numbers </span>
-                                        <input type="text" className="price-list-t" ref={storesRef[st.id]} onKeyUp={() => SetErrorPriceKey(null)} />
-                                        <span className="underline-animation"></span>
-                                    </div>
-                                    <span className="error-msg">{errorPriceKey}</span>
-                                </div>
-                            </React.Fragment>
-                            ))
-                        }
-                        </div>
 
-                        <h3 className="new-product-st">{lang.newproduct.pricing}</h3>
-                        <div className="new-product-i">
-                        { pricing.map((pr, i) => (
-                            <React.Fragment key={i}>
-                            <div>
-                                <span>{pr.label}</span>
-                                <div className="price-list-b">
-                                    <span className="material-icons-sharp price-list-i"> attach_money </span>
-                                    <input type="number" className="price-list-t pricing" ref={pricingRef[pr.id]}  />
-                                    <span className="underline-animation"></span>
-                                </div>
-                                <span className="error-msg">{errorPriceKey}</span>
-                            </div>
-                            </React.Fragment>
-                          ))
-                        }
-                            
-                        </div>
-                    </div>
-                    <div className="new-product-img">
-                        {v_uuid != null && <span>{v_uuid}</span>}
-                        {
-                          (imageURL != null)
-                            && <img className="new-product-pic" src={imageURL} />
-                            // <Camera 
-                            //     onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
-                            //     imageType = {IMAGE_TYPES.PNG}
-                            //     idealFacingMode = {FACING_MODES.ENVIRONMENT}
-                            // />
-                        }
-                    </div>
-                </div>
-
+               
                 <div className="new-product-but">
                     <button className="fbutton fbutton-price-list" onClick={() => __addProduct()}>
                         <span className="material-icons-sharp"> rocket_launch </span>
@@ -288,10 +267,10 @@ export const NewProduct = () => {
                     <div></div>
                     <input type="file"  accept="image/png, image/jpg" onChange={fireImage} className="fbutton" />
 
-                    <button className="fbutton fbutton-price-list" onClick={() => SetImageURL(null)}>
+                    {/* <button className="fbutton fbutton-price-list" onClick={() => SetImageURL(null)}>
                         <span className="material-icons-sharp"> add_a_photo </span>
                         <span>{lang.newproduct.take}</span>
-                    </button>
+                    </button> */}
 
                     <button className="fbutton fbutton-price-list" onClick={() => generateQR(v_uuid)}>
                          <span className="material-icons-sharp"> settings_remote </span>

@@ -8,6 +8,7 @@ import axios from "axios";
 
 import 'react-html5-camera-photo/build/css/index.css';
 import { uuid } from "../util/Utils";
+import { BACKEND_HOST } from "../util/constants";
 
 
 export const TakePhoto = () => {
@@ -38,7 +39,7 @@ export const TakePhoto = () => {
       
         const options = {
             method: 'POST',
-            url: `https://10.0.0.62:8500/products/uploadfile/${client_uuid}`,
+            url: `${BACKEND_HOST}/products/uploadfile/${client_uuid}`,
             headers: {
                 'Content-Type': 'multipart/form-data;',
             },

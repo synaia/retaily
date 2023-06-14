@@ -128,7 +128,10 @@ const salesSlice = createSlice({
     reducers: {
         redirect_pass: (state, action) => {
            state.payment_redirect = action.payload;
-        }
+        },
+        cleanSequence_str:  (state, action) => {
+            state.sequence_str = null;
+         },
     },
     extraReducers: (builder) => {
         builder.addCase(loadSales.pending, (state, action) => {
@@ -206,5 +209,5 @@ const salesSlice = createSlice({
     }
 });
 
-export const { redirect_pass } = salesSlice.actions;
+export const { redirect_pass, cleanSequence_str } = salesSlice.actions;
 export default salesSlice.reducer;

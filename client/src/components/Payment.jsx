@@ -5,7 +5,7 @@ import { Header } from "./Header";
 import { ProductPickedReadOnly } from "./ProductPickedReadOnly";
 import { F_ } from "../util/Utils";
 import { useSelector, useDispatch } from "react-redux";
-import { addSale } from "../redux/features/sale.feature.js";
+import { addSale, cleanSequence_str } from "../redux/features/sale.feature.js";
 import { finishSaleAction, lowOffProductQtyAction } from "../redux/features/product.feature.js";
 import { useRef, useState } from "react";
 import { SCOPES } from "../util/constants.js";
@@ -75,6 +75,10 @@ export const Payment = () => {
             }
 
             navigator('/', {replace: false});
+        }
+
+        return () => {
+            dispatch(cleanSequence_str());
         }
     }, [sequence_str]);
 
