@@ -19,7 +19,7 @@ def image_to_base64(file_name):
 
 def remove_it(file, file_name):
     infile = Image.open(file)
-    infile.thumbnail((300, 200), Image.ANTIALIAS)
+    infile.thumbnail((infile.size[0] // 4, infile.size[1] // 4), Image.ANTIALIAS)
     newfile = remove(infile) # remove bg
     try:
         newfile.save(f'../uploaded/{file_name}.png')
