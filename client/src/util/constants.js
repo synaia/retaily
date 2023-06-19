@@ -1,6 +1,6 @@
 // Generate With Python :)
 export const BACKEND_HOST = window.location.origin;
-export const BACKEND_HOST_WWS = 'wss://retail.app:443';
+export const BACKEND_HOST_WWS = 'wss://retaily.app';
 export const SELF_HOST = window.location.origin;
 
 // constants for test pupuses
