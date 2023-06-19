@@ -805,6 +805,7 @@ const productsSlice = createSlice({
         }).addCase(addProduct.fulfilled, (state, action) => {
             state.loading = false
             putNewProductInList(state, action)
+            loadAllProducts();
         }).addCase(addProduct.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR addProduct() ; ${action.error.message}`
