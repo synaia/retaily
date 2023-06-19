@@ -40,7 +40,7 @@ origins = [
     "https://localhost:8001",
 ]
 
-app = FastAPI(ssl_keyfile=key_pem, ssl_certfile=public_pem)
+app = FastAPI()
 
 app.include_router(product_main.router)
 app.include_router(user_main.router)
@@ -57,9 +57,9 @@ app.add_middleware(
 )
 
 
-@app.get('/')
-async def root():
-    return {'message': 'Message from root.'}
+# @app.get('/')
+# async def root():
+#     return {'message': 'Message from root.'}
 
 
 # @app.middleware("http")
