@@ -172,6 +172,7 @@ export const NewProduct = () => {
         const client_uuid = uuid();
         Set_v_uuid(client_uuid);
         try {
+            console.log(BACKEND_HOST_WWS);
             var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/ws/${client_uuid}`);
             ws.onmessage = function(event) {
                 const data = JSON.parse(event.data);
