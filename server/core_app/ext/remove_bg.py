@@ -9,7 +9,7 @@ def image_to_base64(file_name):
         try:
             file_name = Image.open(f'../uploaded/{file_name}.png')
         except Exception as ex:
-            return None
+            file_name = Image.open(f'./server/uploaded/{file_name}.png')
 
     buf = BytesIO()
     file_name.save(buf, format='PNG')
@@ -18,8 +18,13 @@ def image_to_base64(file_name):
 
 
 def remove_it(file, file_name):
+    import os
     infile = Image.open(file)
     infile.thumbnail((300, 200), Image.ANTIALIAS)
     newfile = remove(infile) # remove bg
-    newfile.save(f'../uploaded/{file_name}.png')
+    try:
+        newfile.save(f'../uploaded/{file_name}.png')
+    except Exception as ex:
+        newfile.save(f'./server/uploaded/{file_name}.png')
+
     return image_to_base64(newfile)

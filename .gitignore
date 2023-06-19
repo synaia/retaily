@@ -1,7 +1,7 @@
 /client/node_modules/
 /server/.idea/
 /.idea/
-/server/uploaded/
+/server/uploaded/*.png
 /server/certs/10.0.0.6.crt
 /server/certs/10.0.0.6.csr
 /server/certs/10.0.0.6.ext
