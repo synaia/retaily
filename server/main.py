@@ -3,6 +3,7 @@ import sys
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 # from starlette.middleware.cors import CORSMiddleware
 import server.core_app.product.product_main as product_main
 import server.core_app.user.user_main as user_main
@@ -73,3 +74,6 @@ async def root():
 # debug mode :-)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8500, ssl_keyfile=key_pem, ssl_certfile=public_pem)
+
+
+app.mount("/", StaticFiles(directory="./client/build", html=True), name="build")

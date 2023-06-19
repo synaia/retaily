@@ -4,3 +4,6 @@ rembg
 aiocache
 SQLAlchemy
 pydantic
+mysqlclient
+python-jose
+passlib

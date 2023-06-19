@@ -1,6 +1,6 @@
 // Generate With Python :)
-export const BACKEND_HOST = 'https://10.0.0.6:8500';
-export const BACKEND_HOST_WWS = 'wss://10.0.0.6:8500';
+export const BACKEND_HOST = window.location.origin;
+export const BACKEND_HOST_WWS = 'wss://retail.app';
 export const SELF_HOST = window.location.origin;
 
 // constants for test pupuses

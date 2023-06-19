@@ -12,3 +12,4 @@
 /client/snowpack.crt
 /client/snowpack.key
 /mysql_database/dbase.sql
+/client/build/
