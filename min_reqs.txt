@@ -3,6 +3,5 @@ uvicorn
 rembg
 aiocache
 SQLAlchemy
-mysql
 mysqlclient
 pydantic
