@@ -120,7 +120,7 @@ EXECUTE current_statement;
 
 CREATE TABLE TMP_PRODUCT AS
 SELECT
-    t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active,
+    DISTINCT t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active,
     RANK() OVER (PARTITION BY t.id ORDER BY t.date_create DESC) AS rank_product_id
  FROM
 (SELECT
@@ -141,6 +141,32 @@ CREATE TABLE product AS
 ALTER TABLE `retaily_db`.`product`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
+
+select * from product p
+	where p.id in (
+		select id from product group by id having count(*) > 1
+	);
+
+select * from madelta_db.product where id = 9053;
+select * from sambil_db__product where id = 9053;
+
+
+SELECT
+    DISTINCT t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active,
+    RANK() OVER (PARTITION BY t.id ORDER BY t.date_create DESC) AS rank_product_id
+ FROM
+(SELECT
+    p.id,             p.name, p.cost, p.price, p.margin, p.code, p.img_path, p.date_create, p.image_raw, p.active
+FROM madelta_db.product p
+UNION ALL
+SELECT
+    p.new_product_id, p.name, p.cost, p.price, p.margin, p.code, p.img_path, p.date_create, p.image_raw, p.active
+FROM sambil_db__product p) AS t
+WHERE t.id = 9053
+ORDER BY t.id;
+
+
+
 
 
 CREATE TABLE sale AS
@@ -660,3 +686,66 @@ SELECT * from product_order_line where product_order_id = 1;
 
 
   select * from scope_list;
+
+  -- init_date=2023-06-12+00:00:00&end_date=2023-06-14+23:59:59
+
+  SELECT
+	s.id,
+    s.amount,
+    s.sub,
+    s.discount,
+    s.tax_amount,
+    s.delivery_charge,
+    s.sequence,
+    s.sequence_type,
+    s.status,
+    s.sale_type,
+    s.date_create,
+    s.login,
+    s.additional_info,
+    cli.id as client_id,
+    cli.name as client_name,
+    cli.document_id,
+    cli.celphone,
+    (SELECT
+        SUM(paid.amount)
+	   FROM sale_paid paid
+      WHERE  paid.sale_id = s.id
+      GROUP BY paid.sale_id
+	) as total_paid,
+    (SELECT
+         COUNT(*)
+	  FROM sale_line line
+     WHERE line.sale_id = s.id
+     GROUP BY line.sale_id
+    ) as total_line,
+
+	(CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - IFNULL((SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						), 0)
+		   ) > 0 THEN 'open'
+      ELSE 'close'
+	 END) as invoice_status
+ FROM sale s,  app_store store, client cli
+WHERE s.client_id = cli.id
+  AND s.store_id = store.id
+  AND store.name = 'MADELTA'
+   AND s.date_create BETWEEN '2023-06-12+00:00:00' AND '2023-06-14+23:59:59'
+  AND (CASE
+      WHEN s.status = 'RETURN' THEN 'cancelled'
+      WHEN (s.amount - IFNULL((SELECT
+							SUM(paid.amount)
+						   FROM sale_paid paid
+						  WHERE  paid.sale_id = s.id
+						  GROUP BY paid.sale_id
+						), 0)
+		   ) > 0 THEN 'open'
+      ELSE 'close'
+	 END) in ('open', 'cancelled', 'close')
+ORDER BY s.id DESC
+;
