@@ -457,8 +457,11 @@ CREATE TABLE `provider` (
   KEY `ix_app_store_id` (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO provider
-SELECT * FROM evofit_sambil.provider;
+INSERT INTO provider (NAME) VALUES('ANS PERFORMANCE');
+INSERT INTO provider (NAME) VALUES('MUSCLE & STRENGTH');
+INSERT INTO provider (NAME) VALUES('UNIVERSAL');
+INSERT INTO provider (NAME) VALUES('OTROS');
+
 
 CREATE TABLE `scopes` (
   `id` int NOT NULL AUTO_INCREMENT,
