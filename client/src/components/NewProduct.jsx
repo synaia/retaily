@@ -171,16 +171,21 @@ export const NewProduct = () => {
     useEffect(() => {
         const client_uuid = uuid();
         Set_v_uuid(client_uuid);
-        var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/ws/${client_uuid}`);
-        ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.sharable != undefined) {
-                const url =  `data:image/png;base64,${data.sharable.image_base64}`;
-                SetImageURL(url);
-            } else {
-                console.log(data);
-            }
-        };
+        try {
+            var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/ws/${client_uuid}`);
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.sharable != undefined) {
+                    const url =  `data:image/png;base64,${data.sharable.image_base64}`;
+                    SetImageURL(url);
+                } else {
+                    console.log(data);
+                }
+            };
+        } catch (err) {
+            console.log(err);
+        }
+        
     }, []);
 
     const generateQR = async (__uuid) => {
