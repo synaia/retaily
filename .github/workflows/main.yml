@@ -15,10 +15,10 @@ jobs:
       # https://stackoverflow.com/a/70447517
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo ${{ vars.WORK_DIR }}
-        echo "-----BEGIN OPENSSH PRIVATE KEY-----b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZWQyNTUxOQAAACAFDP8paQZ8Ssts2Lyi3wNOakeZYa+Szy8+AJ0VAquJkQAAAKDMib/6zIm/+gAAAAtzc2gtZWQyNTUxOQAAACAFDP8paQZ8Ssts2Lyi3wNOakeZYa+Szy8+AJ0VAquJkQAAAEC61MNlmc7arz4VP/vxb68dm2zkPzwotJ1s9jAEkfq38AUM/ylpBnxKy2zYvKLfA05qR5lhr5LPLz4AnRUCq4mRAAAAF2JlbHRyZS53aWx0b25AZ21haWwuY29tAQIDBAUG-----END OPENSSH PRIVATE KEY-----" > ~/.ssh/id_rsa
-        ssh-keyscan -H 143.198.119.176 > ~/.ssh/known_hosts
+        echo "${{ vars.SSH_PRIVATE_KEY }}" 
+        echo "${{ vars.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ vars.SSH_HOST }} > ~/.ssh/known_hosts
     - name: connect and pull
-      run: ssh wilton@143.198.119.176 "cd /home/wilton/retaily && git checkout main && git pull && exit"
+      run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "cd ${{ vars.WORK_DIR }} && git checkout ${{ vars.MAIN_BRANCH }} && git pull && exit"
     - name: cleanup
       run: rm -rf ~/.ssh
