@@ -18,7 +18,6 @@ def image_to_base64(file_name):
 
 
 def remove_it(file, file_name):
-    import os
     infile = Image.open(file)
     infile.thumbnail((300, 200), Image.ANTIALIAS)
     newfile = remove(infile) # remove bg

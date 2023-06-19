@@ -92,7 +92,7 @@ export const auth = createAsyncThunk('users/token', async (args) => {
 
 export const users = createAsyncThunk('users/get', async () => {
     return await Axios.get(
-        `${BACKEND_HOST}/users`, {
+        `${BACKEND_HOST}/users/`, {
         headers: {
             'Content-Type': 'application/json'
         }
