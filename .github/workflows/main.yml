@@ -25,7 +25,7 @@ jobs:
 
     - name: Connect to remote server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}  "cd ${{ secrets.WORK_DIR }} && git pull && exit"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}  "cd ${{ secrets.WORK_DIR }} && git pull && cd ${{ secrets.CLIENT_DIR }}  && npm run build &&  exit"
     - name: cleanup
       run: rm -rf ~/.ssh
       
