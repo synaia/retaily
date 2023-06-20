@@ -30,7 +30,7 @@ export  const lang = {
         }
     },
     menu: {
-        dashboard: 'Tablero',
+        dashboard: 'Resumen',
         pos: 'POS',
         sales: 'Ventas',
         inventory: 'Inventario',
