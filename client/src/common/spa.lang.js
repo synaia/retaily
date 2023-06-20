@@ -31,7 +31,7 @@ export  const lang = {
     },
     menu: {
         dashboard: 'Tablero',
-        pos: 'TPV',
+        pos: 'POS',
         sales: 'Ventas',
         inventory: 'Inventario',
         users: 'Usuarios',
