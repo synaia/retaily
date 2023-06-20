@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy on Digital Ocean 
     runs-on: ubuntu-latest
 
     steps:
@@ -24,4 +25,7 @@ jobs:
 
     - name: Connect to remote server
       run: |
-        ssh -o StrictHostKeyChecking=no wilton@143.198.119.176 "echo Connected"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}  "cd ${{ secrets.WORK_DIR }} && git pull && exit"
+    - name: cleanup
+      run: rm -rf ~/.ssh
+      
