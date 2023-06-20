@@ -1,23 +1,27 @@
+name: SSH Deploy
+
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-  
+
 jobs:
-  run_pull:
-    name: run pull
+  deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: install ssh keys
-      # check this thread to understand why its needed:
-      # https://stackoverflow.com/a/70447517
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install SSH client
+      run: sudo apt-get install -qq openssh-client
+
+    - name: Add SSH private key
       run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ vars.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ vars.SSH_HOST }} > ~/.ssh/known_hosts
-    - name: connect and pull
-      run: ssh ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} "cd ${{ vars.WORK_DIR }} && git checkout ${{ vars.MAIN_BRANCH }} && git pull && exit"
-    - name: cleanup
-      run: rm -rf ~/.ssh
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Connect to remote server
+      run: |
+        ssh -o StrictHostKeyChecking=no wilton@143.198.119.176 "echo Connected"
