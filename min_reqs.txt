@@ -7,3 +7,4 @@ pydantic
 mysqlclient
 python-jose
 passlib
+watchfiles
