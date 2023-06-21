@@ -125,7 +125,7 @@ export const Payment = () => {
 
         const args = {
             'productlist': sale.products,
-            'selectedStore': sale.user.selectedStore
+            'selectedStore': currentUser.selectedStore
         }
 
         dispatch(lowOffProductQtyAction(args));
