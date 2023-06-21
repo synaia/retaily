@@ -972,3 +972,30 @@ def delivery(db: Session, query: Query):
         delivers.append(de)
 
     return delivers
+
+
+def read_sales_total(db: Session, query: Query):
+    sql_raw_total_sales = query.DASH_BOARD_TOTAL_SALES
+    sql_raw_total_sales_promise = query.DASH_BOARD_TOTAL_SALES_PROMISE
+    sql_raw_total_income = query.DASH_BOARD_TOTAL_INCOME
+
+    totals = {}
+
+    cur = get_cursor(db)
+
+    cur.execute(sql_raw_total_sales)
+    resp = cur.fetchall()
+    if len(resp) > 0:
+        totals['total_sale'] = resp[0]['total_sale']
+
+    cur.execute(sql_raw_total_sales_promise)
+    resp = cur.fetchall()
+    if len(resp) > 0:
+        totals['total_promise'] = resp[0]['total_promise']
+
+    cur.execute(sql_raw_total_income)
+    resp = cur.fetchall()
+    if len(resp) > 0:
+        totals['total_income'] = resp[0]['total_income']
+
+    return totals

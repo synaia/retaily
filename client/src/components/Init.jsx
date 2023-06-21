@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { interceptor } from "../redux/features/user.feature.js";
 import { users, scopes } from "../redux/features/user.feature.js";
-import { getStoresInv, loadProducts } from  "../redux/features/product.feature.js";
+import { getStoresInv, loadProducts, salesTotal } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
 import { getPricing } from  "../redux/features/product.feature.js";
@@ -68,6 +68,8 @@ export const Init = () => {
             dispatch(getBulkOrder());
             dispatch(sequences());
             dispatch(getDelivery());
+
+            dispatch(salesTotal())
         }
     }, [currentUser]);
 

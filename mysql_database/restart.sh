@@ -2,19 +2,21 @@ scp  wilton@104.236.247.241:/home/wilton/retail/pos_srv.sql .
 
 scp  wilton@104.236.247.241:/home/wilton/retail/evofit_sambil.sql .
 
-mysql -h localhost -u root  -p$1  -e "DROP DATABASE retaily_db"
-mysql -h localhost -u root  -p$1  -e "DROP DATABASE madelta_db"
-mysql -h localhost -u root  -p$1  -e "DROP DATABASE sambil_db"
+mysql -h localhost -u root   -e "DROP DATABASE retaily_db"
+mysql -h localhost -u root   -e "DROP DATABASE madelta_db"
+mysql -h localhost -u root   -e "DROP DATABASE sambil_db"
 
-mysql -h localhost -u root  -p$1  -e "CREATE DATABASE retaily_db"
-mysql -h localhost -u root  -p$1  -e "CREATE DATABASE madelta_db"
-mysql -h localhost -u root  -p$1  -e "CREATE DATABASE sambil_db"
+mysql -h localhost -u root   -e "CREATE DATABASE retaily_db"
+mysql -h localhost -u root   -e "CREATE DATABASE madelta_db"
+mysql -h localhost -u root   -e "CREATE DATABASE sambil_db"
 
-mysql -h localhost -u root  -p$1  -e "GRANT ALL PRIVILEGES ON retaily_db.* TO 'wilton'@'localhost'"
-mysql -h localhost -u root  -p$1  -e "GRANT ALL PRIVILEGES ON madelta_db.* TO 'wilton'@'localhost'"
-mysql -h localhost -u root  -p$1  -e "GRANT ALL PRIVILEGES ON sambil_db.* TO 'wilton'@'localhost'"
-mysql -h localhost -u root  -p$1  -e "flush privileges"
+mysql -h localhost -u root   -e "GRANT ALL PRIVILEGES ON retaily_db.* TO 'wilton'@'localhost'"
+mysql -h localhost -u root   -e "GRANT ALL PRIVILEGES ON madelta_db.* TO 'wilton'@'localhost'"
+mysql -h localhost -u root   -e "GRANT ALL PRIVILEGES ON sambil_db.* TO 'wilton'@'localhost'"
 
+mysql -h localhost -u root   -e "UPDATE mysql.user SET Super_Priv='Y' WHERE user='wilton'"
+
+mysql -h localhost -u root   -e "FLUSH PRIVILEGES"
 
 mysql -h localhost -u wilton sambil_db < evofit_sambil.sql -p$1
 

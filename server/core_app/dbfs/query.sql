@@ -1069,3 +1069,42 @@ SELECT
 FROM delivery d
 ORDER BY d.id
 ;
+
+
+--DASH_BOARD_TOTAL_SALES
+SELECT
+      SUM(sp.amount) AS total_sale
+FROM
+     sale s, sale_paid sp
+WHERE
+	  s.id = sp.sale_id
+  AND s.date_create >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+  AND s.status <> 'RETURN'
+;
+
+--DASH_BOARD_TOTAL_SALES_PROMISE
+SELECT
+      SUM(s.amount) AS total_promise
+FROM
+     sale s
+WHERE
+      s.date_create >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+  AND s.status <> 'RETURN'
+;
+
+--DASH_BOARD_TOTAL_INCOME
+SELECT
+    SUM( s.amount - (
+      SELECT
+       SUM(l.quantity * p.cost) AS total_cost
+		 FROM sale_line l, product p
+			WHERE
+				 l.sale_id = s.id
+			 AND p.id = l.product_id
+     )) AS total_income
+FROM
+    sale s
+WHERE
+      s.date_create >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+  AND s.status <> 'RETURN'
+;

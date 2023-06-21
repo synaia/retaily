@@ -18,6 +18,7 @@ import { SCOPES } from "../util/constants";
 import { lang } from "../common/spa.lang.js";
 
 
+
 export const AdminBoard = ({Content, Title, Search}) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
@@ -120,7 +121,7 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.SALES.POS) &&
-                <a href="/" key={2}>
+                <a href="/#" key={2}>
                   <span className="material-icons-sharp"> point_of_sale </span>
                   <h3>{lang.menu.pos}</h3>
                 </a>

@@ -51,6 +51,7 @@ const initialState = {
         'user': current
     },
     delivers: [],
+    sales_totals: {},
     errorMessage: null
 };
 
@@ -300,6 +301,11 @@ export const addBulkOrder = createAsyncThunk('product/add_bulk_order', async (li
 
 export const getDelivery = createAsyncThunk('product/delivery', async () => {
     let response = await Axios.get(`${BACKEND_HOST}/products/delivery`,   {});
+    return response.data;
+});
+
+export const salesTotal = createAsyncThunk('product/sales_total', async () => {
+    let response = await Axios.get(`${BACKEND_HOST}/products/sales_total`,   {});
     return response.data;
 });
 
@@ -1021,6 +1027,16 @@ const productsSlice = createSlice({
         }).addCase(getDelivery.rejected, (state, action) => {
             state.loading = false;
             state.errorMessage = `ERROR getDelivery() ; ${action.error.message}`
+        });
+
+        builder.addCase(salesTotal.pending, (state, action) => {
+            state.loading = true;
+        }).addCase(salesTotal.fulfilled, (state, action) => {
+            state.loading = false;
+            state.sales_totals = action.payload;
+        }).addCase(salesTotal.rejected, (state, action) => {
+            state.loading = false;
+            state.errorMessage = `ERROR salesTotal() ; ${action.error.message}`
         });
         
     }

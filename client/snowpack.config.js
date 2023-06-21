@@ -8,6 +8,7 @@ module.exports = {
   },
   plugins: [
     /* ... */
+    '@snowpack/plugin-dotenv'
   ],
   packageOptions: {
     /* ... */

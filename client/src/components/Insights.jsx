@@ -1,6 +1,12 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { F_ } from "../util/Utils";
+import { lang } from "../common/spa.lang.js";
 
 export const Insights = () => {
+    const currentUser = useSelector((state) => state.user.currentUser);
+    const {total_sale, total_promise, total_income} = useSelector((state) => state.product.sales_totals);
 
     return (
         <div className="insights">
@@ -9,8 +15,8 @@ export const Insights = () => {
                 <span className="material-icons-sharp"> analytics </span>
                 <div className="middle">
                     <div className="left">
-                    <h3>Total Sales</h3>
-                    <h1>$25,024</h1>
+                    <h3>{lang.dashboard.total_sales}</h3>
+                    <h1>{F_(total_sale)}</h1>
                     </div>
                     <div className="progress">
                     <svg>
@@ -21,7 +27,7 @@ export const Insights = () => {
                     </div>
                     </div>
                 </div>
-                <small className="text-muted"> Last 24 hours </small>
+                <small className="text-muted"> {lang.dashboard.on_the_running_day} </small>
             </div>
 
             {/* <!-- EXPENSES --> */}
@@ -29,8 +35,8 @@ export const Insights = () => {
             <span className="material-icons-sharp"> bar_chart </span>
             <div className="middle">
                 <div className="left">
-                <h3>Total Expenses</h3>
-                <h1>$14,160</h1>
+                <h3>{lang.dashboard.total_due}</h3>
+                <h1>{F_(total_promise - total_sale)}</h1>
                 </div>
                 <div className="progress">
                 <svg>
@@ -41,7 +47,7 @@ export const Insights = () => {
                 </div>
                 </div>
             </div>
-            <small className="text-muted"> Last 24 hours </small>
+            <small className="text-muted">  {lang.dashboard.on_the_running_day} </small>
             </div>
 
             {/* <!-- INCOME --> */}
@@ -49,8 +55,8 @@ export const Insights = () => {
             <span className="material-icons-sharp"> stacked_line_chart </span>
             <div className="middle">
                 <div className="left">
-                <h3>Total Income</h3>
-                <h1>$10,864</h1>
+                <h3>{lang.dashboard.total_income}</h3>
+                <h1>{F_(total_income)}</h1>
                 </div>
                 <div className="progress">
                 <svg>
@@ -61,7 +67,7 @@ export const Insights = () => {
                 </div>
                 </div>
             </div>
-            <small className="text-muted"> Last 24 hours </small>
+            <small className="text-muted"> {lang.dashboard.on_the_running_day} </small>
             </div>
       </div>
     )

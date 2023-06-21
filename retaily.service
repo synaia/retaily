@@ -1,0 +1,8 @@
+[Unit]
+Description=Retaily App Startup Script.
+
+[Service]
+ExecStart=/bin/bash /home/wilton/retaily/run_in_cloud.sh
+
+[Install]
+WantedBy=multi-user.target

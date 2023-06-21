@@ -4,8 +4,8 @@
   "description": "Migration from js to react",
   "main": "index.js",
   "scripts": {
-    "start": "snowpack  dev --port 9080 --secure",
-    "build": "snowpack build",
+    "start": "cp -v .env.dev  .env && snowpack  dev --port 9080 --secure",
+    "build": "cp -v .env.prod .env && snowpack build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "init": "snowpack init"
   },
@@ -28,5 +28,8 @@
     "react-router-dom": "^6.4.3",
     "snowpack": "^3.7.1",
     "thermal-printer-encoder": "^2.0.0"
+  },
+  "devDependencies": {
+    "@snowpack/plugin-dotenv": "^2.2.0"
   }
 }

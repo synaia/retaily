@@ -42,7 +42,8 @@ from server.core_app.product.product_query import (
     read_bulk_order,
     add_bulk_order,
     approbal_issue_order_line,
-    delivery
+    delivery,
+    read_sales_total,
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -462,6 +463,18 @@ async def __delivery(
         return delivery(db, query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
+@router.get("/sales_total",)
+async def sales_total(
+                        db: Session = Depends(get_db),
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+):
+    try:
+        return read_sales_total(db, query)
+    except Exception as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
 
 
 ###################################################

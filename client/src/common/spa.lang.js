@@ -151,5 +151,12 @@ export  const lang = {
         select_bulk: 'Selecciona el Conjunto de Compras',
         purchase_quantity: 'a Comprar',
         order_not_editable: 'Order no editable, fue cerrada.'
+    },
+    dashboard: {
+        total_sales: 'Ventas Totales',
+        total_due: 'Pendiente por cobro',
+        total_income: 'Ganancias',
+        on_the_running_day: 'En lo que va del día',
+
     }
 }
