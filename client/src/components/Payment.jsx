@@ -88,6 +88,7 @@ export const Payment = () => {
             return;
         }
 
+        transaction.current.user = {...currentUser};
         transaction.current.sequence_type = seqType;
         transaction.current.sequence = sequences.find(sq => sq.code == seqType);
         transaction.current.status = status;
