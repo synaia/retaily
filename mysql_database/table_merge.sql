@@ -133,19 +133,30 @@ FROM sambil_db__product p) AS t
 ORDER BY t.id;
 
 CREATE TABLE product AS
- SELECT t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active
+ SELECT DISTINCT t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active
    FROM TMP_PRODUCT t
   WHERE t.rank_product_id = 1
 ;
+
+DELETE FROM product  WHERE id = 9056 AND cost = 2575 ;
 
 ALTER TABLE `retaily_db`.`product`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
 
--- select * from product p
---	where p.id in (
---		select id from product group by id having count(*) > 1
---	);
+-- select p.* from product p
+-- where p.id in (
+-- 		select id from product group by id having count(*) > 1
+-- 	);
+
+
+
+
+-- SELECT  t.id,  t.name, t.cost, t.price, t.margin, t.code, t.img_path, t.date_create, t.image_raw, t.active
+--    FROM TMP_PRODUCT t
+--   WHERE t.rank_product_id = 1
+--   and t.id = 9056;
+
 --
 -- select * from madelta_db.product where id = 9053;
 -- select * from sambil_db__product where id = 9053;
