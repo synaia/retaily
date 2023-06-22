@@ -122,7 +122,7 @@ export const Client = () => {
     const pickClient = (clientId)=> {
         dispatch(pickClientAction({clientId, clients}));
         if (payment_redirect) {
-            navigator('/payment', {replace: false});
+            navigator('/payment', {replace: true});
         } else {
             navigator('/', {replace: false});
         }

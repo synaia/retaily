@@ -511,7 +511,9 @@ const finishSale = (state, action) => {
 const refreshProductList = (state, action) => {
     const { field, value, product_id, pricing_id} = action.payload;
     const products = [...state.all_products];
+    const products_pos = [...state.products];
     const index = products.findIndex(prod => prod.id == product_id);
+    const indexpos = products_pos.findIndex(prod => prod.id == product_id);
     if(pricing_id != -1) {
         const pricinglist = [...products[index].pricinglist];
         pricinglist[field] = value;
@@ -522,10 +524,13 @@ const refreshProductList = (state, action) => {
             }
         });
         products[index].pricinglist = pricinglist;
+        products_pos[indexpos].price = parseFloat(value);
     } else {
         products[index][field] = value;
+        products_pos[indexpos][field] = value
     }
     state.all_products = products;
+    state.products = products_pos;
 };
 
 const refreshQtyProductList = (state, action) => {
@@ -541,14 +546,21 @@ const refreshQtyProductList = (state, action) => {
 const putNewProductInList = (state, action) => {
     const product = action.payload[0]
     const products = [...state.all_products];
-    const index = products.findIndex(prod => prod.id == product.id);
-    products[index] = product;
+    const products_pos = [...state.products];
+    product.price_for_sale = product.price;
+    product.inventory[0].quantity_for_sale = 1;
+    products.push(product)
+    products_pos.push(product)
     state.all_products = products;
+    state.products = products_pos;
 };
 
 const refreshOnProductOrderList = (state, action) => {
     const { _order, remaining }= action.payload; 
-    let cOrders = [...state.orders];
+    console.log('remaining', remaining)
+    console.log('_order', _order)
+
+    let cOrders;
     if (_order.order_type === "movement") {
         cOrders = [...state.orders];
     } else {
@@ -572,6 +584,28 @@ const refreshOnProductOrderList = (state, action) => {
 
         cProducts[pIndex].inventory = cInventoryList;
         state.products_all_inv = cProducts;
+
+        const all_products = [...state.all_products];
+        const products = [...state.products];
+
+        const p = all_products.find(prod => prod.id == remaining.product_id);
+
+        updateQtyProductInstance(
+            [p], 
+            all_products, 
+            remaining.store_id, 
+            state.all_products, 
+            remaining.remaining_quantity
+            );
+
+        updateQtyProductInstance(
+            [p], 
+            products, 
+            remaining.store_id, 
+            state.all_products, 
+            remaining.remaining_quantity
+            );
+        
     }
 };
 
@@ -595,6 +629,38 @@ const refreshOnProductOrder = (state, action) => {
     } else {
         state.purchase_orders = cOrders;
     }
+
+    const all_products = [...state.all_products];
+    const products = [...state.products];
+
+    order.product_order_line.forEach(_line => {
+        const id = _line.product_id;
+        const qty = _line.quantity_observed;
+        const store_id = _line.to_store.id;
+
+        const p = all_products.find(prod => prod.id == id);
+
+        const inv  = p.inventory.find(inv => inv.store.id == store_id);
+        const new_quantity = inv.quantity + qty
+
+        updateQtyProductInstance(
+            [p], 
+            all_products, 
+            store_id, 
+            state.all_products, 
+            new_quantity
+            );
+
+        
+        updateQtyProductInstance(
+            [p], 
+            products, 
+            store_id, 
+            state.all_products, 
+            new_quantity
+            );
+
+    })
 };
 
 const refreshBulkyList = (state, action) => {
@@ -687,6 +753,21 @@ const updateProductInstance = (productlist, productsInstance, selectedStore, sta
         const soldQty = p.inventory[0].quantity_for_sale; // alway 0:index
         const residualQty = availableQty - soldQty;
         productsInstance[index].inventory[invIndex].quantity = residualQty;
+        stateReference = productsInstance;
+    });
+}
+
+const updateQtyProductInstance = (productIDlist, productsInstance, store_id, stateReference, remaining_quantity) => {
+    productIDlist.forEach( p => {
+        const index = productsInstance.findIndex(prod => prod.id == p.id);
+        const invIndex = productsInstance[index].inventory.findIndex(inv => inv.store.id == store_id);
+        if (invIndex == -1) {
+            // Update current product.inventory for current logged user.
+            productsInstance[index].inventory[0].quantity = remaining_quantity;
+        } else {
+            // Update other inventory for all.
+            productsInstance[index].inventory[invIndex].quantity = remaining_quantity;
+        }
         stateReference = productsInstance;
     });
 }
@@ -811,7 +892,7 @@ const productsSlice = createSlice({
         }).addCase(addProduct.fulfilled, (state, action) => {
             state.loading = false
             putNewProductInList(state, action)
-            loadAllProducts();
+            // loadAllProducts();
         }).addCase(addProduct.rejected, (state, action) => {
             state.loading = false
             state.errorMessage = `ERROR addProduct() ; ${action.error.message}`

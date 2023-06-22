@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useState, useMemo } from "react";
 import { useDispatch , useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import QRCode from "qrcode";
 import Camera, { FACING_MODES, IMAGE_TYPES } from "react-html5-camera-photo";
@@ -25,6 +26,7 @@ export const NewProduct = () => {
     const [errorLabel, SetErrorLabel] = useState(null);
     const [errorPriceKey, SetErrorPriceKey] = useState(null);
     const [errorPercent, SetErrorPercent] = useState(null);
+    const navigator = useNavigate()
     const dispatch = useDispatch();
 
     const [image, SetImage] = useState(null);
@@ -77,7 +79,9 @@ export const NewProduct = () => {
         
 
         // console.log(product);
-        dispatch(addProduct(product))
+        if (confirm(lang.newproduct.create)) {
+            dispatch(addProduct(product));
+        }
     };
 
     // FIX : weak func because asumMe # 1 as default price INPUT.
