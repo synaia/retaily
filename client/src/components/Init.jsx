@@ -7,7 +7,7 @@
  */
 
 
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { interceptor } from "../redux/features/user.feature.js";
@@ -74,6 +74,8 @@ export const Init = () => {
             dispatch(salesTotal())
 
             if (currentUser.selectedStore != undefined) {
+                console.log('***** useffect', currentUser.selectedStore )
+
                 var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/messages/${currentUser.selectedStore}`);
                 ws.onmessage = function(event) {
                     const data = JSON.parse(event.data);
@@ -92,8 +94,15 @@ export const Init = () => {
                 };
             }
         }
-
+        
     }, [currentUser]);
+
+    useLayoutEffect(() => {
+        if (currentUser.selectedStore != undefined) {
+            console.log('***** useLayoutEffect', currentUser.selectedStore )
+        }
+    }, [currentUser])
+
 
     return (
         <React.Fragment>
