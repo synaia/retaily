@@ -1,5 +1,6 @@
 import numpy as np
 from sqlalchemy.orm import Session
+
 import server.core_app.product.product_models as models
 from server.core_app.product.product_schemas import Pricing
 from server.core_app.product.product_schemas import Product
@@ -412,6 +413,19 @@ def read_inventory_head_by_store_id(store_id: int, db: Session, query: Query):
     return head
 
 
+def read_store_byid(store_id: int, db: Session, query: Query):
+    sql_raw = query.SELECTED_STORE_BY_ID
+    cur = get_cursor(db)
+    cur.execute(sql_raw, (store_id,))
+    r = cur.fetchall()
+    store = Store()
+    if len(r) > 0:
+        store.id = store_id
+        store.name = r[0]['name']
+
+    return store
+
+
 def read_stores_inv(db: Session, query: Query):
     sql_raw = query.SELECT_STORES
     sql_raw_inv_valuation = query.SELECT_INV_VALUATION
@@ -734,7 +748,10 @@ def add_product_order(product_order: ProductOrder, db: Session, query: Query):
     cur.connection.commit()
     product_order_id = cur.lastrowid
 
-    return read_product_order(product_order.order_type, db, query)
+    return {
+        'orders': read_product_order(product_order.order_type, db, query),
+        'product_order_id': product_order_id
+    }
 
 
 def add_product_order_line(line: ProductOrderLine, db: Session, query: Query):
@@ -886,7 +903,8 @@ def issue_order_line(line: ProductOrderLine, db: Session, query: Query):
 
     response = {
         'order': read_product_order_by_id(line, db, query),
-        'line': line
+        'line': line,
+        'status': status
     }
 
     return response

@@ -1008,6 +1008,9 @@ SELECT
 --SELECTED_STORE
 SELECT s.id AS store_id FROM app_store s WHERE s.name = %s;
 
+--SELECTED_STORE_BY_ID
+SELECT s.name FROM app_store s WHERE s.id = %s;
+
 --INSERT_SALE
 INSERT INTO sale
     (amount, sub, discount, tax_amount, delivery_charge, sequence, sequence_type, status, sale_type, login, client_id, store_id, additional_info)

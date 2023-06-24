@@ -28,6 +28,7 @@ import { sequences } from "../redux/features/sale.feature.js";
 import { Loading } from "./Loading.jsx";
 
 import { trouble } from "../redux/features/sale.feature.js";
+import { BACKEND_HOST_WWS } from "../util/constants.js";
 
 
 
@@ -47,6 +48,7 @@ export const Init = () => {
             dispatch(trouble());
         }
         printerCheckTask();
+
     }, []);
 
 
@@ -70,7 +72,27 @@ export const Init = () => {
             dispatch(getDelivery());
 
             dispatch(salesTotal())
+
+            if (currentUser.selectedStore != undefined) {
+                var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/messages/${currentUser.selectedStore}`);
+                ws.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    if (data.sharable != undefined) {
+                        console.log(data.sharable);
+
+                        // TODO: very greedyy ... parametrize for cases.
+                        // test only
+                        dispatch(getMovProductOrders());
+                        dispatch(getPurchaseProductOrders());
+                        dispatch(getBulkOrder());
+
+                    } else {
+                        console.log(data);
+                    }
+                };
+            }
         }
+
     }, [currentUser]);
 
     return (

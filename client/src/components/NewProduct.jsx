@@ -84,7 +84,7 @@ export const NewProduct = () => {
         }
     };
 
-    // FIX : weak func because asumMe # 1 as default price INPUT.
+    // TODO: FIX : weak func because asumMe # 1 as default price INPUT.
     useEffect(() => {
         const pricetag = document.querySelector('.pricing');
         if (pricetag != undefined && pricingRef[1].current != undefined) {

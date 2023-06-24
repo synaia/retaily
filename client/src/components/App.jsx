@@ -59,10 +59,13 @@ export const App = () => {
   useEffect(() => {
     EventBus.on("logout", () => {
       logOut();
-  });
+    });
+
+    console.log('SUBSCRIBE TO SERVICE ONETIME')
 
     return () => {
       EventBus.remove("logout");
+      console.log('DISCONECTING FROM SERVICE ONETIME')
     };
   }, []);
 

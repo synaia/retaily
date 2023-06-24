@@ -44,6 +44,7 @@ from server.core_app.product.product_query import (
     approbal_issue_order_line,
     delivery,
     read_sales_total,
+    read_store_byid
 )
 import server.core_app.product.product_schemas as schemas
 import server.core_app.user.user_models as models
@@ -313,7 +314,37 @@ async def __add_product_order(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return add_product_order(order, db, query)
+        result = add_product_order(order, db, query)
+
+        #####
+        #  Web Socket Updated
+        #####
+        if order.order_type == "movement":
+            sharable: dict = {
+                'origin': 'ORDER_NEW',
+                'body': {
+                    'order': {
+                        'id': result['product_order_id'],
+                        'name': order.name,
+                        'memo': order.memo,
+                        'status': "new order",
+                        'user_receiver': order.user_receiver,
+                        'user_requester': order.user_requester,
+                        'issues': []
+                    }
+                }
+            }
+
+            store = read_store_byid(order.to_store.id, db, query)
+            await myvar.set('sharable', sharable)
+            client_uuid_list = await myvar.get('client_uuid_list')
+            sharable_per_client = await myvar.get('sharable_per_client')
+            for uniquename in client_uuid_list:
+                if uniquename == store.name:
+                    sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                    await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result['orders']
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
@@ -325,7 +356,38 @@ async def __add_product_order_line(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return add_product_order_line(line, db, query)
+        result = add_product_order_line(line, db, query)
+
+        #####
+        #  Web Socket Updated
+        #####
+        order: schemas.ProductOrder = result['_order']
+
+        sharable: dict = {
+            'origin': 'ORDER_PRODUCT_LINE',
+            'body': {
+                'order': {
+                    'id': order.id,
+                    'name': order.name,
+                    'memo': order.memo,
+                    'status': "order line changes",
+                    'user_receiver': order.user_receiver,
+                    'user_requester': order.user_requester,
+                    'issues': []
+                }
+            }
+        }
+
+        store: str = order.to_store.name
+        await myvar.set('sharable', sharable)
+        client_uuid_list = await myvar.get('client_uuid_list')
+        sharable_per_client = await myvar.get('sharable_per_client')
+        for uniquename in client_uuid_list:
+            if uniquename == store:
+                sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
@@ -337,7 +399,49 @@ async def __issue_order_line(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return issue_order_line(line, db, query)
+        result = issue_order_line(line, db, query)
+
+        #####
+        #  Web Socket Updated
+        #####
+        order: schemas.ProductOrder = result['order']
+        issues: [] = []
+        for l in order.product_order_line:
+            if l.status == "issue":
+                ln = {
+                    'id': l.product.id,
+                    'product_name': l.product.name,
+                    'quantity': l.quantity,
+                    'quantity_observed': l.quantity_observed
+                }
+                issues.append(ln)
+
+        sharable: dict = {
+            'origin': 'ORDER_ISSUE',
+            'body': {
+                'order': {
+                    'id': order.id,
+                    'name': order.name,
+                    'memo': order.memo,
+                    'status': result['status'],
+                    'user_receiver': order.user_receiver,
+                    'user_requester': order.user_requester,
+                    'issues': issues
+                }
+            }
+        }
+
+        store: str = order.from_store.name
+        await myvar.set('sharable', sharable)
+        client_uuid_list = await myvar.get('client_uuid_list')
+        sharable_per_client = await myvar.get('sharable_per_client')
+        for uniquename in client_uuid_list:
+            if uniquename == store:
+                sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result
+
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
@@ -349,10 +453,49 @@ async def __approbal_issue_order_line(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return approbal_issue_order_line(line, db, query)
+        result = approbal_issue_order_line(line, db, query)
+
+        #####
+        #  Web Socket Updated
+        #####
+        order: schemas.ProductOrder = result['order']
+        issues: [] = []
+        for l in order.product_order_line:
+            ln = {
+                'id': l.product.id,
+                'product_name': l.product.name,
+                'quantity': l.quantity,
+                'quantity_observed': l.quantity_observed
+            }
+            issues.append(ln)
+
+        sharable: dict = {
+            'origin': 'ORDER_APPROBAL',
+            'body': {
+                'order': {
+                    'id': order.id,
+                    'name': order.name,
+                    'memo': order.memo,
+                    'status': "approbal",
+                    'user_receiver': order.user_receiver,
+                    'user_requester': order.user_requester,
+                    'issues': issues
+                }
+            }
+        }
+
+        store: str = order.to_store.name
+        await myvar.set('sharable', sharable)
+        client_uuid_list = await myvar.get('client_uuid_list')
+        sharable_per_client = await myvar.get('sharable_per_client')
+        for uniquename in client_uuid_list:
+            if uniquename == store:
+                sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
-
 
 
 @router.get("/product_order", response_model=list[schemas.ProductOrder])
@@ -390,7 +533,38 @@ async def __process_order(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return process_order(order, db, query)
+        result = process_order(order, db, query)
+
+        #####
+        #  Web Socket Updated
+        #####
+        order: schemas.ProductOrder = result['order']
+
+        sharable: dict = {
+            'origin': 'ORDER_PROCESSED',
+            'body': {
+                'order': {
+                    'id': order.id,
+                    'name': order.name,
+                    'memo': order.memo,
+                    'status': "processed",
+                    'user_receiver': order.user_receiver,
+                    'user_requester': order.user_requester,
+                    'issues': []
+                }
+            }
+        }
+
+        store: str = order.from_store.name
+        await myvar.set('sharable', sharable)
+        client_uuid_list = await myvar.get('client_uuid_list')
+        sharable_per_client = await myvar.get('sharable_per_client')
+        for uniquename in client_uuid_list:
+            if uniquename == store:
+                sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
@@ -402,7 +576,37 @@ async def __rollback_order(
                         token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
     try:
-        return rollback_order(order, db, query)
+        result = rollback_order(order, db, query)
+        #####
+        #  Web Socket Updated
+        #####
+        order: schemas.ProductOrder = result['order']
+
+        sharable: dict = {
+            'origin': 'ORDER_CANCELLED',
+            'body': {
+                'order': {
+                    'id': order.id,
+                    'name': order.name,
+                    'memo': order.memo,
+                    'status': "cancelled",
+                    'user_receiver': order.user_receiver,
+                    'user_requester': order.user_requester,
+                    'issues': []
+                }
+            }
+        }
+
+        store: str = order.to_store.name
+        await myvar.set('sharable', sharable)
+        client_uuid_list = await myvar.get('client_uuid_list')
+        sharable_per_client = await myvar.get('sharable_per_client')
+        for uniquename in client_uuid_list:
+            if uniquename == store:
+                sharable_per_client.append({'client_uuid': uniquename, 'sharable': sharable})
+                await myvar.set('sharable_per_client', sharable_per_client)
+
+        return result
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
@@ -516,3 +720,11 @@ async def websocket_endpoint(websocket: WebSocket, client_uuid: str):
     print('Wating for new events [send_periodically] ....')
     await asyncio.create_task(send_periodically(websocket, manager, client_uuid, 0.9, myvar=myvar))
 
+
+@router.websocket("/messages/{store}")
+async def messages_endpoint(websocket: WebSocket, store: str):
+    manager = ConnectionManager()
+    await manager.connect(websocket, store, myvar=myvar)
+    await websocket.send_json({'Welcome': store})
+    print('Wating for new events [send_periodically] ....')
+    await asyncio.create_task(send_periodically(websocket, manager, store, 0.9, myvar=myvar))
