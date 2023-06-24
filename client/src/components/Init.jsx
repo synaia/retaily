@@ -98,7 +98,7 @@ export const Init = () => {
     }, [currentUser]);
 
     useLayoutEffect(() => {
-        if (currentUser.selectedStore != undefined) {
+        if (currentUser != undefined && currentUser.selectedStore != undefined) {
             console.log('***** useLayoutEffect', currentUser.selectedStore )
         }
     }, [currentUser])
