@@ -46,7 +46,6 @@ export const PurchaseOrderListResponse = () => {
 
     return (
         <React.Fragment>
-            {!loading && errorMessage && <div className="danger">{errorMessage} </div>}
             <div className="movement-top" >
             <ul className="tree">
             { bulk_orders.map( (bulklist, y) => (

@@ -5,7 +5,10 @@ import { BACKEND_HOST } from "../../util/constants";
 const initialState = {
     loading: false,
     clients: [],
-    errorMessage: null
+    errorMessage: {
+        errors: [],
+        notify: false,
+    },
 };
 
 export const loadClients = createAsyncThunk('clients/loadClients', async () => {
@@ -41,6 +44,9 @@ const clientsSlice = createSlice({
     reducers: {
         putClientinListAction: putClientinList,
         updateClientinListAction: updateClientinList,
+        setErrViewedClient: (state, action) => {
+            state.errorMessage.notify = true;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loadClients.pending, (state, action) => {
@@ -50,7 +56,8 @@ const clientsSlice = createSlice({
             state.clients = action.payload
         }).addCase(loadClients.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR loadClients; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR loadClients; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addClient.pending, (state, action) => {
@@ -60,10 +67,11 @@ const clientsSlice = createSlice({
             
         }).addCase(addClient.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR addClient; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addClient; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
     }
 });
 
-export const { putClientinListAction, updateClientinListAction } = clientsSlice.actions;
+export const { putClientinListAction, updateClientinListAction, setErrViewedClient } = clientsSlice.actions;
 export default clientsSlice.reducer;

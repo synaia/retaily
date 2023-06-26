@@ -17,7 +17,10 @@ const { store, ui_theme, grid_theme } = await getPreferences();
 
 const initialState = {
     loading: false,
-    errorMessage: null,
+    errorMessage: {
+        errors: [],
+        notify: false,
+    },
     currentUser: current,
     preferences: {
         selectedStore: store
@@ -31,6 +34,7 @@ const initialState = {
     scopes: [],
     messages: [],
     messages_count: 0,
+    error_viewed: false,
 };
 
 export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
@@ -234,6 +238,9 @@ const userSlice = createSlice({
             let _messages_count = beauty(state.messages_count);
             state.messages_count = _messages_count + 1;
         },
+        setErrViewedUser: (state, action) => {
+            state.errorMessage.notify = true;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(auth.pending, (state, action) => {
@@ -250,14 +257,17 @@ const userSlice = createSlice({
                 persistUser(user);
                 state.currentUser = user;
                 // dateupdate.toISOString();
-                state.errorMessage = '';
+//                state.errorMessage.errors.push('');
+//                state.errorMessage.notify = false;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
         }).addCase(auth.rejected, (state, action) => {
             state.loading = false;
             console.log(`Error happen: ${action.error.message}`)
-            state.errorMessage = action.error.message;
+            state.errorMessage.errors.push(action.error.message);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(logout.pending, (state, action) => {
@@ -268,14 +278,17 @@ const userSlice = createSlice({
                 user.is_logout = true;
                 persistUser(user);
                 state.currentUser = user; // expired token - user
-                state.errorMessage = '';
+//                state.errorMessage.errors.push('');
+//                state.errorMessage.notify = false;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(logout.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = action.error.message;
+            state.errorMessage.errors.push(action.error.message);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(users.pending, (state, action) => {
@@ -284,14 +297,17 @@ const userSlice = createSlice({
             const { data, status, detail } = action.payload
             if (status >= 200 && status <= 300) {
                 state.users = data;
-                state.errorMessage = '';
+//                state.errorMessage.errors.push('');
+//                state.errorMessage.notify = false;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(users.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = action.error.message;
+            state.errorMessage.errors.push(action.error.message);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(scopes.pending, (state, action) => {
@@ -300,18 +316,21 @@ const userSlice = createSlice({
             const { data, status, detail } = action.payload
             if (status >= 200 && status <= 300) {
                 state.scopes = data;
-                state.errorMessage = '';
+//                state.errorMessage.errors.push('');
+//                state.errorMessage.notify = false;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(scopes.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = action.error.message;
+            state.errorMessage.errors.push(action.error.message);
+            state.errorMessage.notify = false;
         });
 
     }
 });
 
-export const { changeTheme, changeStore, addMessage, addMessagesCount } = userSlice.actions;
+export const { changeTheme, changeStore, addMessage, addMessagesCount, setErrViewedUser } = userSlice.actions;
 export default userSlice.reducer;

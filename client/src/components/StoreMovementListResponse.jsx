@@ -30,7 +30,6 @@ export const StoreMovementListResponse = () => {
 
     return (
         <React.Fragment>
-            {!loading && errorMessage && <div className="danger">{errorMessage} </div>}
             <div className="movement-top">
             { orders.map( (order, i) => {
                 if (currentUser.username !== order.user_requester) {

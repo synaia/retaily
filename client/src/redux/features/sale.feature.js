@@ -12,7 +12,10 @@ const initialState = {
     sales: [],
     sequences: [],
     payment_redirect: true,
-    errorMessage: null,
+    errorMessage: {
+        errors: [],
+        notify: false,
+    },
     printer: {
         'isrunning': false
     },
@@ -132,6 +135,9 @@ const salesSlice = createSlice({
         cleanSequence_str:  (state, action) => {
             state.sequence_str = null;
          },
+         setErrViewedSale: (state, action) => {
+            state.errorMessage.notify = true;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loadSales.pending, (state, action) => {
@@ -140,14 +146,15 @@ const salesSlice = createSlice({
             const { data, status, detail } = action.payload;
             if (status >= 200 && status <= 300) {
                 state.sales = data;
-                state.errorMessage = '';
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(loadSales.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR loadSales; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR loadSales; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addPay.pending, (state, action) => {
@@ -156,7 +163,8 @@ const salesSlice = createSlice({
            const { sale_id, paids } = action.payload;
            updatePayInList(state, action, action.payload);
         }).addCase(addPay.rejected, (state, action) => {
-            state.errorMessage = `ERROR addPay; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addPay; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(cancelSale.pending, (state, action) => {
@@ -164,7 +172,8 @@ const salesSlice = createSlice({
         }).addCase(cancelSale.fulfilled, (state, action) => {
             updateSaleInList(state, action, action.payload);
         }).addCase(cancelSale.rejected, (state, action) => {
-            state.errorMessage = `ERROR cancelSale; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR cancelSale; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addSale.pending, (state, action) => {
@@ -173,14 +182,15 @@ const salesSlice = createSlice({
             const { data, status, detail } = action.payload;
             if (status >= 200 && status <= 300) {
                 state.sequence_str = data
-                state.errorMessage = detail;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(addSale.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR addSale; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addSale; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(sequences.pending, (state, action) => {
@@ -189,14 +199,15 @@ const salesSlice = createSlice({
             const { data, status, detail } = action.payload;
             if (status >= 200 && status <= 300) {
                 state.sequences = data;
-                state.errorMessage = detail;
             } else {
-                state.errorMessage = detail;
+                state.errorMessage.errors.push(detail);
+                state.errorMessage.notify = false;
             }
             state.loading = false;
         }).addCase(sequences.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR sequences; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR sequences; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(trouble.pending, (state, action) => {
@@ -204,10 +215,11 @@ const salesSlice = createSlice({
         }).addCase(trouble.fulfilled, (state, action) => {
             state.printer.isrunning = printerBasic.running();
         }).addCase(trouble.rejected, (state, action) => {
-            state.errorMessage = `ERROR ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
     }
 });
 
-export const { redirect_pass, cleanSequence_str } = salesSlice.actions;
+export const { redirect_pass, cleanSequence_str, setErrViewedSale } = salesSlice.actions;
 export default salesSlice.reducer;

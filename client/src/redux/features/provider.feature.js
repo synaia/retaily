@@ -6,7 +6,10 @@ import { BACKEND_HOST } from "../../util/constants";
 const initialState = {
     providers: [],
     loading: false,
-    errorMessage: null
+    errorMessage: {
+        errors: [],
+        notify: false,
+    },
 };
 
 export const loadProviders = createAsyncThunk('provider', async () => {
@@ -28,7 +31,8 @@ const providerSlice = createSlice({
             state.providers = action.payload
         }).addCase(loadProviders.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR loading provider; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR loading provider; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
     }
 });

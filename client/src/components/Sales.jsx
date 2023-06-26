@@ -238,7 +238,6 @@ export const Sales = () => {
         <div className="sales-container">
         <div className="sales-grid">
             {loading && <Loading Text="Loading :)" /> }
-            {!loading && errorMessage &&  <div>ERROR: {errorMessage} </div>}
             {!loading && sales.length == 0 &&
                 <div className="sale-card" >
                     <h2>Nothing to show.</h2>

@@ -105,7 +105,6 @@ export const BulkLabelList = () => {
 
     return (
         <React.Fragment>
-            {!loading && errorMessage &&  <div className="danger">{errorMessage} </div>}
             <div className="price-list">
                 <div>
                     <span>Name</span>

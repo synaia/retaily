@@ -209,7 +209,6 @@ export const NewProduct = () => {
 
     return (
         <React.Fragment>
-            {!loading && errorMessage &&  <div className="danger">{errorMessage} </div>}
 
             <div className="product-field">
                 <div>

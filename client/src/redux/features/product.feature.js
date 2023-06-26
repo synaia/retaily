@@ -52,7 +52,10 @@ const initialState = {
     },
     delivers: [],
     sales_totals: {},
-    errorMessage: null
+    errorMessage: {
+        errors: [],
+        notify: false,
+    },
 };
 
 
@@ -798,6 +801,9 @@ const productsSlice = createSlice({
         cleanBulkOrders: (state, action) => {
             state.bulk_orders = [];
         },
+        setErrViewedProduct: (state, action) => {
+            state.errorMessage.notify = true;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loadProducts.pending, (state, action) => {
@@ -811,7 +817,8 @@ const productsSlice = createSlice({
         }).addCase(loadProducts.rejected, (state, action) => {
             state.loading = false;
             state.loading_all_products  = false;
-            state.errorMessage = `ERROR loadProducts; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR loadProducts; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(loadAllProducts.pending, (state, action) => {
@@ -821,7 +828,8 @@ const productsSlice = createSlice({
             state.all_products = action.payload
         }).addCase(loadAllProducts.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR loadAllProducts; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR loadAllProducts; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getPricingLabels.pending, (state, action) => {
@@ -831,7 +839,8 @@ const productsSlice = createSlice({
             state.pricing_labels = action.payload
         }).addCase(getPricingLabels.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR getPricingLabels; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getPricingLabels; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getPricing.pending, (state, action) => {
@@ -841,7 +850,8 @@ const productsSlice = createSlice({
             state.pricing = action.payload
         }).addCase(getPricing.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR pricing_labels ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR pricing_labels ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getStores.pending, (state, action) => {
@@ -851,7 +861,8 @@ const productsSlice = createSlice({
             state.stores = action.payload
         }).addCase(getStores.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR getStores ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getStores ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getStoresInv.pending, (state, action) => {
@@ -864,7 +875,8 @@ const productsSlice = createSlice({
             console.log('DELAY DELAY')
         }).addCase(getStoresInv.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR getStoresInv ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getStoresInv ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addPricing.pending, (state, action) => {
@@ -874,7 +886,8 @@ const productsSlice = createSlice({
             state.pricing = action.payload
         }).addCase(addPricing.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR addPricing() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addPricing() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(updatePricing.pending, (state, action) => {
@@ -884,7 +897,8 @@ const productsSlice = createSlice({
             state.pricing = action.payload
         }).addCase(updatePricing.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR updatePricing() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR updatePricing() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addProduct.pending, (state, action) => {
@@ -895,7 +909,8 @@ const productsSlice = createSlice({
             // loadAllProducts();
         }).addCase(addProduct.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR addProduct() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addProduct() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getProductsByInventory.pending, (state, action) => {
@@ -912,7 +927,8 @@ const productsSlice = createSlice({
             state.inv_valuation_changed = inv_valuation_changed
         }).addCase(getProductsByInventory.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR getProductsByInventory() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getProductsByInventory() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getProductsAllInventory.pending, (state, action) => {
@@ -924,7 +940,8 @@ const productsSlice = createSlice({
             state.count_resume = count_resume
         }).addCase(getProductsAllInventory.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR getProductsAllInventory() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getProductsAllInventory() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(openInventory.pending, (state, action) => {
@@ -934,7 +951,8 @@ const productsSlice = createSlice({
             // TODO UPDATE IN LIST
         }).addCase(openInventory.rejected, (state, action) => {
             state.loading = false
-            state.errorMessage = `ERROR openInventory() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR openInventory() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getInventoryHead.pending, (state, action) => {
@@ -947,7 +965,8 @@ const productsSlice = createSlice({
             // state.inventory_head.changed = changed.length;
         }).addCase(getInventoryHead.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getInventoryHead() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getInventoryHead() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getInventoryHeadByStoreId.pending, (state, action) => {
@@ -957,7 +976,8 @@ const productsSlice = createSlice({
             state.inventory_head_by_store = action.payload;
         }).addCase(getInventoryHeadByStoreId.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getInventoryHeadByStoreId() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getInventoryHeadByStoreId() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(updateNextQty.pending, (state, action) => {
@@ -973,7 +993,8 @@ const productsSlice = createSlice({
 
         }).addCase(updateNextQty.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR updateNextQty() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR updateNextQty() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addStore.pending, (state, action) => {
@@ -986,7 +1007,8 @@ const productsSlice = createSlice({
             state.resume_inv = resume
         }).addCase(addStore.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR addStore() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addStore() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getMovProductOrders.pending, (state, action) => {
@@ -996,7 +1018,8 @@ const productsSlice = createSlice({
             state.orders = action.payload
         }).addCase(getMovProductOrders.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getProductOrders() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getProductOrders() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getPurchaseProductOrders.pending, (state, action) => {
@@ -1010,7 +1033,8 @@ const productsSlice = createSlice({
 
         }).addCase(getPurchaseProductOrders.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getPurchaseProductOrders() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getPurchaseProductOrders() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addProductOrder.pending, (state, action) => {
@@ -1025,7 +1049,8 @@ const productsSlice = createSlice({
             }
         }).addCase(addProductOrder.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR addProductOrder() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addProductOrder() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(processOrder.pending, (state, action) => {
@@ -1035,7 +1060,8 @@ const productsSlice = createSlice({
             refreshOnProductOrder(state, action);
         }).addCase(processOrder.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR processOrder() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR processOrder() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(rollbackOrder.pending, (state, action) => {
@@ -1045,7 +1071,8 @@ const productsSlice = createSlice({
             refreshOnProductOrder(state, action);
         }).addCase(rollbackOrder.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR rollbackOrder() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR rollbackOrder() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addProductOrderLine.pending, (state, action) => {
@@ -1055,7 +1082,8 @@ const productsSlice = createSlice({
             refreshOnProductOrderList(state, action);
         }).addCase(addProductOrderLine.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR addProductOrderLine() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR addProductOrderLine() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(issueProductOrderLine.pending, (state, action) => {
@@ -1066,7 +1094,8 @@ const productsSlice = createSlice({
             refreshBulkyList(state, action);
         }).addCase(issueProductOrderLine.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR issueProductOrderLine() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR issueProductOrderLine() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(approbalIssueOrderLine.pending, (state, action) => {
@@ -1077,7 +1106,8 @@ const productsSlice = createSlice({
             refreshBulkyList(state, action);
         }).addCase(approbalIssueOrderLine.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR approbalIssueOrderLine() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR approbalIssueOrderLine() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getBulkOrder.pending, (state, action) => {
@@ -1087,7 +1117,8 @@ const productsSlice = createSlice({
             state.bulk_labels = action.payload;
         }).addCase(getBulkOrder.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getBulkOrder() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getBulkOrder() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(addBulkOrder.pending, (state, action) => {
@@ -1097,7 +1128,8 @@ const productsSlice = createSlice({
             state.bulk_labels = action.payload;
         }).addCase(addBulkOrder.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getBulkOrder() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getBulkOrder() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(getDelivery.pending, (state, action) => {
@@ -1107,7 +1139,8 @@ const productsSlice = createSlice({
             state.delivers = action.payload;
         }).addCase(getDelivery.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR getDelivery() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR getDelivery() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
 
         builder.addCase(salesTotal.pending, (state, action) => {
@@ -1117,7 +1150,8 @@ const productsSlice = createSlice({
             state.sales_totals = action.payload;
         }).addCase(salesTotal.rejected, (state, action) => {
             state.loading = false;
-            state.errorMessage = `ERROR salesTotal() ; ${action.error.message}`
+            state.errorMessage.errors.push(`ERROR salesTotal() ; ${action.error.message}`);
+            state.errorMessage.notify = false;
         });
         
     }
@@ -1136,7 +1170,8 @@ export const {
     refreshProductListAction,
     cleanBulkOrders,
     lowOffProductQtyAction,
-    updateDeliveryValueAction
+    updateDeliveryValueAction,
+    setErrViewedProduct
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

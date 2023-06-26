@@ -95,9 +95,7 @@ export const Login = () => {
                  </select>
                  </div>
             }
-            {errorMessage &&
-                <h3 className="danger">{errorMessage}</h3>
-            }
+
         </div>
         </>
     )

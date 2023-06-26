@@ -7,15 +7,19 @@ import '../../assets/style-admin.css';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loadSales } from "../redux/features/sale.feature.js";
+import { loadSales, setErrViewedSale } from "../redux/features/sale.feature.js";
 import { logout } from "../redux/features/user.feature.js";
 
-import { changeTheme, addMessagesCount } from "../redux/features/user.feature.js";
+import { changeTheme, addMessagesCount, setErrViewedUser } from "../redux/features/user.feature.js";
+import { setErrViewedProduct } from "../redux/features/product.feature.js";
+import { setErrViewedClient } from "../redux/features/client.feature.js";
+
 import EventBus from "../common/EventBus"
 import package_file from "../../package.json";
 import { SCOPES } from "../util/constants";
 
 import { lang } from "../common/spa.lang.js";
+import { beauty } from "../util/Utils";
 
 
 
@@ -23,14 +27,34 @@ export const AdminBoard = ({Content, Title, Search}) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const messages = useSelector((state) => state.user.messages);
   const messages_count = useSelector((state) => state.user.messages_count);
+  const errorMessageUser = useSelector((state) => state.user.errorMessage);
+  const errorMessageProduct = useSelector((state) => state.product.errorMessage);
+  const errorMessageSale = useSelector((state) => state.sale.errorMessage);
+  const errorMessageClient = useSelector((state) => state.client.errorMessage);
+  const error_viewed = useSelector((state) => state.user.error_viewed);
+  const [errorMessage, SetErrorMessage] = useState([]);
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
 
-  useEffect(()=> {
-    console.log('ADMIN BOARD, ', currentUser)
-  }, [currentUser]);
-  
+
+  useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageProduct.errors]]);
+  }, [errorMessageProduct.errors]);
+
+  useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageUser.errors]]);
+  }, [errorMessageUser.errors]);
+
+  useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageSale.errors]]);
+  }, [errorMessageSale.errors]);
+
+  useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageClient.errors]]);
+  }, [errorMessageClient.errors]);
+
+
 
   useEffect(() => {
     const highlightsted = [];
@@ -113,6 +137,48 @@ export const AdminBoard = ({Content, Title, Search}) => {
   }, [messages])
 
 
+  const showErrr = () => {
+    return (errorMessageProduct.notify  == false || errorMessageUser.notify  == false ||  errorMessageSale.notify  == false || errorMessageClient.notify  == false )
+  }
+
+  useEffect(() => {
+    if (errorMessage && errorMessage.length > 0 && showErrr() ) {      
+      const toast = document.querySelector(".toast-err");
+      const closeIcon = document.querySelector(".message-err-close");
+      const progress = document.querySelector(".progress");
+
+      let timer1, timer2;
+
+      toast.classList.add("active");
+      progress.classList.add("active");
+
+      // timer1 = setTimeout(() => {
+      //     toast.classList.remove("active");
+      // }, 15000); //1s = 1000 milliseconds
+
+      // timer2 = setTimeout(() => {
+      //   progress.classList.remove("active");
+      // }, 15300);
+      
+      closeIcon.addEventListener("click", () => {
+        toast.classList.remove("active");
+        
+        setTimeout(() => {
+          progress.classList.remove("active");
+        }, 300);
+
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      });
+
+      dispatch(setErrViewedUser());
+      dispatch(setErrViewedProduct());
+      dispatch(setErrViewedSale());
+      dispatch(setErrViewedClient());
+    }
+  }, [errorMessage])
+
+
   const Breadcrumbs = () => {
     let full_path = [];
       let ref = '';
@@ -148,6 +214,26 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </div>
             </div>
             <span className="material-icons-sharp message-close"> close </span>
+
+            <div className="progress"></div>
+          </div>
+
+
+          <div className="toast-err">
+            <div className="toast-err-content">
+                <div className="icon">
+                    <span className="material-icons-sharp message-warning"> warning </span>
+                </div>
+
+                <div className="toast-err-message">
+                { errorMessage.map( (msg, i) => (
+                  <li className="">{msg}</li>
+                ))
+                }
+                  
+                </div>
+            </div>
+            <span className="material-icons-sharp message-err-close"> close </span>
 
             <div className="progress"></div>
           </div>

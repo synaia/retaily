@@ -2,7 +2,10 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { lang } from "../common/spa.lang.js";
-import { changeTheme, addMessagesCount } from "../redux/features/user.feature.js";
+import { changeTheme, addMessagesCount, setErrViewedUser,  } from "../redux/features/user.feature.js";
+import { setErrViewedProduct } from "../redux/features/product.feature.js";
+import { setErrViewedClient } from "../redux/features/client.feature.js";
+import { setErrViewedSale } from "../redux/features/sale.feature.js";
 
 export const Header = () => {
     const dispatch = useDispatch();
@@ -10,6 +13,30 @@ export const Header = () => {
     const messages = useSelector((state) => state.user.messages);
     const messages_count = useSelector((state) => state.user.messages_count);
     const printer = useSelector((state) => state.sale.printer);
+
+    const errorMessageUser = useSelector((state) => state.user.errorMessage);
+    const errorMessageProduct = useSelector((state) => state.product.errorMessage);
+    const errorMessageSale = useSelector((state) => state.sale.errorMessage);
+    const errorMessageClient = useSelector((state) => state.client.errorMessage);
+
+    const [errorMessage, SetErrorMessage] = useState([]);
+
+    useEffect(() => {
+        SetErrorMessage([...errorMessage, [...errorMessageProduct.errors]]);
+      }, [errorMessageProduct.errors]);
+    
+    useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageUser.errors]]);
+    }, [errorMessageUser.errors]);
+
+    useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageSale.errors]]);
+    }, [errorMessageSale.errors]);
+
+    useEffect(() => {
+    SetErrorMessage([...errorMessage, [...errorMessageClient.errors]]);
+    }, [errorMessageClient.errors]);
+
 
     useEffect(() => {
         if (messages.length > 0 && messages_count != messages.length) {      
@@ -45,6 +72,47 @@ export const Header = () => {
         }
       }, [messages])
 
+      const showErrr = () => {
+        return (errorMessageProduct.notify  == false || errorMessageUser.notify  == false ||  errorMessageSale.notify  == false || errorMessageClient.notify  == false )
+      }
+    
+      useEffect(() => {
+        if (errorMessage && errorMessage.length > 0 && showErrr() ) {      
+          const toast = document.querySelector(".toast-err");
+          const closeIcon = document.querySelector(".message-err-close");
+          const progress = document.querySelector(".progress");
+    
+          let timer1, timer2;
+    
+          toast.classList.add("active");
+          progress.classList.add("active");
+    
+          // timer1 = setTimeout(() => {
+          //     toast.classList.remove("active");
+          // }, 15000); //1s = 1000 milliseconds
+    
+          // timer2 = setTimeout(() => {
+          //   progress.classList.remove("active");
+          // }, 15300);
+          
+          closeIcon.addEventListener("click", () => {
+            toast.classList.remove("active");
+            
+            setTimeout(() => {
+              progress.classList.remove("active");
+            }, 300);
+    
+            clearTimeout(timer1);
+            clearTimeout(timer2);
+          });
+    
+          dispatch(setErrViewedUser());
+          dispatch(setErrViewedProduct());
+          dispatch(setErrViewedSale());
+          dispatch(setErrViewedClient());
+        }
+      }, [errorMessage])
+
 
     return (
     <>
@@ -59,6 +127,25 @@ export const Header = () => {
                 </div>
             </div>
             <span className="material-icons-sharp message-close"> close </span>
+
+            <div className="progress"></div>
+          </div>
+
+          <div className="toast-err">
+            <div className="toast-err-content">
+                <div className="icon">
+                    <span className="material-icons-sharp message-warning"> warning </span>
+                </div>
+
+                <div className="toast-err-message">
+                { errorMessage.map( (msg, i) => (
+                  <li className="">{msg}</li>
+                ))
+                }
+                  
+                </div>
+            </div>
+            <span className="material-icons-sharp message-err-close"> close </span>
 
             <div className="progress"></div>
           </div>

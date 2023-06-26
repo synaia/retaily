@@ -2563,6 +2563,7 @@ input::placeholder, textarea::placeholder {
   overflow: hidden;
   transform: translateX(calc(100% + 30px));
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+  z-index: 100;
 }
 
 .toast.active{
@@ -2634,6 +2635,104 @@ input::placeholder, textarea::placeholder {
   height: 100%;
   width: 100%;
   background-color: var(--color-primary);
+}
+
+.progress.active:before{
+  animation: progress 15s linear forwards;
+}
+
+@keyframes progress {
+  100%{
+      right: 100%;
+  }
+}
+
+
+
+/* Toast ERROR Message Animation  */
+.toast-err {
+  position: absolute;
+  top: 35px;
+  right: 30px;
+  /* border-radius: 12px; */
+  padding: 30px 175px 40px 55px;
+  box-shadow: var(--box-shadow);
+  border-left: 6px solid var(--color-danger);
+  overflow: hidden;
+  transform: translateX(calc(100% + 30px));
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+  z-index: 100;
+}
+
+.toast-err.active{
+  transform: translateX(0%);
+  background-color: var(--color-white);
+}
+
+.toast-err .toast-err-content{
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.message-warning {
+  color: var(--color-danger);
+}
+
+.message-err-close {
+  font-size: 20px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.message-close:hover {
+  color: var(--color-warning);
+  transition: all 300ms ease;
+}
+
+
+
+.toast-err-message .text{
+  font-size: 15px;
+  font-weight: 300;;
+  color: var(--color-dark);
+}
+
+
+.toast-err .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 5px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.toast-err .close:hover{
+  opacity: 1;
+}
+
+.toast-err .progress{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--color-white)
+}
+
+.toast-err .progress:before{
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-danger);
 }
 
 .progress.active:before{
