@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { loadSales } from "../redux/features/sale.feature.js";
 import { logout } from "../redux/features/user.feature.js";
 
-import { changeTheme } from "../redux/features/user.feature.js";
+import { changeTheme, addMessagesCount } from "../redux/features/user.feature.js";
 import EventBus from "../common/EventBus"
 import package_file from "../../package.json";
 import { SCOPES } from "../util/constants";
@@ -21,6 +21,8 @@ import { lang } from "../common/spa.lang.js";
 
 export const AdminBoard = ({Content, Title, Search}) => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  const messages = useSelector((state) => state.user.messages);
+  const messages_count = useSelector((state) => state.user.messages_count);
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const [menu_open, set_menu_open] = useState("close");
@@ -76,6 +78,41 @@ export const AdminBoard = ({Content, Title, Search}) => {
   }, []);
 
 
+  useEffect(() => {
+    if (messages.length > 0 && messages_count != messages.length) {      
+      dispatch(addMessagesCount());
+
+      const toast = document.querySelector(".toast");
+      const closeIcon = document.querySelector(".message-close");
+      const progress = document.querySelector(".progress");
+
+      let timer1, timer2;
+
+      toast.classList.add("active");
+      progress.classList.add("active");
+
+      timer1 = setTimeout(() => {
+          toast.classList.remove("active");
+      }, 15000); //1s = 1000 milliseconds
+
+      timer2 = setTimeout(() => {
+        progress.classList.remove("active");
+      }, 15300);
+      
+      closeIcon.addEventListener("click", () => {
+        toast.classList.remove("active");
+        
+        setTimeout(() => {
+          progress.classList.remove("active");
+        }, 300);
+
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      });
+    }
+  }, [messages])
+
+
   const Breadcrumbs = () => {
     let full_path = [];
       let ref = '';
@@ -98,6 +135,26 @@ export const AdminBoard = ({Content, Title, Search}) => {
    
     return (
           <div className="container">
+
+
+          <div className="toast">
+            <div className="toast-content">
+                <div className="icon">
+                    <span className="material-icons-sharp message-mail"> mark_email_unread </span>
+                </div>
+
+                <div className="toast-message">
+                    <span className="">{lang.messages.new_messages(messages.length)}</span>
+                </div>
+            </div>
+            <span className="material-icons-sharp message-close"> close </span>
+
+            <div className="progress"></div>
+          </div>
+
+        
+
+            
             <aside>
               <div className="top">
                 <div className="logo">
@@ -157,10 +214,10 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </a>
                 }
 
-                <a href="#" key={8}>
+                <a href="/#/admin/messages" key={8}>
                   <span className="material-icons-sharp"> mail_outline </span>
                   <h3>{lang.menu.messages}</h3>
-                  <span className="message-count">26</span>
+                  <span className="message-count">{messages.length}</span>
                 </a>
 
                 {currentUser.scopes.includes(SCOPES.USER.SETTING) &&

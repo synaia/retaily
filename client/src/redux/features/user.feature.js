@@ -29,6 +29,8 @@ const initialState = {
     },
     users: [],
     scopes: [],
+    messages: [],
+    messages_count: 0,
 };
 
 export const interceptor = createAsyncThunk('interceptor/util', async (args, thunkAPI) => {
@@ -218,7 +220,20 @@ const userSlice = createSlice({
             state.currentUser.selectedStore = store.name;
             state.currentUser.store = store;
             persistUser(beauty(state.currentUser));
-        }
+        },
+        addMessage: (state, action) => {
+            const { sharable } = action.payload;
+            console.log(sharable);
+            const _messages = [...state.messages];
+            _messages.push(sharable);
+            state.messages = _messages.reverse();
+
+            console.log(state)
+        },
+        addMessagesCount: (state, action) => {
+            let _messages_count = beauty(state.messages_count);
+            state.messages_count = _messages_count + 1;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(auth.pending, (state, action) => {
@@ -298,5 +313,5 @@ const userSlice = createSlice({
     }
 });
 
-export const { changeTheme, changeStore } = userSlice.actions;
+export const { changeTheme, changeStore, addMessage, addMessagesCount } = userSlice.actions;
 export default userSlice.reducer;

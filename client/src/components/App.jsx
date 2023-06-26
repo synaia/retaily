@@ -35,12 +35,14 @@ import { PurchaseOrderResponse } from "./PurchaseOrderResponse";
 import { OrderBulkResponse } from "./OrderBulkResponse";
 import { BulkLabelList } from "./BulkLabelList";
 import { Login } from "./Login";
+import { Messages } from "./Messages";
 import EventBus from "../common/EventBus"
 
 import package_file from "../../package.json";
 import { Theme } from "./Theme";
 
 import { lang } from "../common/spa.lang.js";
+
 
 
 export const App = () => {
@@ -105,6 +107,8 @@ export const App = () => {
                   <Route path="/admin/inventory/purchaseresp/:order_id" element={<AdminBoard  key={17} Content={<PurchaseOrderResponse />} Title={lang.menu.response_purchase} />} />
                   <Route path="/admin/inventory/bulk/:bulk_id" element={<AdminBoardBulk Content={<OrderBulkResponse />} Title={lang.menu.bulk_order} />} />
                   <Route path="/admin/inventory/bulklist" element={<AdminBoard  key={18} Content={<BulkLabelList />} Title={lang.menu.bulk_order_new} />} />
+
+                  <Route path="/admin/messages" element={<AdminBoard  key={40} Content={<Messages/>} Title={lang.menu.messages} />} />
                 </Routes>
               </Provider>
             </HashRouter>

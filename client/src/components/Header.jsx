@@ -1,14 +1,69 @@
 import React from "react";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { lang } from "../common/spa.lang.js";
+import { changeTheme, addMessagesCount } from "../redux/features/user.feature.js";
 
 export const Header = () => {
+    const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.user.currentUser);
+    const messages = useSelector((state) => state.user.messages);
+    const messages_count = useSelector((state) => state.user.messages_count);
     const printer = useSelector((state) => state.sale.printer);
+
+    useEffect(() => {
+        if (messages.length > 0 && messages_count != messages.length) {      
+          dispatch(addMessagesCount());
+    
+          const toast = document.querySelector(".toast");
+          const closeIcon = document.querySelector(".message-close");
+          const progress = document.querySelector(".progress");
+    
+          let timer1, timer2;
+    
+          toast.classList.add("active");
+          progress.classList.add("active");
+    
+          timer1 = setTimeout(() => {
+              toast.classList.remove("active");
+          }, 15000); //1s = 1000 milliseconds
+    
+          timer2 = setTimeout(() => {
+            progress.classList.remove("active");
+          }, 15300);
+          
+          closeIcon.addEventListener("click", () => {
+            toast.classList.remove("active");
+            
+            setTimeout(() => {
+              progress.classList.remove("active");
+            }, 300);
+    
+            clearTimeout(timer1);
+            clearTimeout(timer2);
+          });
+        }
+      }, [messages])
 
 
     return (
+    <>
+         <div className="toast">
+            <div className="toast-content">
+                <div className="icon">
+                    <span className="material-icons-sharp message-mail"> mark_email_unread </span>
+                </div>
+
+                <div className="toast-message">
+                    <span className="">{lang.messages.new_messages(messages.length)}</span>
+                </div>
+            </div>
+            <span className="material-icons-sharp message-close"> close </span>
+
+            <div className="progress"></div>
+          </div>
+
+
         <div className="header-content">
             <div>
                 <h1>{lang.pos.pos}</h1>
@@ -50,5 +105,6 @@ export const Header = () => {
                 </div>
             </div>
         </div>
+    </>
     )
 }

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { interceptor } from "../redux/features/user.feature.js";
 import { users, scopes } from "../redux/features/user.feature.js";
+import { addMessage } from "../redux/features/user.feature.js";
 import { getStoresInv, loadProducts, salesTotal } from  "../redux/features/product.feature.js";
 import { loadAllProducts } from  "../redux/features/product.feature.js";
 import { getPricingLabels } from  "../redux/features/product.feature.js";
@@ -54,6 +55,25 @@ export const Init = () => {
 
 
     useEffect(() => {
+        let ws;
+
+        const onMessageEvent = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.sharable != undefined) {
+                dispatch(addMessage(data));
+
+                // TODO: very greedyy ... parametrize for cases.
+                // test only
+                dispatch(getMovProductOrders());
+                dispatch(getPurchaseProductOrders());
+                dispatch(getBulkOrder());
+
+            } else {
+                console.log(data);
+            }
+        }
+
+        
         if (currentUser && currentUser.is_logout == null) {
             dispatch(users());
             dispatch(scopes());
@@ -76,22 +96,14 @@ export const Init = () => {
             if (currentUser.selectedStore != undefined) {
                 console.log('***** useffect', currentUser.selectedStore )
 
-                var ws = new WebSocket(`${BACKEND_HOST_WWS}/products/messages/${currentUser.selectedStore}`);
-                ws.onmessage = function(event) {
-                    const data = JSON.parse(event.data);
-                    if (data.sharable != undefined) {
-                        console.log(data.sharable);
+                ws = new WebSocket(`${BACKEND_HOST_WWS}/products/messages/${currentUser.selectedStore}`);
+                ws.addEventListener("message", onMessageEvent);
+            }
+        }
 
-                        // TODO: very greedyy ... parametrize for cases.
-                        // test only
-                        dispatch(getMovProductOrders());
-                        dispatch(getPurchaseProductOrders());
-                        dispatch(getBulkOrder());
-
-                    } else {
-                        console.log(data);
-                    }
-                };
+        return () => {
+            if (ws != null) {
+                ws.removeEventListener("message", onMessageEvent);
             }
         }
         

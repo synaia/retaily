@@ -158,5 +158,14 @@ export  const lang = {
         total_income: 'Ganancias',
         on_the_running_day: 'En lo que va del día',
 
+    },
+    messages: {
+        ORDER_PRODUCT_LINE: 'NUEVOS CAMBIO DE PRODUCTOS EN EL MOVIMIENTO',
+        ORDER_CANCELLED: 'LA ORDEN FUE CANCELADA',
+        ORDER_PROCESSED: 'LA ORDEN FUE PROCESADA',
+        ORDER_APPROBAL: 'EL CAMBIO DE CANTIDAD FUE APROBADO',
+        ORDER_ISSUE: 'EL SIGUIENTE PRODUCTO TIENE OBSERVACIONES',
+        ORDER_NEW: 'UNA NUEVA ORDEN HA SIDO CREADA',
+        new_messages: (num) => `Tiene ${num} Nuevos Mensajes`,
     }
 }

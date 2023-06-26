@@ -322,14 +322,14 @@ async def __add_product_order(
         if order.order_type == "movement":
             sharable: dict = {
                 'origin': 'ORDER_NEW',
+                'marker': 'new',
                 'body': {
                     'order': {
                         'id': result['product_order_id'],
                         'name': order.name,
                         'memo': order.memo,
                         'status': "new order",
-                        'user_receiver': order.user_receiver,
-                        'user_requester': order.user_requester,
+                        'user_receiver': order.user_requester,
                         'issues': []
                     }
                 }
@@ -365,6 +365,7 @@ async def __add_product_order_line(
 
         sharable: dict = {
             'origin': 'ORDER_PRODUCT_LINE',
+            'marker': 'order-line',
             'body': {
                 'order': {
                     'id': order.id,
@@ -418,6 +419,7 @@ async def __issue_order_line(
 
         sharable: dict = {
             'origin': 'ORDER_ISSUE',
+            'marker': 'issue',
             'body': {
                 'order': {
                     'id': order.id,
@@ -471,6 +473,7 @@ async def __approbal_issue_order_line(
 
         sharable: dict = {
             'origin': 'ORDER_APPROBAL',
+            'marker': 'approbal',
             'body': {
                 'order': {
                     'id': order.id,
@@ -542,6 +545,7 @@ async def __process_order(
 
         sharable: dict = {
             'origin': 'ORDER_PROCESSED',
+            'marker': 'processed',
             'body': {
                 'order': {
                     'id': order.id,
@@ -584,6 +588,7 @@ async def __rollback_order(
 
         sharable: dict = {
             'origin': 'ORDER_CANCELLED',
+            'marker': 'cancelled',
             'body': {
                 'order': {
                     'id': order.id,
