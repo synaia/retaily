@@ -2761,6 +2761,23 @@ input::placeholder, textarea::placeholder {
 
 }
 
+.pos-not-found {
+  z-index: 1;
+  
+  display: grid;
+  grid-template-columns: 0.3fr auto;
+  align-items: center;
+  gap: 1.5rem;
+
+  position: absolute;
+  top: 20%;
+  left: 30%;
+
+  font-size: 2rem;
+
+}
+
+
 .bounce-in-top {
   z-index: 1;
   

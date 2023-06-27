@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch , useSelector} from "react-redux";
 import { pickProductAction } from "../redux/features/product.feature.js";
 import { Loading } from "./Loading";
+import { lang } from "../common/spa.lang.js";
 
 
 export const ProductGrid = () => {
@@ -79,6 +80,15 @@ export const ProductGrid = () => {
 
     return (
         <React.Fragment>
+            {!loading && search.current?.value.length > 0 && products_partial.length == 0 &&
+                <div className="pos-not-found">
+                    <div className="icon">
+                        <span className="material-icons-sharp mark-email-read"> sentiment_very_dissatisfied </span>
+                    </div>
+                    <span>{search.current?.value?.toUpperCase()} {lang.pos.not_found}</span>
+                </div>
+            }
+
             <div className="search-terminal">
                 <span className="material-icons-sharp"> search </span>
                 <input ref={search} type="text" onKeyUp={filterProduct} className="search-bar" />
@@ -86,8 +96,6 @@ export const ProductGrid = () => {
             </div>
 
             <div className="products" id="products">
-                {!loading && search.current?.value.length > 0 && products_partial.length == 0 &&
-                <div> <h1>{search.current?.value?.toUpperCase()} Not found</h1></div> }
                 {!loading && (
                     products_partial.map((product, i)=> (
                         <Product 

@@ -25,7 +25,7 @@ jobs:
 
     - name: Connect to remote server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}  "cd ${{ secrets.WORK_DIR }} && git pull && cd ${{ secrets.CLIENT_DIR }} && npm install && npm run build &&  exit"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}  "cd ${{ secrets.WORK_DIR }} && git pull && cd ${{ secrets.CLIENT_DIR }} && npm install && npm run build && sudo systemctl restart retaily.service &&  exit"
     - name: cleanup
       run: rm -rf ~/.ssh
       

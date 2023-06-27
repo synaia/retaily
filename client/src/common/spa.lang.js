@@ -7,6 +7,7 @@ export  const lang = {
         delivery: 'Delivery:',
         discount: 'Descuento:',
         tax: 'ITBIS',
+        not_found: 'No fue encontrado',
         discardsale: 'Esta seguro que quiere descartar?',
         client: {
             header: 'Localiza Clientes',
