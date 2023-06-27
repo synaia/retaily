@@ -14,6 +14,7 @@ import { F_, validateInputX } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 import { lang } from "../common/spa.lang.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 
@@ -60,6 +61,14 @@ export const Store = () => {
     const [is_inventory_open, set_inventory_open] = useState(false);
 
     const [productFound, SetProductFound] = useState(0);
+
+    let dialog = new CustomDialogs({
+        id: 'dialog',
+        locale: {
+            accept: lang.newproduct.yes,
+            cancel: lang.store.no_close_inventory
+        }
+    });
 
 
     useEffect(()=> {
@@ -130,10 +139,12 @@ export const Store = () => {
         set_inventory_open(true);
     };
 
-    const __closeinventory = () => {
-        if (!confirm('ARE YOU SURE?')) {
+    const __closeinventory = async () => {
+        const result = await dialog.confirm(lang.store.close_sure);
+        if (!result) {
             return;
         }
+
         const store  = products_inv[0].inventory[0].store;
         dispatch(closeInventory(store));
         dispatch(getProductsByInventory(params.store_name));
@@ -141,10 +152,19 @@ export const Store = () => {
         set_inventory_open(false);
     };
 
-    const __cancelInventory = () => {
-        if (!confirm('CANCEL THIS INVENTORY ... ARE YOU SURE?')) {
+    const __cancelInventory = async () => {
+        dialog = new CustomDialogs({
+            id: 'dialog',
+            locale: {
+                accept: lang.store.yes_cancel,
+                cancel: lang.store.no_close_inventory
+            }
+        });
+        const result = await dialog.confirm(lang.store.cancel_sure);
+        if (!result) {
             return;
         }
+    
         const store  = products_inv[0].inventory[0].store;
         dispatch(cancelInventory(store));
         dispatch(getProductsByInventory(params.store_name));

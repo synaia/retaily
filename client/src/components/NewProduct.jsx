@@ -16,6 +16,8 @@ import { Inventory } from "./Inventory.jsx";
 
 import { lang } from "../common/spa.lang.js";
 
+import { CustomDialogs } from "../api/nano-dialog.js";
+
 
 export const NewProduct = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
@@ -45,6 +47,14 @@ export const NewProduct = () => {
     const pricingRef =  [];
     pricing.forEach( (p) => {
         pricingRef[p.id] = React.createRef();
+    });
+
+    const dialog = new CustomDialogs({
+        id: 'dialog',
+        locale: {
+            accept: lang.newproduct.yes,
+            cancel: lang.newproduct.no_cancel,
+        }
     });
 
     const __addProduct = () => {
@@ -77,11 +87,14 @@ export const NewProduct = () => {
             pricinglist: pricinglist
         };
         
+        const result = dialog.confirm(lang.newproduct.create);
+        result.then(res => {
+            if (res) {
+                dispatch(addProduct(product));
+            }
+        })
 
-        // console.log(product);
-        if (confirm(lang.newproduct.create)) {
-            dispatch(addProduct(product));
-        }
+
     };
 
     // TODO: FIX : weak func because asumMe # 1 as default price INPUT.

@@ -12,6 +12,7 @@ import { F_ } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 import { lang } from "../common/spa.lang.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 export const PurchaseOrderResponse = () => {
@@ -32,6 +33,8 @@ export const PurchaseOrderResponse = () => {
     const gridRef_order = useRef(null);
 
     const [productFoundRight, SetProductFoundRight] = useState(0);
+
+    const dialog = new CustomDialogs();
 
 
     const get_rows_from_order = (__lines, spread = false) => {
@@ -167,7 +170,7 @@ export const PurchaseOrderResponse = () => {
     const rowChange = (rows, changes) => {
         if (order.status == "closed") {
             console.log('order closed bye.');
-            alert(lang.purchase.order_not_editable);
+            dialog.alert(lang.purchase.order_not_editable);
             return;
         }
         const product_id = rows[changes.indexes[0]].id;

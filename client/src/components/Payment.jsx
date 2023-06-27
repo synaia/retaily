@@ -13,6 +13,7 @@ import { SCOPES } from "../util/constants.js";
 import { PrinterBasic } from "../api/printer.js";
 
 import { lang } from "../common/spa.lang.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 
@@ -43,6 +44,13 @@ export const Payment = () => {
 
     const transaction = useRef({...sale});
 
+    const dialog = new CustomDialogs({
+        id: 'dialog',
+        locale: {
+            accept: lang.newproduct.yes,
+            cancel: lang.pos.payment.no_print_require,
+        }
+    });
 
     useEffect(() => {
         printerBasic.troubleshooting();
@@ -66,15 +74,17 @@ export const Payment = () => {
 
     useEffect(() => {
         if (sequence_str != null ) {
-            if (confirm('Requiere Printing?')) {
-                transaction.current.sequence_str = sequence_str;
-                printerBasic.prepareDevice()
-                .then(pre => {
-                    printerBasic.print(transaction.current);
-                });
-            }
-
-            navigator('/', {replace: false});
+            const result = dialog.confirm(lang.pos.payment.print_require);
+            result.then(res => {
+                if (res) {
+                    transaction.current.sequence_str = sequence_str;
+                    printerBasic.prepareDevice()
+                    .then(pre => {
+                        printerBasic.print(transaction.current);
+                    });
+                }
+                navigator('/', {replace: false});
+            });
         }
 
         return () => {

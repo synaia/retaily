@@ -26,7 +26,9 @@ export  const lang = {
             for_deliver: 'Venta Delivery',
             cc: 'Tarjeta créd/déb',
             add_info: 'Nota adicional ...',
-            _return: 'regresar'
+            _return: 'regresar',
+            print_require: 'Requiere Impresión?',
+            no_print_require: 'No, no voy a imprimir'
         }
     },
     menu: {
@@ -72,7 +74,10 @@ export  const lang = {
         in_date: 'Fecha',
         user: 'Usuario',
         re_print: 'Re-Imprimir Factura',
-        cancel: 'Cancelar Factura'
+        cancel: 'Cancelar Factura',
+        loading: 'Cargando ...',
+        noresults: 'Sin resultados para esta consulta.',
+        no_discard: 'Continuar con esta venta'
     },
     products: {
         active: 'Activo',
@@ -104,7 +109,9 @@ export  const lang = {
         pricing: 'Precios',
         create: 'Crear Producto',
         take: 'Usar foto local',
-        connect: 'Conectar al Celular'
+        connect: 'Conectar al Celular',
+        yes: 'Sí',
+        no_cancel: 'NO, Cancelar'
     },
     store: {
         name: 'Nombre del Almacén',
@@ -120,7 +127,13 @@ export  const lang = {
         days: 'Dias abierto',
         open_inventory: 'Abrir Inventario Nuevo',
         close_inventory: 'Finalizar Inventario en Progreso',
-        cancel_inventory: 'Cancelar Inventario sin Efecto'
+        cancel_inventory: 'Cancelar Inventario sin Efecto',
+        no_close_inventory: 'NO, no voy a cerrar',
+        close_sure: 'Está seguro de cerrar este inventario?',
+        cancel_sure: 'Está seguro de CANCELAR este inventario?',
+        no_close_inventory: 'NO lo voy a Cancelar',
+        yes_cancel: 'Si, Cancelar'
+
     },
     storemov: {
         from_store: 'Desde Almacén',
@@ -149,7 +162,8 @@ export  const lang = {
         name: 'Order',
         select_bulk: 'Selecciona el Conjunto de Compras',
         purchase_quantity: 'a Comprar',
-        order_not_editable: 'Order no editable, fue cerrada.'
+        order_not_editable: 'Order no editable, fue cerrada.',
+        non_negative: 'Cantidad Negativa No Admitida'
     },
     dashboard: {
         total_sales: 'Ventas Totales',

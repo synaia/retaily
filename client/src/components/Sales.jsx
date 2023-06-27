@@ -237,10 +237,13 @@ export const Sales = () => {
     return (
         <div className="sales-container">
         <div className="sales-grid">
-            {loading && <Loading Text="Loading :)" /> }
+            {loading && <Loading Text={lang.sale.loading} /> }
             {!loading && sales.length == 0 &&
-                <div className="sale-card" >
-                    <h2>Nothing to show.</h2>
+                <div className="bounce-in-top sales-bounce">
+                    <div className="icon">
+                        <span className="material-icons-sharp mark-email-read"> flutter_dash </span>
+                    </div>
+                    <span>{lang.sale.noresults}</span>
                 </div>
             }
             {!loading && (

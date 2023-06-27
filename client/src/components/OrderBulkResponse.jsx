@@ -13,6 +13,7 @@ import 'react-data-grid/lib/styles.css';
 
 
 import { lang } from "../common/spa.lang.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 export const OrderBulkResponse = () => {
@@ -41,6 +42,8 @@ export const OrderBulkResponse = () => {
     const [productCount, setProductCount] = useState();
     const [valueCostOberved, setValueCostObserved] = useState();
     const [valueCost, setValueCost] = useState();
+
+    const dialog = new CustomDialogs();
 
 
     const onKewyDownEvent = (event) => {
@@ -378,8 +381,7 @@ export const OrderBulkResponse = () => {
 
     const rowChange = (rows, changes) => {
         if (bulk.status == "closed") {
-            console.log('order closed bye.');
-            alert(lang.purchase.order_not_editable);
+            dialog.alert(lang.purchase.order_not_editable);
             return;
         }
         const product_id = rows[changes.indexes[0]].id;

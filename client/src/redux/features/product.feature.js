@@ -501,10 +501,7 @@ const cleanSale = (state) => {
 }
 
 const discardSale = (state, action) => {
-    // reset sale to initial state
-    if(!confirm(lang.pos.discardsale)) return;
-    
-   cleanSale(state);
+    cleanSale(state);
 };
 
 const finishSale = (state, action) => {

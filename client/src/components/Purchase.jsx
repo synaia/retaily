@@ -14,7 +14,7 @@ import { F_, validateInputX } from "../util/Utils.js";
 import 'react-data-grid/lib/styles.css';
 
 import { lang } from "../common/spa.lang.js";
-
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 export const Purchase = () => {
@@ -43,6 +43,8 @@ export const Purchase = () => {
 
     const [productFoundLeft, SetProductFoundLeft] = useState(0);
     const [productFoundRight, SetProductFoundRight] = useState(0);
+
+    const dialog = new CustomDialogs();
 
     useEffect(() => {
         if (order != null) {
@@ -267,8 +269,7 @@ export const Purchase = () => {
 
     const rowChange = (rows, changes, side = 'left') => {
         if (order.status == "closed" || order.status == "cancelled" ) {
-            console.log('Order status Not editable bye.')
-            alert(lang.purchase.order_not_editable);
+            dialog.alert(lang.purchase.order_not_editable);
             return;
         }
         // console.log(changes);
@@ -287,7 +288,7 @@ export const Purchase = () => {
 
 
         if (qty < 0) {
-            alert('NON NEG QTY please');
+            dialog.alert(lang.purchase.non_negative);
             return;
         }
 

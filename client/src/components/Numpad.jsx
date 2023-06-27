@@ -8,6 +8,8 @@ import { PrinterBasic } from "../api/printer.js";
 import { trouble } from "../redux/features/sale.feature.js";
 import { SCOPES } from "../util/constants.js";
 import { F_ } from "../util/Utils.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
+import { lang } from "../common/spa.lang.js";
 
 
 export const Numpad = () => {
@@ -50,6 +52,21 @@ export const Numpad = () => {
         dispatch(updateDeliveryValueAction(value));
     }
 
+    const _discardSale =  async () => {
+        let dialog = new CustomDialogs({
+            id: 'dialog',
+            locale: {
+                accept: lang.newproduct.yes,
+                cancel: lang.sale.no_discard,
+            }
+        });
+    
+        const result =  await dialog.confirm(lang.pos.discardsale);
+        if (result) {
+            dispatch(discardSaleAction());
+        }
+    }
+
     if (currentUser.scopes.includes(SCOPES.SALES.POS_VELIVERY)) {
         return (
             <div className="bottom-left-side">
@@ -59,7 +76,7 @@ export const Numpad = () => {
                     <div className="numpad-btn" onClick={removeProductFromPicket}>
                         <span className="material-icons-sharp"> delete </span>
                     </div>
-                    <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
+                    <div className="numpad-btn" onClick={() => _discardSale()}>
                         <span className="material-icons-sharp"> delete_sweep </span>
                     </div>
                     {delivers.map((d, i) => (
@@ -79,7 +96,7 @@ export const Numpad = () => {
                     <div className="numpad-btn" onClick={removeProductFromPicket}>
                         <span className="material-icons-sharp"> delete </span>
                     </div>
-                    <div className="numpad-btn" onClick={() => dispatch(discardSaleAction())}>
+                    <div className="numpad-btn" onClick={() => _discardSale()}>
                         <span className="material-icons-sharp"> delete_sweep </span>
                     </div>
                 </div>
