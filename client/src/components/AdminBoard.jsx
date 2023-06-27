@@ -288,13 +288,13 @@ export const AdminBoard = ({Content, Title, Search}) => {
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.REPORT.VIEW) &&
-                <a href="#" key={6}>
+                <a href="#" key={6} onClick={(event) => event.preventDefault()}>
                   <span className="material-icons-sharp"> report_gmailerrorred </span>
                   <h3>{lang.menu.reports}</h3>
                 </a>
                 }
                 {currentUser.scopes.includes(SCOPES.ANALYTIC.VIEW) &&
-                <a href="#" key={7}>
+                <a href="#" key={7} onClick={(event) => event.preventDefault()}>
                   <span className="material-icons-sharp"> insights </span>
                   <h3>{lang.menu.analytics}</h3>
                 </a>

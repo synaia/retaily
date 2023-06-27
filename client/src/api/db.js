@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { SCOPES } from '../util/constants.js';
 
 export const db = new Dexie('retail.db');
 
@@ -34,7 +35,11 @@ export const persistUser = async (user) => {
 
   console.log('USER REFRESH .... ', freshuser);
   if (user.selectedStore != null && user.is_logout == null) {
-    window.location.href = '/#/admin/';
+    if(user.scopes.includes(SCOPES.DASHBOARD.VIEW)) {
+      window.location.href = '/#/admin/';
+    } else {
+      window.location.href = '/#/admin/messages';
+    }
   }
 
   if (user.is_logout != null) {

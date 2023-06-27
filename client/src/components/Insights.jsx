@@ -1,12 +1,23 @@
 import React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { F_ } from "../util/Utils";
 import { lang } from "../common/spa.lang.js";
+import { SCOPES } from "../util/constants";
 
 export const Insights = () => {
     const currentUser = useSelector((state) => state.user.currentUser);
+    const navigator = useNavigate();
     const {total_sale, total_promise, total_income} = useSelector((state) => state.product.sales_totals);
+
+    useEffect(() => {
+        if(!currentUser.scopes.includes(SCOPES.DASHBOARD.VIEW)) {
+            navigator('/admin/messages', {replace: true});
+        }
+    }, [currentUser])
+   
 
     return (
         <div className="insights">

@@ -122,7 +122,6 @@ export  const lang = {
         close_inventory: 'Finalizar Inventario en Progreso',
         cancel_inventory: 'Cancelar Inventario sin Efecto'
     },
-
     storemov: {
         from_store: 'Desde Almacén',
         to_store: 'Para Almacén',
@@ -167,5 +166,13 @@ export  const lang = {
         ORDER_ISSUE: 'EL SIGUIENTE PRODUCTO TIENE OBSERVACIONES',
         ORDER_NEW: 'UNA NUEVA ORDEN HA SIDO CREADA',
         new_messages: (num) => `Tiene ${num} Nuevos Mensajes`,
+        nomessages: 'No tienes mensajes nuevos!',
+    },
+    login: {
+        form: 'Inicio de Sesión',
+        username: 'usuario',
+        password: 'clave de acceso',
+        store: 'seleccione la tienda',
+        login: 'Entrada',
     }
 }

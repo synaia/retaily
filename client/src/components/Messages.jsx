@@ -28,6 +28,14 @@ export const Messages = () => {
     return (
         <React.Fragment>            
             <div className="movement-top">
+            {messages.length == 0 &&
+                <div className="bounce-in-top">
+                    <div className="icon">
+                        <span className="material-icons-sharp mark-email-read"> mark_email_read </span>
+                    </div>
+                    <span>{lang.messages.nomessages}</span>
+                </div>
+            }
             { messages.map( (msg, i) => (
                     <div className="message-grid" key={i} onClick={() =>  navigator(`/admin/inventory/storemovresp/${msg.body.order.id}`, {replace: false})}>
                         <div className={`message-${msg.marker}`}></div>
