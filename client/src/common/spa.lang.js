@@ -77,7 +77,10 @@ export  const lang = {
         cancel: 'Cancelar Factura',
         loading: 'Cargando ...',
         noresults: 'Sin resultados para esta consulta.',
-        no_discard: 'Continuar con esta venta'
+        no_discard: 'Continuar con esta venta',
+        cancel_invoice: 'Quiere cancelar esta factura?',
+        no_cancel_invoice: 'NO cancelar factura',
+        yes_cancel: 'Si cancelar'
     },
     products: {
         active: 'Activo',

@@ -8,6 +8,7 @@ import { PrinterBasic } from "../api/printer.js";
 
 import { lang } from "../common/spa.lang.js";
 import { storeInfo } from "../common/store-info.js";
+import { CustomDialogs } from "../api/nano-dialog.js";
 
 
 export const Sales = () => {
@@ -37,6 +38,14 @@ export const Sales = () => {
 
     const printer = useSelector((state) => state.sale.printer);
     const printerBasic = new PrinterBasic();
+
+    const dialog = new CustomDialogs({
+        id: 'dialog',
+        locale: {
+            accept: lang.sale.yes_cancel,
+            cancel: lang.sale.no_cancel_invoice,
+        }
+    });
 
     useEffect(() => {
         printerBasic.troubleshooting();
@@ -201,8 +210,11 @@ export const Sales = () => {
         setpaymenttext(p_texts);
     };
 
-    const _cancelSale = (id) => {
-        dispatch(cancelSale({id}));
+    const _cancelSale = async (id) => {
+        const result = await dialog.confirm(lang.sale.cancel_invoice);
+        if (result) {
+            dispatch(cancelSale({id}));
+        }
     };
 
     useEffect(() => {
