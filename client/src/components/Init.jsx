@@ -47,6 +47,7 @@ export const Init = () => {
         const printerCheckTask = () => {
             setTimeout(printerCheckTask, 5000);
             dispatch(trouble());
+            console.log('Try to connect to Madelta Printer.')
         }
         printerCheckTask();
 
