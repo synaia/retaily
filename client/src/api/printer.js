@@ -248,7 +248,7 @@ export class PrinterBasic {
                 });
             if (!found) {
                 //TODO: do it manually by user.
-                await this.connectToDevice();
+                // await this.connectToDevice();
             }
         } else {
             console.log('Device already set: ', this.device)
