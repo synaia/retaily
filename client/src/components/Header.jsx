@@ -6,6 +6,7 @@ import { changeTheme, addMessagesCount, setErrViewedUser,  } from "../redux/feat
 import { setErrViewedProduct } from "../redux/features/product.feature.js";
 import { setErrViewedClient } from "../redux/features/client.feature.js";
 import { setErrViewedSale } from "../redux/features/sale.feature.js";
+import { PrinterBasic } from "../api/printer.js";
 
 export const Header = () => {
     const dispatch = useDispatch();
@@ -20,6 +21,8 @@ export const Header = () => {
     const errorMessageClient = useSelector((state) => state.client.errorMessage);
 
     const [errorMessage, SetErrorMessage] = useState([]);
+
+    const printerBasic = new PrinterBasic();
 
     useEffect(() => {
         SetErrorMessage([...errorMessage, [...errorMessageProduct.errors]]);
@@ -167,7 +170,7 @@ export const Header = () => {
                         <span className="material-icons-sharp"> print </span>
                     }
                     {printer.isrunning == false &&
-                        <span className="material-icons-sharp danger"> print_disabled </span>
+                        <span className="material-icons-sharp danger" onClick={() => printerBasic.connectToDevice()}> print_disabled </span>
                     }
                     </div>
                     <div className="theme-toggler">
