@@ -241,7 +241,9 @@ export class PrinterBasic {
                         found = true;
                         // console.log('prepared devices: ', devices)
                         this.device = devices[0];
-                        return this.#setup(this.device);
+                        if (!this.device.opened) {
+                            return this.#setup(this.device);
+                        }
                     }
                 }).catch(error => {
                     console.log('Ummmmm ', error);
