@@ -2,6 +2,8 @@ source /home/wilton/miniconda3/etc/profile.d/conda.sh
 
 conda activate retaily_env
 
+cd /home/wilton/retaily
+
 uvicorn server.main:app --host 0.0.0.0 --port 4443 \
 --ssl-keyfile /home/wilton/certs/retaily.app.key \
 --ssl-certfile /home/wilton/certs/1c55a1ede5e4705a.pem \
