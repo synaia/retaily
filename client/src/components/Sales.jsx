@@ -99,10 +99,10 @@ export const Sales = () => {
 
         console.log(transaction)
         
-        // printerBasic.prepareDevice()
-        //         .then(pre => {
-        //             printerBasic.print(transaction);
-        //         });
+        printerBasic.prepareDevice()
+                .then(pre => {
+                    printerBasic.print(transaction);
+                });
     }
 
     const p_texts = []
