@@ -170,7 +170,10 @@ export const Header = () => {
                         <span className="material-icons-sharp"> print </span>
                     }
                     {printer.isrunning == false &&
-                        <span className="material-icons-sharp danger" onClick={() => printerBasic.connectToDevice()}> print_disabled </span>
+                        <span className="material-icons-sharp danger" 
+                        onClick={() => printerBasic.connectToDevice()}
+                        title="Click to solve."
+                        > print_disabled </span>
                     }
                     </div>
                     <div className="theme-toggler">
