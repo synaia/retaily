@@ -208,9 +208,11 @@ export class PrinterBasic {
     }
 
     #setup(device) {
-        return device.open()
-        .then(() => device.selectConfiguration(1))
-        .then(() => device.claimInterface(0))
+        if (!device.opened) {
+            return device.open()
+            .then(() => device.selectConfiguration(1))
+            .then(() => device.claimInterface(0))
+        }
     }
 
     cutpaper() {
