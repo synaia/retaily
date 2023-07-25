@@ -524,10 +524,14 @@ const refreshProductList = (state, action) => {
             }
         });
         products[index].pricinglist = pricinglist;
-        products_pos[indexpos].price = parseFloat(value);
+        if (indexpos != -1) {
+            products_pos[indexpos].price = parseFloat(value);
+        }
     } else {
         products[index][field] = value;
-        products_pos[indexpos][field] = value
+        if (indexpos != -1) {
+            products_pos[indexpos][field] = value
+        }
     }
     state.all_products = products;
     state.products = products_pos;
