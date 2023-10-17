@@ -21,6 +21,7 @@ WHERE
   AND s.name = %s
   AND pc.price_key = 'DEFAULT'
   AND p.active = 1
+  AND p.archived = 0
   ;
 
 --SELECT_ALL_PRODUCT_ACTIVE
@@ -37,6 +38,7 @@ SELECT
     p.image_raw
   FROM product  p
     WHERE p.active = 1
+     AND  p.archived = 0
   ORDER BY p.id DESC
 ;
 
@@ -53,6 +55,7 @@ SELECT
     p.active,
     p.image_raw
   FROM product  p
+   WHERE p.archived = 0
   ORDER BY p.id DESC
 ;
 
@@ -82,7 +85,8 @@ SELECT
     AS last_update_inv
   FROM product  p
    WHERE
-      p.active = 1
+        p.active = 1
+    AND p.archived = 0
   ORDER BY COALESCE(last_update_inv, p.date_create) DESC
 ;
 
@@ -483,6 +487,7 @@ FROM app_inventory i, app_store st, product p
 	  st.id = i.store_id
   AND i.product_id = p.id
   AND p.active = 1
+  AND p.archived = 0
   AND i.quantity > 0
   AND st.name = %s
 ;
@@ -496,6 +501,7 @@ FROM app_inventory i, app_store st, product p
 	  st.id = i.store_id
   AND i.product_id = p.id
   AND p.active = 1
+  AND p.archived = 0
   AND i.quantity > 0
   AND i.status = 'changed'
   AND st.name = %s

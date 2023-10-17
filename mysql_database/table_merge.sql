@@ -142,6 +142,7 @@ CREATE TABLE product AS
 DELETE FROM product  WHERE id = 9056 AND cost = 2575 ;
 DELETE FROM product  WHERE id = 9053 AND margin = 1177 ;
 
+
 ALTER TABLE `retaily_db`.`product`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
@@ -558,6 +559,8 @@ INSERT INTO app_inventory (quantity, next_quantity, product_id, store_id)
 
 ALTER TABLE `retaily_db`.`product`
 ADD COLUMN `user_modified` VARCHAR(45) NULL AFTER `active`;
+
+ALTER TABLE `retaily_db`.`product` ADD COLUMN `archived` VARCHAR(1) DEFAULT '0' AFTER `user_modified` ;
 
 -- -- 8936
 SELECT p.id, count(*) FROM product p, app_inventory i
