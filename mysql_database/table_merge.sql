@@ -1,4 +1,5 @@
 USE retaily_db;
+SET SQL_SAFE_UPDATES = 0;
 
 CREATE TABLE sambil_db__client AS
 SELECT
@@ -139,6 +140,7 @@ CREATE TABLE product AS
 ;
 
 DELETE FROM product  WHERE id = 9056 AND cost = 2575 ;
+DELETE FROM product  WHERE id = 9053 AND margin = 1177 ;
 
 ALTER TABLE `retaily_db`.`product`
 CHANGE COLUMN `id` `id` BIGINT NOT NULL AUTO_INCREMENT ,
