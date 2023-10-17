@@ -469,8 +469,9 @@ def read_stores_inv(db: Session, query: Query):
 
 
 def add_product(product: Product,  db: Session, query: Query, token_info):
-    image_raw = image_to_base64(product.img_path)
-    image_raw = f'data:image/png;base64,{image_raw}' if image_raw is not None else image_raw
+    # image_raw = image_to_base64(product.img_path)
+    # image_raw = f'data:image/png;base64,{image_raw}' if image_raw is not None else image_raw
+    image_raw = None
     sql_raw_insert_product = query.INSERT_PRODUCT
     cur = get_cursor(db)
     data = (product.name, product.cost, product.code, product.user_modified, image_raw)
