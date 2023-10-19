@@ -20,7 +20,7 @@ from server.core_app.dbfs.Query import Query
 SECRET_KEY = "1f0cf1b58b6207323d9fb963b3b6ce85c1f725a474713ae8054b2969be23c0d0"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60*5
-ACCESS_TOKEN_EXPIRE_SECONDS = 60*60
+ACCESS_TOKEN_EXPIRE_SECONDS = 60*60*10
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
