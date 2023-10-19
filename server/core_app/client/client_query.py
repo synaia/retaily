@@ -11,15 +11,15 @@ def read_clients(db: Session):
 
 
 def create_client(client: models.Client, db: Session, query: Query):
-    sql_raw_insert_client = query.INSERT_CLIENT
-    cur = get_cursor(db)
-    data = (client.name, client.document_id, client.address, client.celphone, client.email, client.wholesaler)
-    cur.execute(sql_raw_insert_client, data)
-    cur.connection.commit()
+    # sql_raw_insert_client = query.INSERT_CLIENT
+    # cur = get_cursor(db)
+    # data = (client.name, client.document_id, client.address, client.celphone, client.email, client.wholesaler)
+    # cur.execute(sql_raw_insert_client, data)
+    # cur.connection.commit()
 
-    # db.add(client)
-    # db.commit()
-    # db.refresh(client)
+    db.add(client)
+    db.commit()
+    db.refresh(client)
     return client
 
 
