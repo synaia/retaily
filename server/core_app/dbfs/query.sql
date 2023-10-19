@@ -1117,3 +1117,8 @@ WHERE
       s.date_create >= DATE_SUB(CURDATE(), INTERVAL 0 DAY)
   AND s.status <> 'RETURN'
 ;
+
+--INSERT_CLIENT
+INSERT INTO client (name, document_id, address, celphone, email, wholesaler)
+ VALUES (%s, %s, %s, %s, %s, %s)
+;

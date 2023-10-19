@@ -1,3 +1,5 @@
+import os
+import sys
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
 from server.core_app.database import get_db
@@ -6,9 +8,21 @@ import server.core_app.client.client_schemas as schemas
 import server.core_app.user.user_models as models
 import server.core_app.client.client_models as client_models
 from server.core_app.client.client_query import read_clients, create_client, update_client
+from server.core_app.dbfs.Query import Query
 
 
 router = APIRouter(prefix='/clients', tags=['clients'])
+
+gettrace = getattr(sys, 'gettrace', None)
+# is debug mode :-) ?
+if gettrace():
+    path = os.getcwd() + '/dbfs/query.sql'
+    print('Debugging :-* ')
+else:
+    path = os.getcwd() + '/server/core_app/dbfs/query.sql'
+    print('Run normally.')
+
+query = Query(path)
 
 
 @router.get("/", response_model=list[schemas.Client])
@@ -36,7 +50,7 @@ async def add_client(
     })
 
     try:
-        return create_client(new_client, db=db)
+        return create_client(new_client, db=db, query=query)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
