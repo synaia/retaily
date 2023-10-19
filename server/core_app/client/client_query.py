@@ -12,7 +12,7 @@ def read_clients(db: Session):
 def create_client(client: models.Client, db: Session):
     db.add(client)
     db.commit()
-    # db.refresh(client)
+    db.refresh(client)
     return client
 
 
