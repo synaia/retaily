@@ -32,7 +32,7 @@ async def add_client(
         "address": client.address,
         "celphone": client.celphone,
         "email": client.email,
-        "wholesaler": True
+        "wholesaler": client.wholesaler,
     })
 
     try:
