@@ -1122,3 +1122,7 @@ WHERE
 INSERT INTO client (name, document_id, address, celphone, email, wholesaler)
  VALUES (%s, %s, %s, %s, %s, %s)
 ;
+
+--FIND_LAST_CLIENT
+SELECT id FROM client ORDER BY id DESC LIMIT 1
+;

@@ -186,6 +186,7 @@ def get_next_sequence(code: str, db: Session, query: Query):
 
 def add_sale(transaction: dict,  db: Session, query: Query):
     sql_raw_insert_sale: str = query.INSERT_SALE
+    sql_last_client: str = query.FIND_LAST_CLIENT
     cur = get_cursor(db)
     TWO_DECIMAL: int = 2 
 
@@ -202,7 +203,14 @@ def add_sale(transaction: dict,  db: Session, query: Query):
     sequence: str = get_next_sequence(code=sequence_type, db=db, query=query)
 
     login: str = transaction['user']['username']
-    client_id: int = transaction['client']['id']
+
+    try:
+        client_id: int = transaction['client']['id']
+    except Exception as ex:
+        cur.execute(sql_last_client)
+        last_client_id = cur.fetchall()
+        client_id: int = last_client_id[0]['id']
+
     store_name: str = transaction['user']['selectedStore']
     store_id: int = selected_store(store_name, db, query)
     additional_info: str = transaction['additional_info']
