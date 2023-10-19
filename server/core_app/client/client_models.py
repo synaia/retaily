@@ -14,5 +14,5 @@ class Client(Base):
     address = Column(String)
     celphone = Column(String)
     email = Column(String)
-    # date_create = Column(DateTime)
+    date_create = Column(DateTime)
     wholesaler = Column(Integer)
