@@ -137,9 +137,10 @@ export const Client = () => {
             return;
         }
 
+        const uname = name.current?.value.toUpperCase()
         const new_client = {
            "document_id": documentId.current?.value, 
-           "name": name.current?.value, 
+           "name": uname, 
            "address": address.current?.value, 
            "celphone": celphone.current?.value, 
            "email": email.current?.value,
