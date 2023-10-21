@@ -331,6 +331,28 @@ UPDATE sale
 WHERE id = %s
 ;
 
+--SELECT_STORE_FROM_SALE
+SELECT s.store_id
+ FROM sale s
+WHERE
+  s.id = %s
+;
+
+--SELECT_SALE_LINES_RETURN
+SELECT sl.quantity, sl.product_id
+ FROM sale_line sl
+WHERE
+  sl.sale_id = %s
+;
+
+--SALE_RETURN_QUANTITY
+UPDATE app_inventory
+ SET quantity = quantity + %s
+ WHERE
+       product_id = %s
+   AND store_id = %s
+;
+
 --SELECT_STORES
  SELECT
       s.id,

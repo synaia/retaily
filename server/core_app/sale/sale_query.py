@@ -137,10 +137,31 @@ def add_pay(paids: list[SalePaid], sale_id: int,  db: Session, query: Query):
     return {'sale_id': sale_id, 'paids': sale_paids}
 
 
+def solve_canceled_invoice(sale_id: int,  db: Session, query: Query):
+    sql_raw_select_store = query.SELECT_STORE_FROM_SALE
+    cur = get_cursor(db)
+    cur.execute(sql_raw_select_store, (sale_id,))
+    store = cur.fetchall()
+    store_id: int = 0
+    if len(store) > 0:
+        store_id: int = store[0]['store_id']
+
+    sql_raw_select_sale_lines = query.SELECT_SALE_LINES_RETURN
+    sql_return_sale_quantity = query.SALE_RETURN_QUANTITY
+    cur.execute(sql_raw_select_sale_lines, (sale_id,))
+    sale_lines = cur.fetchall()
+    for sl in sale_lines:
+        quantity = sl['quantity']
+        product_id = sl['product_id']
+        cur.execute(sql_return_sale_quantity, (quantity, product_id, store_id,))
+    cur.connection.commit()
+
+
 def cancel_sale(sale_id: int,  db: Session, query: Query):
     sql_raw_sale_return = query.UPDATE_SALES_AS_RETURN
     cur = get_cursor(db)
     cur.execute(sql_raw_sale_return, (sale_id,))
+    solve_canceled_invoice(sale_id, db, query)
     cur.connection.commit()
     return {'sale_id': sale_id}
 
