@@ -10,12 +10,13 @@ export class PrinterBasic {
     constructor() { 
         this.thermalEncoder = new ThermalPrinterEncoder({
             language: 'esc-pos',
-            wordWrap: true
+            wordWrap: true,
+            width: 46,
         });
         console.log('PrinterBasic instanxce ready.'); 
     }
 
-    print(transaction, copy = false, codepage = "cp852") {
+    print(transaction, copy = false, codepage = "auto") {
         const logo = new Image();
         logo.src = transaction.user.store.logo;
         const salesman = transaction.user.first_name.toUpperCase();
@@ -64,22 +65,25 @@ export class PrinterBasic {
             }
             data.line(client_address)
             .newline()
-            .line('-'.repeat(48)) 
+            // .line('-'.repeat(48)) 
+            .rule({style: 'single'})
             .align('center')
             .line(sequence)
             .line(sequence_str)
             .align('left')
-            .line('-'.repeat(48)) 
+            // .line('-'.repeat(48)) 
+            .rule({style: 'single'})
             .table(
                 [
-                    { width: 36, marginRight: 2, align: 'left' },
+                    { width: 34, marginRight: 2, align: 'left' },
                     { width: 10, align: 'right' }
                 ], 
                 [
                     [ 'Item', 'Valor' ],
                 ]
             )
-            .line('-'.repeat(48));
+            // .line('-'.repeat(48));
+            .rule({style: 'single'});
 
             transaction.products.forEach(p => {
                 let discount;
@@ -96,7 +100,7 @@ export class PrinterBasic {
                 const price_for_sale = p.price_for_sale * p.inventory[0].quantity_for_sale;
                 data.table(
                     [
-                        { width: 36, marginRight: 2, align: 'left' },
+                        { width: 34, marginRight: 2, align: 'left' },
                         { width: 10, align: 'right' }
                     ], 
                     [
@@ -111,10 +115,11 @@ export class PrinterBasic {
             .align('center')
             .line('Resumen Facturacion')
             .align('left')
-            .line('-'.repeat(48))
+            // .line('-'.repeat(48))
+            .rule({style: 'single'})
             .table(
                 [
-                    { width: 36, marginRight: 2, align: 'left' },
+                    { width: 34, marginRight: 2, align: 'left' },
                     { width: 10, align: 'right' }
                 ], 
                 [
@@ -124,13 +129,14 @@ export class PrinterBasic {
                     [ 'Total', (encoder) => encoder.bold().text(`${T_(total)}`).bold() ]
                 ]
             )
-            .line('-'.repeat(48));
+            // .line('-'.repeat(48));
+            .rule({style: 'single'});
             transaction.paids.forEach(p => {
                 let descPaid = p.type == "CC" ? "Pago tarjeta" : "Pago efectivo"
                 const amount = T_(parseFloat(p.amount));
                 data.table(
                     [
-                        { width: 36, marginRight: 2, align: 'left' },
+                        { width: 34, marginRight: 2, align: 'left' },
                         { width: 10, align: 'right' }
                     ], 
                     [
