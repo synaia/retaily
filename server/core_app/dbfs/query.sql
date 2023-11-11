@@ -186,6 +186,7 @@ SELECT
     cli.name as client_name,
     cli.document_id,
     cli.celphone,
+    cli.address,
     (SELECT
         SUM(paid.amount)
 	   FROM sale_paid paid
@@ -250,6 +251,7 @@ SELECT
     cli.name as client_name,
     cli.document_id,
     cli.celphone,
+    cli.address,
     (SELECT
         SUM(paid.amount)
 	   FROM sale_paid paid

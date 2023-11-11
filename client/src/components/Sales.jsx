@@ -65,6 +65,7 @@ export const Sales = () => {
         const products = [];
         sale.sale_line.forEach(p => {
             let product = {}
+            product['name'] = p.product.name;
             product['discount'] = p.discount;
             product['inventory'] = [{'quantity_for_sale': p.quantity}]
             product['price'] = p.amount;
@@ -101,7 +102,8 @@ export const Sales = () => {
         
         printerBasic.prepareDevice()
                 .then(pre => {
-                    printerBasic.print(transaction);
+                    // const codepages = ["auto", "cp852", "cp437", "cp737", "cp850", "cp775", "cp855", "cp857", "cp858", "cp860", "cp861", "cp862", "cp863", "cp864", "cp865", "cp866", "cp874", "cp936", "cp949", "cp950", "cp1252", "iso88596"]
+                    printerBasic.print(transaction, true);
                 });
     }
 

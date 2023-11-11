@@ -68,6 +68,7 @@ def read_sales(init_date: str, end_date: str, store: str, store_s: str, invoice_
         client.name = rp['client_name']
         client.document_id = rp['document_id']
         client.celphone = rp['celphone']
+        client.address = rp['address']
         sale.client = client
 
         cur.execute(sql_raw_line, (sale.id,))

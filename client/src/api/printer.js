@@ -15,77 +15,10 @@ export class PrinterBasic {
         console.log('PrinterBasic instanxce ready.'); 
     }
 
-    print(transaction) {
-        // let string = "WILTON BELTRE\n\n";
-        // let encoder = new TextEncoder();
-        // let data = encoder.encode(string);
-        // const data = this.thermalEncoder.initialize()
-        // .underline(true)
-        // .text('WILTON BELTRE')
-        // .underline(false)
-        // .newline()
-        // .bold()
-        // .text('BOLD TEXT')
-        // .newline()
-        // .align('right')
-        // .line('RIGHT $5,689.00')
-        // .align('center')
-        // .line('THANK YOU!!')
-        // .align('left')
-        // .size('small')
-        // .line('A line of small text')
-        // .size('normal')
-        // .line('A line of normal text')
-        // .width(2)
-        // .line('A line of text twice as wide')
-        // .width(3)
-        // .line('A line of text three times as wide')
-        // .width(1)
-        // .line('A line of text with normal width')
-        // .height(2)
-        // .line('A line of text twice as high')
-        // .height(3)
-        // .line('A line of text three times as high')
-        // .height(1)
-        // .line('A line of text with normal height')
-        // .encode();
-
-        // const data = this.thermalEncoder.initialize()
-        // .table(
-        //     [
-        //         { width: 36, marginRight: 2, align: 'left' },
-        //         { width: 10, align: 'right' }
-        //     ], 
-        //     [
-        //         [ 'Item 1', (encoder) => encoder.height(3).text('$ 250,75').height(1) ],
-        //         [ 'Item 2', '15,00' ],
-        //         [ 'Item 3', '9,95' ],
-        //         [ 'Item 4', '4,75' ],
-        //         [ 'Item 5', '211,05' ],
-        //         [ '', '='.repeat(10) ],
-        //         [ 'Total', (encoder) => encoder.bold().text('$ 250,75').bold() ],
-        //     ]
-        // )
-        // .encode()
-
-        // const data = this.thermalEncoder.initialize()
-        // .box(
-        //     { width: 30, align: 'right', style: 'double', marginLeft: 10 }, 
-        //     'The quick brown fox jumps over the lazy dog'
-        // )
-        // .encode()
-
-        // const data = this.thermalEncoder.initialize()
-        // .rule({ style: 'single' }) 
-        // .encode()
-
-        // const data = this.thermalEncoder.initialize()
-        // .qrcode('https://www.instagram.com/evofitdr', 2, 8, 'h')
-        // .encode()
-
-
+    print(transaction, copy = false, codepage = "cp852") {
         const logo = new Image();
         logo.src = transaction.user.store.logo;
+        const salesman = transaction.user.first_name.toUpperCase();
         const slogan = transaction.user.store.slogan;
         const address = transaction.user.store.address;
         const company_id = transaction.user.store.company_id;
@@ -103,18 +36,33 @@ export class PrinterBasic {
         logo.onload = () => {
             const algorithm = 'threshold';
             const data = this.thermalEncoder.initialize()
-            .codepage('cp852')
+            .codepage(codepage)
             .align('center')
             .image(logo, 304, 248, algorithm)
-            .line(slogan)
-            .newline()
+            .line(slogan);
+            if (copy) {
+                data.newline()
+                .invert()
+                .text(" C O P I A ")
+                .invert()
+                .newline();
+            }
+            data.newline()
             .align('left')
             .line(address)
             .line(`RNC ${company_id}`)
-            .line(date)
-            .newline()
-            .line(client_line)
-            .line(client_address)
+            .line(`${date}  @${salesman}`)
+            .newline();
+            if (copy) {
+                data.bold()
+                .height(2)
+                .line(client_line)
+                .height(1)
+                .bold()
+            } else {
+                data.line(client_line)
+            }
+            data.line(client_address)
             .newline()
             .line('-'.repeat(48)) 
             .align('center')

@@ -5,6 +5,8 @@ import { solveResponse } from "../../util/Utils";
 
 import { PrinterBasic } from "../../api/printer.js";
 
+import { beauty } from "../../util/Utils";
+
 const printerBasic = new PrinterBasic();
 
 const initialState = {
