@@ -101,7 +101,7 @@ export const SearchBar = () => {
         const HOURS_BACK = 1 * 24;
         let end_date = new Date();
         let init_date = new Date();
-        init_date.setHours(init_date.getHours() - HOURS_BACK);
+        init_date.setHours(init_date.getHours());
         end_date = end_date.toISOString().split('T')[0];
         init_date = init_date.toISOString().split('T')[0];
         document.querySelector('.init_date').value = init_date;
