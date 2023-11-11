@@ -98,7 +98,7 @@ export const SearchBar = () => {
 
 
     useEffect(() => {
-        const HOURS_BACK = 2 * 24;
+        const HOURS_BACK = 1 * 24;
         let end_date = new Date();
         let init_date = new Date();
         init_date.setHours(init_date.getHours() - HOURS_BACK);
