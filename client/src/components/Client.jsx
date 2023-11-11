@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRef, useEffect, useMemo } from "react";
 import { useDispatch , useSelector} from "react-redux";
-import { addClient, updateClient, putClientinListAction, updateClientinListAction } from "../redux/features/client.feature.js";
+import { addClient, updateClient, putClientinListAction, refreshClientListAction } from "../redux/features/client.feature.js";
 
 import DataGrid from 'react-data-grid';
 import { textEditor } from 'react-data-grid';
@@ -81,8 +81,8 @@ export const Client = () => {
         };
 
         console.log(args);
-       
-        // dispatch(updatePricing(args))
+        dispatch(refreshClientListAction(args))
+        dispatch(updateClient(args))
     };
 
      /**
@@ -164,23 +164,6 @@ export const Client = () => {
 
         // "date_create": "2023-02-18T14:58:33",
         // "wholesaler": true,
-    }
-
-    const editClient = () => {
-        const current_client = {
-            "id": clientIdState,
-            "document_id": documentId.current?.value, 
-            "name": name.current?.value, 
-            "address": address.current?.value, 
-            "celphone": celphone.current?.value, 
-            "email": email.current?.value,
-            "date_create": "2023-02-18T14:58:33",
-            "wholesaler": true,
-         }
-         dispatch(updateClient(current_client));
-         dispatch(pickNewClientAction(current_client));
-         dispatch(updateClientinListAction(current_client));
-         navigator('/', {replace: true});
     }
     
     const filterClient = (ev) => {
@@ -300,13 +283,6 @@ export const Client = () => {
                             <div className="middle-left-side-client" onClick={createClient}>
                                 <div>
                                     <h3>{lang.pos.client.save}</h3>
-                                </div>
-                            </div>
-                        }
-                        {clientIdState != null &&
-                            <div className="middle-left-side-client" onClick={editClient}>
-                                <div>
-                                    <h3>{lang.pos.client.update}</h3>
                                 </div>
                             </div>
                         }

@@ -55,25 +55,15 @@ async def add_client(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
 
-@router.put("/update/{client_id}")
-async def upt_client(
-        client_id: int,
-        client: schemas.Client,
-        db: Session = Depends(get_db),
-        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
+@router.post("/update")
+async def update_client_(
+                        client_id: int,
+                        field: str,
+                        value: str,
+                        db: Session = Depends(get_db),
+                        token_info: models.User = Security(dependency=validate_permissions, scopes=["sales"])
 ):
-    new_client = client_models.Client(**{
-        "id": client_id,
-        "name": client.name,
-        "document_id": client.document_id,
-        "address": client.address,
-        "celphone": client.celphone,
-        "email": client.email,
-        "date_create": client.date_create,
-        "wholesaler": True
-    })
-
     try:
-        return update_client(client, db=db)
+        update_client(client_id, field, value, db=db)
     except Exception as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))

@@ -26,7 +26,9 @@ def create_client(client: models.Client, db: Session, query: Query):
     return client
 
 
-def update_client(client, db: Session):
-    obj = db.query(models.Client).where(models.Client.id == client.id)
-    obj.update(client.dict())
-    db.commit()
+def update_client(client_id: int, field: str, value: str, db: Session):
+    cur = get_cursor(db)
+    sql_raw_update = f'UPDATE client SET {field} = "{value}" WHERE id = %s;'
+    cur.execute(sql_raw_update, (client_id,))
+    cur.connection.commit()
+
